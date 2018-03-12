@@ -35,7 +35,7 @@
                         <div class="card">
                             <h5 class="card-header">{{ loop.index }}</h5>
                             <div class="card-body">
-                                <h5 class="card-title">{{ record['_source']['title'] }}</h5>
+                                <h5 class="card-title">{{ record['_source']['title']|safe }}</h5>
                                 <p class="card-text">{{ record['_source']['body']|safe }}</p>
                                 <a href="{{ record['_source']['url'] }}" class="btn btn-primary">Link</a>
                             </div>

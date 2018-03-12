@@ -1,5 +1,6 @@
 from flask import Flask, render_template, g, request
 from elasticsearch import Elasticsearch
+
 # import os
 
 app = Flask(__name__)
@@ -31,6 +32,12 @@ def query():
     data = []
     for record in res['hits']['hits']:
         print(record)
+        record['_source']['title'] = str(record['_source']['title']).replace(request.form['queryString'],
+                                                                           "<mark>" + request.form[
+                                                                               'queryString'] + "</mark>")
+
+        record['_source']['body'] = str(record['_source']['body']).replace(request.form['queryString'],
+                                                                             "<mark>" + request.form['queryString'] + "</mark>")
         data.append(record)
     # print(json.dumps(res, sort_keys=True, indent=4))
 
