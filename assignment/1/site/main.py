@@ -21,6 +21,7 @@ def query():
     res = es.search(index="ettoday", body={
         "query": {
             "match": {
+                # "title": request.form['queryString']
                 "body": request.form['queryString']
             }
         }
