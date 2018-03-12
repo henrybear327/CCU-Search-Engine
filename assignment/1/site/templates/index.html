@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <!--https://getbootstrap.com/docs/4.0/utilities/spacing/-->
+        <div class="col-md-8 mx-auto p-md-8 my-5">
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ url_for('query') }}" method="post">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="queryString" class="form-control" placeholder="Search!"
+                                       aria-label="search" value="{{searchString}}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary" type="submit"><i
+                                            class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if data is defined %}
+            <hr>
+
+            {% for record in data %}
+            Title: {{ record['_source']['title'] }}
+            <br>
+            Body: {{ record['_source']['body'] }}
+            <hr>
+            {% endfor %}
+
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}
