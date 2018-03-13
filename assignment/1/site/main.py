@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, session, redirect
 from elasticsearch import Elasticsearch
 
-# import os
+# import os, json
 
 app = Flask(__name__)
 
@@ -46,12 +46,22 @@ def query(page=1):
     # get result based on exact match
     res = es.search(index="ettoday", body={
         "query": {
-            "match": {
-                # "title": session['queryString']
-                "body": session['queryString']
+            "multi_match": {
+                "query": session['queryString'],
+                "fields": ["title", "body"]
             }
         }
     }, from_=param_from, size=5)
+
+    # # get result based on exact match
+    # res = es.search(index="ettoday", body={
+    #     "query": {
+    #         "match": {
+    #             # "title": session['queryString']
+    #             "body": session['queryString']
+    #         }
+    #     }
+    # }, from_=param_from, size=5)
 
     # print(res)
     data = []
@@ -67,7 +77,7 @@ def query(page=1):
                                                                            "<mark>" + session[
                                                                                'queryString'] + "</mark>")
         data.append(record)
-    # print(json.dumps(res, sort_keys=True, indent=4))
+    # print(json.dumps(res, sort_keys=True, indent=4, ensure_ascii=False))
 
     return render_template('index.html', data=data, searchString=session['queryString'], page=page)
 
