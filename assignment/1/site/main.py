@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, session, redirect
 from elasticsearch import Elasticsearch
 
-# import os, json
+import os, json
 
 app = Flask(__name__)
 
@@ -50,8 +50,17 @@ def query(page=1):
                 "query": session['queryString'],
                 "fields": ["title", "body"]
             }
+        },
+        "highlight": {
+            "number_of_fragments": 5,
+            "fragment_size": 200,
+            "fields": {
+                "title": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]},
+                "body": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
+            }
         }
     }, from_=param_from, size=5)
+    print(json.dumps(res, sort_keys=True, indent=4, ensure_ascii=False))
 
     # # get result based on exact match
     # res = es.search(index="ettoday", body={
@@ -69,15 +78,14 @@ def query(page=1):
         # print(record)
 
         # highlight words that was search
-        record['_source']['title'] = str(record['_source']['title']).replace(session['queryString'],
-                                                                             "<mark>" + session[
-                                                                                 'queryString'] + "</mark>")
-
-        record['_source']['body'] = str(record['_source']['body']).replace(session['queryString'],
-                                                                           "<mark>" + session[
-                                                                               'queryString'] + "</mark>")
+        # record['_source']['title'] = str(record['_source']['title']).replace(session['queryString'],
+        #                                                                      "<mark>" + session[
+        #                                                                          'queryString'] + "</mark>")
+        #
+        # record['_source']['body'] = str(record['_source']['body']).replace(session['queryString'],
+        #                                                                    "<mark>" + session[
+        #                                                                        'queryString'] + "</mark>")
         data.append(record)
-    # print(json.dumps(res, sort_keys=True, indent=4, ensure_ascii=False))
 
     return render_template('index.html', data=data, searchString=session['queryString'], page=page)
 

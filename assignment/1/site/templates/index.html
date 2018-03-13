@@ -49,11 +49,13 @@
                                 <h5 class="card-header">
                                     <span class="badge badge-primary">{{ loop.index }}</span>
                                     <a href="{{ record['_source']['url'] }}"
-                                       target="_blank">{{ record['_source']['title']|safe }}</a>
+{#                                       target="_blank">{{ record['_source']['title']|safe }}</a>#}
+                                       target="_blank">{{ record['highlight']['title'][0]|safe }}</a>
                                 </h5>
                                 <div class="card-body">
                                     <h5 class="card-title"></h5>
-                                    <p class="card-text">{{ record['_source']['body']|safe }}</p>
+{#                                    <p class="card-text">{{ record['_source']['body']|safe }}</p>#}
+                                    <p class="card-text">{{ record['highlight']['body'][0]|safe }}</p>
                                     {# <a href="{{ record['_source']['url'] }}" class="btn btn-primary">Link</a>#}
                                 </div>
                             </div>
