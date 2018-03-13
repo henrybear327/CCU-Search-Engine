@@ -30,18 +30,36 @@
 
                 {% if data is defined %}
                     <hr>
+                    {% if searchString|length == 0 %}
 
-                    {% for record in data %}
-                        <div class="card">
-                            <h5 class="card-header">{{ loop.index }}</h5>
-                            <div class="card-body">
-                                <h5 class="card-title">{{ record['_source']['title']|safe }}</h5>
-                                <p class="card-text">{{ record['_source']['body']|safe }}</p>
-                                <a href="{{ record['_source']['url'] }}" class="btn btn-primary">Link</a>
+                        <h5 class="text-center">
+                            Please enter some text to search...
+                        </h5>
+
+                    {% elif data|length == 0 %}
+
+                        <h5 class="text-center">
+                            No result about {{ searchString }} is found...
+                        </h5>
+
+                    {% else %}
+
+                        {% for record in data %}
+                            <div class="card">
+                                <h5 class="card-header">
+                                    <span class="badge badge-primary">{{ loop.index }}</span>
+                                     <a href="{{ record['_source']['url'] }}" target="_blank">{{ record['_source']['title']|safe }}</a>
+                                </h5>
+                                <div class="card-body">
+                                    <h5 class="card-title"></h5>
+                                    <p class="card-text">{{ record['_source']['body']|safe }}</p>
+{#                                    <a href="{{ record['_source']['url'] }}" class="btn btn-primary">Link</a>#}
+                                </div>
                             </div>
-                        </div>
-                        <br>
-                    {% endfor %}
+                            <br>
+                        {% endfor %}
+
+                    {% endif %}
 
                 {% endif %}
 
