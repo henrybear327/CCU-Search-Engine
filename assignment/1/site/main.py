@@ -12,16 +12,6 @@ app = Flask(__name__)
 # ))
 # app.config['DATABASE']
 
-@app.route('/test/<int:ha>', methods=['GET'])
-def test(ha):
-    return "fuck" + str(ha)
-
-
-@app.route('/test', methods=['POST'])
-def test1():
-    return "POST FUCK"
-
-
 @app.route('/query', methods=['POST'])
 @app.route('/query/<int:page>', methods=['GET'])
 def query(page=1):
