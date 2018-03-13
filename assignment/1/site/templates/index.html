@@ -48,16 +48,38 @@
                             <div class="card">
                                 <h5 class="card-header">
                                     <span class="badge badge-primary">{{ loop.index }}</span>
-                                     <a href="{{ record['_source']['url'] }}" target="_blank">{{ record['_source']['title']|safe }}</a>
+                                    <a href="{{ record['_source']['url'] }}"
+                                       target="_blank">{{ record['_source']['title']|safe }}</a>
                                 </h5>
                                 <div class="card-body">
                                     <h5 class="card-title"></h5>
                                     <p class="card-text">{{ record['_source']['body']|safe }}</p>
-{#                                    <a href="{{ record['_source']['url'] }}" class="btn btn-primary">Link</a>#}
+                                    {# <a href="{{ record['_source']['url'] }}" class="btn btn-primary">Link</a>#}
                                 </div>
                             </div>
                             <br>
                         {% endfor %}
+
+                        <nav aria-label="searchPagination">
+                            <ul class="pagination">
+                                <li class="page-item {% if page == 1 %} disabled {% endif %}">
+                                    <a class="page-link" href="{{ url_for('query') }}/{{ page - 1}}">Previous</a>
+                                </li>
+
+                                {% for cnt in range(1, 11, 1) %}
+                                    <li class="page-item {% if cnt == page %} active {% endif %}">
+                                        <a class="page-link" href="{{ url_for('query') }}/{{ cnt }}">
+                                            {{ cnt }} {% if cnt == page %}
+                                            <span class="sr-only">(current)</span> {% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+
+                                <li class="page-item {% if page == 10 %} disabled {% endif %}">
+                                    <a class="page-link" href="{{ url_for('query') }}/{{ page + 1}}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
 
                     {% endif %}
 
