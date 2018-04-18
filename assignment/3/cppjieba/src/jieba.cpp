@@ -34,7 +34,7 @@ void testSegmentation(Segmentation &segmentation)
     segmentation.printSegmentationResult(res);
 }
 
-void printJson(vector<json> &batchData)
+void printJson(vector<string> &batchData)
 {
     if (batchData.size() == 0)
         return;
@@ -46,8 +46,10 @@ void printJson(vector<json> &batchData)
     myfile.open(filename, ios::trunc);
 
     try {
-        json j = batchData;
-        myfile << j.dump(4) << endl;
+        for (auto i : batchData) {
+            // myfile << j.dump(4) << endl;
+            myfile << i << endl;
+        }
     } catch (nlohmann::detail::type_error) {
         cerr << "json error while dumping (batch data loss)" << endl;
     }
@@ -56,7 +58,7 @@ void printJson(vector<json> &batchData)
     myfile.close();
 }
 
-void dealJson(vector<json> &batchData, Reader &reader, Record &rec,
+void dealJson(vector<string> &batchData, Reader &reader, Record &rec,
               vector<int> &selection)
 {
     if (batchData.size() == BATCH_SIZE) {
@@ -73,7 +75,7 @@ void performSegmentation(Segmentation &segmentation, Reader &reader,
     // url, title, keyword, image link, body
     vector<int> selection{1, 6, 8, 9, 16};
     int cnt = 0;
-    vector<json> batchData;
+    vector<string> batchData;
     for (; cnt < n; cnt++) {
         auto rec = reader.getRecord();
         if (rec.hasData == false) // end of file
@@ -109,7 +111,7 @@ int main()
     // testSegmentation(segmentation);
     // testReader(segmentation, reader, 3);
 
-    // performSegmentation(segmentation, reader, 1000);
+    // performSegmentation(segmentation, reader, 10);
     performSegmentation(segmentation, reader);
 
     return EXIT_SUCCESS;

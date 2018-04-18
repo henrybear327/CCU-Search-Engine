@@ -133,7 +133,8 @@ string Reader::getRecordInJson(const Record &rec, vector<int> &selection)
     // print
     string ret = "";
     try {
-        ret = j.dump(4);
+        ret = j.dump();
+        // cerr << ret << endl;
     } catch (nlohmann::detail::type_error) {
         cerr << "json error while printing (ignore this data)" << endl;
     }
