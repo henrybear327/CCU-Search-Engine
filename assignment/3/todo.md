@@ -1,9 +1,9 @@
 # Todo List
 
 - [x] Try out [cpp jieba](https://github.com/yanyiwu/cppjieba)
-- [ ] Try out Jsoncpp
+- [x] Try out Jsoncpp
 - [x] Translate Jieba dictionary to Traditional Chinese
-- [ ] Preprocess the ettoday data
+- [x] Preprocess the ettoday data
 - [ ] Pour data into Solr
 - [ ] Pour data into ES
 

@@ -11,9 +11,11 @@ using namespace std;
 using json = nlohmann::json;
 
 string inputFile = "../../data/ettoday";
+string outputFolder = "../../data/jieba/";
 
 const int PRINT_KEEP_ALIVE = 10000;
 const int BATCH_SIZE = 100000;
+int filenameCounter;
 
 void testSegmentation(Segmentation &segmentation)
 {
@@ -37,14 +39,21 @@ void printJson(vector<json> &batchData)
     if (batchData.size() == 0)
         return;
 
+    string filename = outputFolder + "ettoday_" + to_string(batchData.size()) +
+                      "_" + to_string(filenameCounter++) + ".txt";
+
+    ofstream myfile;
+    myfile.open(filename, ios::trunc);
+
     try {
         json j = batchData;
-        cout << j.dump(4) << endl;
+        myfile << j.dump(4) << endl;
     } catch (nlohmann::detail::type_error) {
         cerr << "json error while dumping (batch data loss)" << endl;
     }
 
     batchData.clear();
+    myfile.close();
 }
 
 void dealJson(vector<json> &batchData, Reader &reader, Record &rec,
@@ -95,11 +104,13 @@ int main()
     // init
     Segmentation segmentation;
     Reader reader(inputFile);
+    filenameCounter = 0;
 
     // testSegmentation(segmentation);
     // testReader(segmentation, reader, 3);
 
-    performSegmentation(segmentation, reader, 10);
+    // performSegmentation(segmentation, reader, 1000);
+    performSegmentation(segmentation, reader);
 
     return EXIT_SUCCESS;
 }
