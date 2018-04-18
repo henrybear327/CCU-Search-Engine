@@ -4,6 +4,9 @@
 #include <iostream>
 #include <string>
 
+#include "json.hpp"
+using json = nlohmann::json;
+
 using namespace std;
 
 void Reader::testRun(int row)
@@ -101,7 +104,7 @@ Record Reader::getRecord()
     return rec;
 }
 
-void Reader::printRecord(const Record &rec, vector<int> &selection)
+void Reader::debugPrintRecord(const Record &rec, vector<int> &selection)
 {
     cout << "===========================================" << endl;
     for (int i = 0; i < HEADINGCOUNT; i++) {
@@ -111,4 +114,28 @@ void Reader::printRecord(const Record &rec, vector<int> &selection)
         }
     }
     cout << "===========================================" << endl;
+}
+
+string Reader::getRecordInJson(const Record &rec, vector<int> &selection)
+{
+    // to JSON
+    json j;
+    for (auto i : selection) {
+        try {
+            j[recordHeading[i]] = rec.data[i];
+        } catch (nlohmann::detail::type_error) {
+            cerr << "json error while building" << endl;
+            cerr << rec.data[i] << endl;
+            return "";
+        }
+    }
+
+    // print
+    string ret = "";
+    try {
+        ret = j.dump(4);
+    } catch (nlohmann::detail::type_error) {
+        cerr << "json error while printing" << endl;
+    }
+    return ret;
 }

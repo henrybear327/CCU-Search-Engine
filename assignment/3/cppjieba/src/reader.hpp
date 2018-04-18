@@ -53,7 +53,8 @@ public:
 
     void testRun(int row);
     Record getRecord();
-    void printRecord(const Record &rec, vector<int> &selection);
+    void debugPrintRecord(const Record &rec, vector<int> &selection);
+    string getRecordInJson(const Record &rec, vector<int> &selection);
 
     ~Reader()
     {

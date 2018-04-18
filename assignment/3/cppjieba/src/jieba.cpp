@@ -1,3 +1,4 @@
+#include <climits>
 #include <iostream>
 #include <string>
 
@@ -6,9 +7,13 @@
 
 using namespace std;
 
+#include "json.hpp"
+using json = nlohmann::json;
+
 string inputFile = "../../data/ettoday";
 
 const int PRINT_KEEP_ALIVE = 10000;
+const int BATCH_SIZE = 100000;
 
 void testSegmentation(Segmentation &segmentation)
 {
@@ -27,47 +32,57 @@ void testSegmentation(Segmentation &segmentation)
     segmentation.printSegmentationResult(res);
 }
 
-void testReader(Segmentation &segmentation, Reader &reader, int n = 3)
+void printJson(vector<json> &batchData)
 {
-    // reader.testRun(100);
+    if (batchData.size() == 0)
+        return;
 
-    // url, title, keyword, image link, body
-    vector<int> selection{1, 6, 8, 9, 16};
-    int cnt = 0;
-    for (int i = 0; i < n; i++) {
-        auto rec = reader.getRecord();
-        if (rec.hasData == false)
-            break;
-        cnt++;
-        if (cnt % 10000 == 0)
-            cerr << "Data cnt " << cnt << endl;
-
-        vector<string> res;
-        segmentation.performSegmentation(rec.data[16], res);
-        rec.data[16] = segmentation.getSegmentationString(res);
-        reader.printRecord(rec, selection);
+    try {
+        json j = batchData;
+        cout << j.dump(4) << endl;
+    } catch (nlohmann::detail::type_error) {
+        cerr << "json error while dumping (batch data loss)" << endl;
     }
-    cerr << "Done! " << cnt << " records" << endl;
+
+    batchData.clear();
 }
 
-void performSegmentation(Segmentation &segmentation, Reader &reader)
+void dealJson(vector<json> &batchData, Reader &reader, Record &rec,
+              vector<int> &selection)
+{
+    if (batchData.size() == BATCH_SIZE) {
+        printJson(batchData);
+    }
+    auto jsonString = reader.getRecordInJson(rec, selection);
+    if (jsonString != "")
+        batchData.push_back(jsonString);
+}
+
+void performSegmentation(Segmentation &segmentation, Reader &reader,
+                         int n = INT_MAX)
 {
     // url, title, keyword, image link, body
     vector<int> selection{1, 6, 8, 9, 16};
     int cnt = 0;
-    while (1) {
+    vector<json> batchData;
+    for (; cnt < n; cnt++) {
         auto rec = reader.getRecord();
-        if (rec.hasData == false)
+        if (rec.hasData == false) // end of file
             break;
-        cnt++;
+
         if (cnt % 10000 == 0)
             cerr << "Data cnt " << cnt << endl;
 
+        // segmentation on body only
         vector<string> res;
         segmentation.performSegmentation(rec.data[16], res);
         rec.data[16] = segmentation.getSegmentationString(res);
-        reader.printRecord(rec, selection);
+
+        // reader.debugPrintRecord(rec, selection);
+        dealJson(batchData, reader, rec, selection);
     }
+
+    printJson(batchData);
     cerr << "Done! " << cnt << " records" << endl;
 }
 
@@ -84,7 +99,7 @@ int main()
     // testSegmentation(segmentation);
     // testReader(segmentation, reader, 3);
 
-    performSegmentation(segmentation, reader);
+    performSegmentation(segmentation, reader, 10);
 
     return EXIT_SUCCESS;
 }
