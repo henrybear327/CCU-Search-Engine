@@ -1,18 +1,17 @@
 #include "segmentation.hpp"
 
-void Segmentation::printSegmentationResult(std::vector<std::string> &res)
+void Segmentation::printSegmentationResult(vector<string> &res)
 {
     for (auto i : res) {
-        std::cout << i << " ";
+        cout << i << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
-void Segmentation::performSegmentation(std::string &s,
-                                       std::vector<std::string> &res)
+void Segmentation::performSegmentation(string &s, vector<string> &res)
 {
-    std::cout << "Cut With HMM" << std::endl;
-    std::cout << s << std::endl;
-    std::cout << "=====================================" << std::endl;
+    cout << "Cut With HMM" << endl;
+    cout << s << endl;
+    cout << "=====================================" << endl;
     jieba.Cut(s, res, true);
 }

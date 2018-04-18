@@ -1,7 +1,12 @@
-#include "segmentation.hpp"
 #include <iostream>
+#include <string>
+
+#include "reader.hpp"
+#include "segmentation.hpp"
 
 using namespace std;
+
+string inputFile = "../../data/ettoday";
 
 int main(int argc, char **argv)
 {
@@ -11,7 +16,9 @@ int main(int argc, char **argv)
 
     // init
     Segmentation segmentation;
+    Reader reader(inputFile);
 
+    // test input
     string s =
         "台灣虎航麻疹群聚疫情延燒，擴及其他航空公司。衛福部疾管署今公布，此群聚情"
         "再新增4名感染者，其中包含2名馬來西亞航空與長榮航空的地勤人員，以及2名台"
