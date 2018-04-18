@@ -1,11 +1,15 @@
 # Todo List
 
-- [ ] Try out cpp jieba 
+- [x] Try out [cpp jieba](https://github.com/yanyiwu/cppjieba)
 - [ ] Try out Jsoncpp
-- [ ] Translate Jieba dictionary to Traditional Chinese
+- [x] Translate Jieba dictionary to Traditional Chinese
 - [ ] Preprocess the ettoday data
 - [ ] Pour data into Solr
 - [ ] Pour data into ES
+
+# Preface
+
+If you can use Python, don't use c++, unless speed is what your care.
 
 # Machine
 
@@ -30,4 +34,5 @@ cmake ..
 make
 ```
 2. Put your source code under `src`
-3. When compiling, you will encounter `fatal error: 'limonp/Logging.hpp' file not found`, the solution to it is copy `deps/limonp` folder to `include/cppjieba`. WTF
+3. When compiling, you will encounter `fatal error: 'limonp/Logging.hpp' file not found`
+	* the [solution](https://blog.csdn.net/xiaolong361/article/details/76640511) to it is copy `deps/limonp` folder to `include/cppjieba`. WTF
