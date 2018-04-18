@@ -10,8 +10,8 @@ void Segmentation::printSegmentationResult(vector<string> &res)
 
 void Segmentation::performSegmentation(string &s, vector<string> &res)
 {
-    cout << "Cut With HMM" << endl;
-    cout << s << endl;
-    cout << "=====================================" << endl;
+    cerr << "Cut With HMM" << endl;
+    cerr << s << endl;
+    cerr << "=====================================" << endl;
     jieba.Cut(s, res, true);
 }

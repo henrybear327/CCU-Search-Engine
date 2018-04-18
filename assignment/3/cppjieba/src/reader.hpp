@@ -1,6 +1,7 @@
 #ifndef READER_H
 #define READER_H
 
+#include <iostream>
 #include <string>
 
 using namespace std;
@@ -8,10 +9,15 @@ using namespace std;
 class Reader
 {
 private:
-    string input;
+    string inputFile;
 
 public:
-    Reader(string _input) : input(_input) {}; // constructor must have {}
+    Reader(string _inputFile) : inputFile(_inputFile)
+    {
+        cerr << "Init Reader" << endl;
+    }; // constructor must have {}
+
+    void testRun(int row);
 };
 
 #endif

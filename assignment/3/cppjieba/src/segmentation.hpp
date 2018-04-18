@@ -3,6 +3,7 @@
 
 #include "../include/cppjieba/Jieba.hpp"
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -21,7 +22,10 @@ private:
 
 public:
     Segmentation()
-        : jieba(DICT_PATH, HMM_PATH, USER_DICT_PATH, IDF_PATH, STOP_WORD_PATH) {}
+        : jieba(DICT_PATH, HMM_PATH, USER_DICT_PATH, IDF_PATH, STOP_WORD_PATH)
+    {
+        cerr << "Init Segmentation" << endl;
+    }
 
     void printSegmentationResult(vector<string> &res);
     void performSegmentation(string &s, vector<string> &res);

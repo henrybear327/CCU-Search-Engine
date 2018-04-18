@@ -19,6 +19,7 @@ int main(int argc, char **argv)
     Reader reader(inputFile);
 
     // test input
+    // https://udn.com/news/story/7266/3094115
     string s =
         "台灣虎航麻疹群聚疫情延燒，擴及其他航空公司。衛福部疾管署今公布，此群聚情"
         "再新增4名感染者，其中包含2名馬來西亞航空與長榮航空的地勤人員，以及2名台"
@@ -28,6 +29,8 @@ int main(int argc, char **argv)
 
     segmentation.performSegmentation(s, res);
     segmentation.printSegmentationResult(res);
+
+    reader.testRun(100);
 
     return EXIT_SUCCESS;
 }
