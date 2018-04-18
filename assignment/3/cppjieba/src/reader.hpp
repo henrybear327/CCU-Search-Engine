@@ -20,14 +20,12 @@ static const char *recordHeading[HEADINGCOUNT] = {
 
 struct Record {
     bool hasData;
-    bool doDebugPrint;
     string data[HEADINGCOUNT]; // heading type, data
     Record()
     {
         for (int i = 0; i < HEADINGCOUNT; i++)
             data[i] = "";
         hasData = false;
-        doDebugPrint = false;
     }
 };
 

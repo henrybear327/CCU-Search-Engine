@@ -1,5 +1,6 @@
 COMPILER = g++
-OPTIONS = -Wall -Wextra -O3 -std=c++14
+OPTIONS = -Wall -Wextra -O3 -std=c++14 
+# -Wshadow
 
 all: format jieba
 	rm *.orig *.gch

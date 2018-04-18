@@ -10,8 +10,20 @@ void Segmentation::printSegmentationResult(vector<string> &res)
 
 void Segmentation::performSegmentation(string &s, vector<string> &res)
 {
-    cerr << "Cut With HMM" << endl;
-    cerr << s << endl;
-    cerr << "=====================================" << endl;
+    res.clear();
+
+    // cerr << "Cut With HMM" << endl;
+    // cerr << s << endl;
+    // cerr << "=====================================" << endl;
     jieba.Cut(s, res, true);
+}
+
+string Segmentation::getSegmentationString(vector<string> &res)
+{
+    string ans = "";
+
+    for (auto i : res)
+        ans += i + " ";
+
+    return ans;
 }

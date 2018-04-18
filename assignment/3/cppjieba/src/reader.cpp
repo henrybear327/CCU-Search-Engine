@@ -69,7 +69,6 @@ Record Reader::getRecord()
                     // GG: this might just be another normal line starting with @
                     // cat ettoday| grep -A 3 -B 3 "^@@" | more
                     rec.data[headerIndex] += "\n" + line;
-                    rec.doDebugPrint = true;
                     continue;
                 }
 
@@ -104,9 +103,6 @@ Record Reader::getRecord()
 
 void Reader::printRecord(const Record &rec, vector<int> &selection)
 {
-    if (rec.doDebugPrint == false)
-        return;
-
     cout << "===========================================" << endl;
     for (int i = 0; i < HEADINGCOUNT; i++) {
         if (find(selection.begin(), selection.end(), i) != selection.end()) {

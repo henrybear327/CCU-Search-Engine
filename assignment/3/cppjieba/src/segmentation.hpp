@@ -29,6 +29,7 @@ public:
 
     void printSegmentationResult(vector<string> &res);
     void performSegmentation(string &s, vector<string> &res);
+    string getSegmentationString(vector<string> &res);
 };
 
 #endif

@@ -37,17 +37,31 @@ int main()
     //     segmentation.printSegmentationResult(res);
     // }
 
-    // reader.testRun(100);
     // {
-    //     vector<int> selection{6, 16};
+    //     // reader.testRun(100);
+
+    //     // url, title, keyword, image link, body
+    //     vector<int> selection{1, 6, 8, 9, 16};
+    //     int cnt = 0;
     //     for (int i = 0; i < 3; i++) {
     //         auto rec = reader.getRecord();
+    //         if (rec.hasData == false)
+    //             break;
+    //         cnt++;
+    //         if (cnt % 10000 == 0)
+    //             cerr << "Data cnt " << cnt << endl;
+
+    //         vector<string> res;
+    //         segmentation.performSegmentation(rec.data[16], res);
+    //         rec.data[16] = segmentation.getSegmentationString(res);
     //         reader.printRecord(rec, selection);
     //     }
+    //     cerr << "Done! " << cnt << " records" << endl;
     // }
 
     {
-        vector<int> selection{6, 16};
+        // url, title, keyword, image link, body
+        vector<int> selection{1, 6, 8, 9, 16};
         int cnt = 0;
         while (1) {
             auto rec = reader.getRecord();
@@ -56,7 +70,11 @@ int main()
             cnt++;
             if (cnt % 10000 == 0)
                 cerr << "Data cnt " << cnt << endl;
-            reader.printRecord(rec, selection);
+
+            vector<string> res;
+            segmentation.performSegmentation(rec.data[16], res);
+            rec.data[16] = segmentation.getSegmentationString(res);
+            // reader.printRecord(rec, selection);
         }
         cerr << "Done! " << cnt << " records" << endl;
     }
