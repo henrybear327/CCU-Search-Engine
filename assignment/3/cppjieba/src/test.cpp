@@ -30,6 +30,5 @@ int main(int argc, char **argv)
     jieba.Cut(s, words, false);
     cout << limonp::Join(words.begin(), words.end(), " ") << endl;
 
-
     return EXIT_SUCCESS;
 }
