@@ -1,6 +1,8 @@
 # Todo List
 
 - [ ] Try out cpp jieba 
+- [ ] Try out Jsoncpp
+- [ ] Translate Jieba dictionary to Traditional Chinese
 - [ ] Preprocess the ettoday data
 - [ ] Pour data into Solr
 - [ ] Pour data into ES
@@ -11,10 +13,10 @@
 * Intel® Core™ i5-7500 CPU @ 3.40GHz × 4
 * 8GB RAM
 
-# [Simplified Chinese to Traditional Chinese](http://linux-wiki.cn/wiki/zh-tw/%E7%AE%80%E7%B9%81%E8%BD%AC%E6%8D%A2)
+# [Simplified Chinese to Traditional Chinese](https://github.com/BYVoid/OpenCC)
 
-* Install `zh-autoconvert`
-* Run `iconv -f utf8 -t gbk sim.txt | autob5 | iconv -f big5 -t utf8 > fan.txt`
+* `sudo apt install opencc`
+* `opencc -i input.txt -o output.txt`
 
 # Notes on cppjieba
 

@@ -2,11 +2,11 @@
 
 using namespace std;
 
-const char *const DICT_PATH = "../dict/jieba.dict.utf8";
-const char *const HMM_PATH = "../dict/hmm_model.utf8";
-const char *const USER_DICT_PATH = "../dict/user.dict.utf8";
-const char *const IDF_PATH = "../dict/idf.utf8";
-const char *const STOP_WORD_PATH = "../dict/stop_words.utf8";
+const char *const DICT_PATH = "../dict/jieba.dict.fan.utf8";
+const char *const HMM_PATH = "../dict/hmm_model.fan.utf8";
+const char *const USER_DICT_PATH = "../dict/user.dict.fan.utf8";
+const char *const IDF_PATH = "../dict/idf.fan.utf8";
+const char *const STOP_WORD_PATH = "../dict/stop_words.fan.utf8";
 
 int main(int argc, char **argv) {
   cppjieba::Jieba jieba(DICT_PATH, HMM_PATH, USER_DICT_PATH, IDF_PATH,
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
   string s;
   string result;
 
-  s = "他来到了网易杭研大厦";
+  s = "他來到了網易杭研大廈";
   cout << s << endl;
   cout << "[demo] Cut With HMM" << endl;
   jieba.Cut(s, words, true);
@@ -26,23 +26,23 @@ int main(int argc, char **argv) {
   jieba.Cut(s, words, false);
   cout << limonp::Join(words.begin(), words.end(), "/") << endl;
 
-  s = "我来到北京清华大学";
+  s = "我來到北京清華大學";
   cout << s << endl;
   cout << "[demo] CutAll" << endl;
   jieba.CutAll(s, words);
   cout << limonp::Join(words.begin(), words.end(), "/") << endl;
 
-  s = "小明硕士毕业于中国科学院计算所，后在日本京都大学深造";
+  s = "小明碩士畢業於中國科學院計算所，後在日本京都大學深造";
   cout << s << endl;
   cout << "[demo] CutForSearch" << endl;
   jieba.CutForSearch(s, words);
   cout << limonp::Join(words.begin(), words.end(), "/") << endl;
 
   cout << "[demo] Insert User Word" << endl;
-  jieba.Cut("男默女泪", words);
+  jieba.Cut("男默女淚", words);
   cout << limonp::Join(words.begin(), words.end(), "/") << endl;
-  jieba.InsertUserWord("男默女泪");
-  jieba.Cut("男默女泪", words);
+  jieba.InsertUserWord("男默女淚");
+  jieba.Cut("男默女淚", words);
   cout << limonp::Join(words.begin(), words.end(), "/") << endl;
 
   cout << "[demo] CutForSearch Word With Offset" << endl;
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
   cout << "[demo] Lookup Tag for Single Token" << endl;
   const int DemoTokenMaxLen = 32;
-  char DemoTokens[][DemoTokenMaxLen] = {"拖拉机", "CEO", "123", "。"};
+  char DemoTokens[][DemoTokenMaxLen] = {"拖拉機", "CEO", "123", "。"};
   vector<pair<string, string>> LookupTagres(sizeof(DemoTokens) /
                                             DemoTokenMaxLen);
   vector<pair<string, string>>::iterator it;
@@ -63,8 +63,8 @@ int main(int argc, char **argv) {
 
   cout << "[demo] Tagging" << endl;
   vector<pair<string, string>> tagres;
-  s = "我是拖拉机学院手扶拖拉机专业的。不用多久，我就会升职加薪，当上CEO，走上"
-      "人生巅峰。";
+  s = "我是拖拉機學院手扶拖拉機專業的。不用多久，我就會升職加薪，當上CEO，走上"
+      "人生巔峯。";
   jieba.Tag(s, tagres);
   cout << s << endl;
   cout << tagres << endl;
