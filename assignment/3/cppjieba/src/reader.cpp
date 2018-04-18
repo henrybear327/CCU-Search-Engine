@@ -67,7 +67,9 @@ Record Reader::getRecord()
                     // exit(1);
 
                     // GG: this might just be another normal line starting with @
+                    // cat ettoday| grep -A 3 -B 3 "^@@" | more
                     rec.data[headerIndex] += "\n" + line;
+                    rec.doDebugPrint = true;
                     continue;
                 }
 
