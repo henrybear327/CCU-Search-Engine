@@ -9,14 +9,14 @@ format: *.cpp *.hpp
 	clang-format -style=LLVM -i *.cpp *.hpp
 	astyle --style=linux *.cpp *.hpp 
 
-jieba: segmentation reader jieba.cpp 
-	$(COMPILER) $(OPTIONS) segmentation.o reader.o jieba.cpp -o jieba
+jieba: segmentation io jieba.cpp 
+	$(COMPILER) $(OPTIONS) segmentation.o io.o jieba.cpp -o jieba
 
 segmentation: segmentation.hpp segmentation.cpp 
 	$(COMPILER) $(OPTIONS) -c segmentation.hpp segmentation.cpp
 
-reader: reader.hpp reader.cpp
-	$(COMPILER) $(OPTIONS) -c reader.hpp reader.cpp
+io: io.hpp io.cpp
+	$(COMPILER) $(OPTIONS) -c io.hpp io.cpp
 
 run: all
 	time ./jieba

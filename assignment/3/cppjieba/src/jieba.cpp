@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-#include "reader.hpp"
+#include "io.hpp"
 #include "segmentation.hpp"
 
 using namespace std;
@@ -58,26 +58,25 @@ void printJson(vector<string> &batchData)
     myfile.close();
 }
 
-void dealJson(vector<string> &batchData, Reader &reader, Record &rec,
+void dealJson(vector<string> &batchData, IO &io, Record &rec,
               vector<int> &selection)
 {
     if (batchData.size() == BATCH_SIZE) {
         printJson(batchData);
     }
-    auto jsonString = reader.getRecordInJson(rec, selection);
+    auto jsonString = io.getRecordInJson(rec, selection);
     if (jsonString != "")
         batchData.push_back(jsonString);
 }
 
-void performSegmentation(Segmentation &segmentation, Reader &reader,
-                         int n = INT_MAX)
+void performSegmentation(Segmentation &segmentation, IO &io, int n = INT_MAX)
 {
     // url, title, keyword, image link, body
     vector<int> selection{1, 6, 8, 9, 16};
     int cnt = 0;
     vector<string> batchData;
     for (; cnt < n; cnt++) {
-        auto rec = reader.getRecord();
+        auto rec = io.getRecord();
         if (rec.hasData == false) // end of file
             break;
 
@@ -90,7 +89,7 @@ void performSegmentation(Segmentation &segmentation, Reader &reader,
         rec.data[16] = segmentation.getSegmentationString(res);
 
         // reader.debugPrintRecord(rec, selection);
-        dealJson(batchData, reader, rec, selection);
+        dealJson(batchData, io, rec, selection);
     }
 
     printJson(batchData);
@@ -105,14 +104,14 @@ int main()
 
     // init
     Segmentation segmentation;
-    Reader reader(inputFile);
+    IO reader(inputFile);
     filenameCounter = 0;
 
-    // testSegmentation(segmentation);
+    testSegmentation(segmentation);
     // testReader(segmentation, reader, 3);
 
     // performSegmentation(segmentation, reader, 10);
-    performSegmentation(segmentation, reader);
+    // performSegmentation(segmentation, reader);
 
     return EXIT_SUCCESS;
 }

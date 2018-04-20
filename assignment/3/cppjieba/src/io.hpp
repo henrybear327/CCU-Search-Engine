@@ -29,7 +29,7 @@ struct Record {
     }
 };
 
-class Reader
+class IO
 {
 private:
     string inputFile;
@@ -37,7 +37,7 @@ private:
     ifstream myfile;
 
 public:
-    Reader(string _inputFile) : inputFile(_inputFile), myfile(_inputFile)
+    IO(string _inputFile) : inputFile(_inputFile), myfile(_inputFile)
     {
         cerr << "Init Reader" << endl;
         if (myfile.is_open()) {
@@ -56,7 +56,7 @@ public:
     void debugPrintRecord(const Record &rec, vector<int> &selection);
     string getRecordInJson(const Record &rec, vector<int> &selection);
 
-    ~Reader()
+    ~IO()
     {
         myfile.close();
     }

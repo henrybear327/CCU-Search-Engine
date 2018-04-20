@@ -1,4 +1,4 @@
-#include "reader.hpp"
+#include "io.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -9,7 +9,7 @@ using json = nlohmann::json;
 
 using namespace std;
 
-void Reader::testRun(int row)
+void IO::testRun(int row)
 {
     // init their own reading variable
     string testline;
@@ -34,7 +34,7 @@ void Reader::testRun(int row)
     }
 }
 
-Record Reader::getRecord()
+Record IO::getRecord()
 {
     Record rec;
 
@@ -104,7 +104,7 @@ Record Reader::getRecord()
     return rec;
 }
 
-void Reader::debugPrintRecord(const Record &rec, vector<int> &selection)
+void IO::debugPrintRecord(const Record &rec, vector<int> &selection)
 {
     cout << "===========================================" << endl;
     for (int i = 0; i < HEADINGCOUNT; i++) {
@@ -116,7 +116,7 @@ void Reader::debugPrintRecord(const Record &rec, vector<int> &selection)
     cout << "===========================================" << endl;
 }
 
-string Reader::getRecordInJson(const Record &rec, vector<int> &selection)
+string IO::getRecordInJson(const Record &rec, vector<int> &selection)
 {
     // to JSON
     json j;
