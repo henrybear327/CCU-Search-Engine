@@ -15,10 +15,11 @@ string outputFolder = "../../data/jieba/";
 
 const int PRINT_KEEP_ALIVE = 10000;
 const int BATCH_SIZE = 100000;
-int filenameCounter;
 
-void testSegmentation(Segmentation &segmentation)
+void testSegmentation()
 {
+    Segmentation segmentation;
+
     // test input
     // https://udn.com/news/story/7266/3094115
     string s = "台灣虎航麻疹群聚疫情延燒，擴及其他航空公司。衛福部疾管署今公布"
@@ -34,66 +35,24 @@ void testSegmentation(Segmentation &segmentation)
     segmentation.printSegmentationResult(res);
 }
 
-void printJson(vector<string> &batchData)
+void performSegmentation()
 {
-    if (batchData.size() == 0)
-        return;
+    IO io(inputFile, outputFolder);
 
-    string filename = outputFolder + "ettoday_" + to_string(batchData.size()) +
-                      "_" + to_string(filenameCounter++) + ".txt";
-
-    ofstream myfile;
-    myfile.open(filename, ios::trunc);
-
-    try {
-        for (auto i : batchData) {
-            // myfile << j.dump(4) << endl;
-            myfile << i << endl;
-        }
-    } catch (nlohmann::detail::type_error) {
-        cerr << "json error while dumping (batch data loss)" << endl;
-    }
-
-    batchData.clear();
-    myfile.close();
-}
-
-void dealJson(vector<string> &batchData, IO &io, Record &rec,
-              vector<int> &selection)
-{
-    if (batchData.size() == BATCH_SIZE) {
-        printJson(batchData);
-    }
-    auto jsonString = io.getRecordInJson(rec, selection);
-    if (jsonString != "")
-        batchData.push_back(jsonString);
-}
-
-void performSegmentation(Segmentation &segmentation, IO &io, int n = INT_MAX)
-{
     // url, title, keyword, image link, body
-    vector<int> selection{1, 6, 8, 9, 16};
-    int cnt = 0;
-    vector<string> batchData;
-    for (; cnt < n; cnt++) {
-        auto rec = io.getRecord();
-        if (rec.hasData == false) // end of file
+    vector<int> selectionColumns{1, 6, 8, 9, 16};
+    vector<int> segmentationColumns{16};
+    vector<string> ret;
+
+    while (1) {
+        io.getBatchRecordsInJson(BATCH_SIZE, ret, selectionColumns,
+                                 segmentationColumns);
+        if (ret.size() == 0)
             break;
-
-        if (cnt % 10000 == 0)
-            cerr << "Data cnt " << cnt << endl;
-
-        // segmentation on body only
-        vector<string> res;
-        segmentation.performSegmentation(rec.data[16], res);
-        rec.data[16] = segmentation.getSegmentationString(res);
-
-        // reader.debugPrintRecord(rec, selection);
-        dealJson(batchData, io, rec, selection);
     }
 
-    printJson(batchData);
-    cerr << "Done! " << cnt << " records" << endl;
+    cerr << "Total records = " << io.getRecordCount() << endl;
+    cerr << "Valid records = " << io.getRecordCount() << endl;
 }
 
 int main()
@@ -103,15 +62,10 @@ int main()
     cin.tie(NULL);
 
     // init
-    Segmentation segmentation;
-    IO reader(inputFile);
-    filenameCounter = 0;
 
-    testSegmentation(segmentation);
-    // testReader(segmentation, reader, 3);
+    // testSegmentation();
 
-    // performSegmentation(segmentation, reader, 10);
-    // performSegmentation(segmentation, reader);
+    performSegmentation();
 
     return EXIT_SUCCESS;
 }

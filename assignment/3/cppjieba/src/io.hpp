@@ -1,6 +1,7 @@
 #ifndef READER_H
 #define READER_H
 
+#include "segmentation.hpp"
 #include <fstream> // field ‘myfile’ has incomplete type ‘std::ifstream {aka std::basic_ifstream<char>}’
 #include <iostream>
 #include <string>
@@ -11,12 +12,7 @@ using namespace std;
 static const int HEADINGCOUNT = 19;
 
 // https://stackoverflow.com/questions/2328671/constant-variables-not-working-in-header
-static const char *recordHeading[HEADINGCOUNT] = {
-    "Gais_REC",  "url",       "MainTextMD5", "UntagMD5", "SiteCode",
-    "UrlCode",   "title",     "Size",        "keyword",  "image_links",
-    "Fetchtime", "post_time", "Ref",         "BodyMD5",  "Lang",
-    "IP",        "body",      "botVer",      "Time"
-};
+extern const char *recordHeading[HEADINGCOUNT];
 
 struct Record {
     bool hasData;
@@ -32,14 +28,33 @@ struct Record {
 class IO
 {
 private:
+    Segmentation segmentation;
+
     string inputFile;
+    string outputFolder;
+
     string line;
     ifstream myfile;
 
+    int filenameCounter;
+    int recordCounter;
+    int validRecordCounter;
+
+    void writeToFile(vector<string> &batchData);
+
+    // get raw record
+    Record getRecord();
+    // convert struct Record to json string
+    string getRecordInJson(const Record &rec, vector<int> &selectionColumns);
+
 public:
-    IO(string _inputFile) : inputFile(_inputFile), myfile(_inputFile)
+    IO(string _inputFile, string _outputFolder) : myfile(_inputFile)
     {
         cerr << "Init Reader" << endl;
+
+        inputFile = _inputFile;
+        outputFolder = _outputFolder;
+
         if (myfile.is_open()) {
             getline(myfile, line);
             if (line.length() == 1 && line[0] == '@')
@@ -49,12 +64,21 @@ public:
                 exit(1);
             }
         }
+
+        filenameCounter = 0;
+        validRecordCounter = 0;
     }; // constructor must have {}
 
     void testRun(int row);
-    Record getRecord();
+
     void debugPrintRecord(const Record &rec, vector<int> &selection);
-    string getRecordInJson(const Record &rec, vector<int> &selection);
+
+    void getBatchRecordsInJson(int batchSize, vector<string> &ret,
+                               vector<int> &selectionColumns,
+                               vector<int> &segmentationColumns);
+
+    int getRecordCount();
+    int getValidRecordCount();
 
     ~IO()
     {

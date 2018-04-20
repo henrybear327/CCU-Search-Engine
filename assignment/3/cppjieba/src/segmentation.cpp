@@ -15,7 +15,7 @@ void Segmentation::performSegmentation(string &s, vector<string> &res)
     // cerr << "Cut With HMM" << endl;
     // cerr << s << endl;
     // cerr << "=====================================" << endl;
-    jieba.Cut(s, res, false);
+    jieba.Cut(s, res, true);
 }
 
 string Segmentation::getSegmentationString(vector<string> &res)
