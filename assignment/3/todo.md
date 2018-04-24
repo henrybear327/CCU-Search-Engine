@@ -4,8 +4,8 @@
 - [x] Try out Jsoncpp
 - [x] Translate Jieba dictionary to Traditional Chinese
 - [x] Preprocess the ettoday data
+- [x] Pour data into ES
 - [ ] Pour data into Solr
-- [ ] Pour data into ES
 
 # Preface
 

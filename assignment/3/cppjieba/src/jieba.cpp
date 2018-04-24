@@ -13,7 +13,6 @@ using json = nlohmann::json;
 string inputFile = "../../data/ettoday";
 string outputFolder = "../../data/jieba/";
 
-const int PRINT_KEEP_ALIVE = 10000;
 const int BATCH_SIZE = 100000;
 
 void testSegmentation()

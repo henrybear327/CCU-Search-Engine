@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <!--https://getbootstrap.com/docs/4.0/utilities/spacing/-->
+            <div class="col-md-8 mx-auto p-md-8 my-5">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ url_for('query') }}" method="post">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" name="queryString" class="form-control" placeholder="Search!"
+                                           aria-label="search" value="{{ searchString }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="submit"><i
+                                                class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {% if data is defined %}
+                    <hr>
+                    {% if searchString|length == 0 %}
+
+                        <h5 class="text-center">
+                            Please enter some text to search...
+                        </h5>
+
+                    {% elif data|length == 0 %}
+
+                        <h5 class="text-center">
+                            No result about {{ searchString }} is found...
+                        </h5>
+
+                    {% else %}
+
+                        {% for record in data %}
+                            <div class="card">
+                                <h5 class="card-header">
+                                    <span class="badge badge-primary">{{ loop.index }}</span>
+
+                                    {% if record['highlight']['title'] is defined %}
+                                        <a href="{{ record['_source']['url'] }}" target="_blank">
+                                            {{ record['highlight']['title'][0]|safe }}
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ record['_source']['url'] }}" target="_blank">
+                                            {{ record['_source']['title']|safe }}
+                                        </a>
+                                    {% endif %}
+                                </h5>
+                                <div class="card-body">
+                                    <h5 class="card-title"></h5>
+                                    <p class="card-text">
+                                        {% if record['highlight']['body'] is defined %}
+                                            {{ record['highlight']['body'][0]|safe }}
+                                        {% else %}
+                                            {{ record['_source']['body']|safe }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <br>
+                        {% endfor %}
+
+                        <nav aria-label="searchPagination">
+                            <ul class="pagination">
+                                <li class="page-item {% if page == 1 %} disabled {% endif %}">
+                                    <a class="page-link" href="{{ url_for('query') }}/{{ page - 1 }}">Previous</a>
+                                </li>
+
+                                {% for cnt in range(1, 11, 1) %}
+                                    <li class="page-item {% if cnt == page %} active {% endif %}">
+                                        <a class="page-link" href="{{ url_for('query') }}/{{ cnt }}">
+                                            {{ cnt }} {% if cnt == page %}
+                                            <span class="sr-only">(current)</span> {% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+
+                                <li class="page-item {% if page == 10 %} disabled {% endif %}">
+                                    <a class="page-link" href="{{ url_for('query') }}/{{ page + 1 }}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
