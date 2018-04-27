@@ -10,7 +10,7 @@ import parser
 
 
 class Fetcher:
-    def __init__(self):
+    def __init__(self, checking_url):
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920x1080")
@@ -19,6 +19,8 @@ class Fetcher:
         # self.FetchedData = namedtuple('FetchedData', ['page_source', 'title'])
 
         self.parser = parser.Parser()
+
+        self.checking_url = checking_url
 
     def __del__(self):
         self.driver.quit()
@@ -65,8 +67,11 @@ class Fetcher:
                 continue  # void(0) case
 
             href = split_href.scheme + "://" + split_href.netloc + split_href.path
-            # print(link.text, href)
-            selenium_links.append(href)
+            # print(link.text, split_href.scheme, split_href.netloc, split_href.path)
+            if str(href).find(self.checking_url) != -1:
+                selenium_links.append(href)
+            else:
+                print("Rejected url ", href)
 
         end_time = datetime.datetime.now()
         delta = end_time - start_time

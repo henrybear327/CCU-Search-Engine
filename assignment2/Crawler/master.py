@@ -5,6 +5,7 @@ import datetime
 
 # initial_page = "https://www.google.com"
 initial_page = "https://www.npr.org/"
+checking_url = "npr.org"
 interval = 1000  # 1000 ms
 
 if __name__ == '__main__':
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     url_queue = URLQueue.URLQueue()
     url_queue.insert_url([initial_page])
 
-    fetcher = fetcher.Fetcher()
+    fetcher = fetcher.Fetcher(checking_url)
 
     end_time = datetime.datetime.now()
     delta = end_time - start_time
