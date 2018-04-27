@@ -67,6 +67,7 @@ class Fetcher:
                 continue  # void(0) case
 
             href = split_href.scheme + "://" + split_href.netloc + split_href.path
+            # print(href)
             # print(link.text, split_href.scheme, split_href.netloc, split_href.path)
             if str(href).find(self.checking_url) != -1:
                 selenium_links.append(href)

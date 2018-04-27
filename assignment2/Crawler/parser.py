@@ -11,6 +11,7 @@ class Parser:
         links = soup.find_all('a', href=True)
         for link in links:
             href = link['href']
+            # print(href)
             # link_name = link.text
 
             # url = urlparse(href)
