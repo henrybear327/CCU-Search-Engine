@@ -2,17 +2,17 @@
 
 Prototype first! Improvements come later!
 
-- [ ] master
-- [ ] fetcher
-    - [ ] get parameters filtering
+* master
+* fetcher
+    - [x] get parameters filtering
     - [ ] how do get restart working
     - [ ] multi-thread (subprocess)
-- [ ] parser
+* parser
     - [ ] use readability.js
     - [ ] write my own readability package
-- [ ] storage
+* storage
     - [ ] use mongoDB
-- [ ] url pool manager (urlQueue)
+* url pool manager (urlQueue)
     - [ ] use bloom filter
  
 # Packages

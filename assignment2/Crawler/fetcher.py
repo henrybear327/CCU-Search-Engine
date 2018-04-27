@@ -33,7 +33,9 @@ class Fetcher:
         start_time = datetime.datetime.now()
 
         self.driver.get(url)
-        # driver.save_screenshot(driver.title+".png")
+
+        filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
+        self.driver.save_screenshot("../image/" + filename)
 
         end_time = datetime.datetime.now()
         delta = end_time - start_time
@@ -70,7 +72,7 @@ class Fetcher:
         delta = end_time - start_time
         print("get links", delta)
 
-        print(len(soup_links), len(selenium_links))
+        print("Two methods link count check", len(soup_links), len(selenium_links))
         return selenium_links
         # return self.FetchedData(self.driver.page_source, self.driver.title)
 

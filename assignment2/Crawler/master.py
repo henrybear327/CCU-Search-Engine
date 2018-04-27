@@ -1,10 +1,11 @@
 import URLQueue
 import fetcher
+
 import datetime
 
 # initial_page = "https://www.google.com"
 initial_page = "https://www.npr.org/"
-interval = 1000 # 1000 ms
+interval = 1000  # 1000 ms
 
 if __name__ == '__main__':
     print("Master started. Initial page {}".format(initial_page))
