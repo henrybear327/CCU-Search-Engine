@@ -2,7 +2,9 @@ import URLQueue
 import fetcher
 import datetime
 
-initial_page = "https://www.npr.org"
+# initial_page = "https://www.google.com"
+initial_page = "https://www.npr.org/"
+interval = 1000 # 1000 ms
 
 if __name__ == '__main__':
     print("Master started. Initial page {}".format(initial_page))
@@ -21,7 +23,10 @@ if __name__ == '__main__':
 
     # start crawling
     while url_queue.has_next_url():
+        print("queue size", url_queue.get_size())
         next_url = url_queue.get_next_url()
+        print("fetching ", next_url)
 
         links = fetcher.get_new_links(next_url)
         # print(links)
+        url_queue.insert_url(links)

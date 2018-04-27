@@ -15,5 +15,8 @@ class Parser:
 
             url = urlparse(href)
             # print(link_name, url.scheme, url.netloc, url.path, url.params, url.query)
-            print(url)
+            # print(url)
         return links
+
+    def get_page_content(self, page_source):
+        pass

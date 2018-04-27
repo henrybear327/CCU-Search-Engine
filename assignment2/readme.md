@@ -4,15 +4,16 @@ Prototype first! Improvements come later!
 
 - [ ] master
 - [ ] fetcher
-    * get parameters filtering
-    * multi-thread (subprocess)
+    - [ ] get parameters filtering
+    - [ ] how do get restart working
+    - [ ] multi-thread (subprocess)
 - [ ] parser
-    * use readability.js
-    * write my own readability package
+    - [ ] use readability.js
+    - [ ] write my own readability package
 - [ ] storage
-    * use mongoDB
+    - [ ] use mongoDB
 - [ ] url pool manager (urlQueue)
-    * use bloom filter
+    - [ ] use bloom filter
  
 # Packages
 
@@ -34,3 +35,8 @@ Prototype first! Improvements come later!
 
 * [如何入门 Python 爬虫？](https://www.zhihu.com/question/20899988)
 * [DRIVING HEADLESS CHROME WITH PYTHON](https://duo.com/decipher/driving-headless-chrome-with-python)
+
+# Notes
+
+* `pkill -f chrome`
+    * If you forgot to `quit`... [read me](https://stackoverflow.com/questions/15067107/difference-between-webdriver-dispose-close-and-quit?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)

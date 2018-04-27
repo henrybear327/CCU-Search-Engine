@@ -15,6 +15,11 @@ class URLQueue:
         return self.url_queue.get()
 
     def insert_url(self, urls):
+        """
+        Perform checking before inserting
+        :param urls:
+        :return:
+        """
         for url in urls:
             # check for fetched or not
             if url in self.seen:
@@ -23,3 +28,6 @@ class URLQueue:
 
             # enqueue
             self.url_queue.put(url)
+
+    def get_size(self):
+        return self.url_queue.qsize()
