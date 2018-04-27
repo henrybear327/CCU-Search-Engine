@@ -32,14 +32,14 @@ class Fetcher:
         filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
         self.driver.save_screenshot("../image/" + filename)
 
-        end_time = datetime.datetime.now()
-        delta = end_time - start_time
-        print("get content", delta)
-
         # parse links
         try:
             links = self.driver.find_elements_by_tag_name('a')
         except NoSuchElementException:
             return
+
+        end_time = datetime.datetime.now()
+        delta = end_time - start_time
+        print("get content", delta)
 
         self.parser.parse(self.driver.page_source, links)
