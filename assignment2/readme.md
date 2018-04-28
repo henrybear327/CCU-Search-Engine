@@ -27,6 +27,9 @@ Prototype first! Improvements come later!
 * beautifulsoup4
 * lxml
 * pymongo
+    * ubuntu
+        * `sudo service mongod start`
+        * `systemctl enable mongod.service`
 
 ## manual installation
 

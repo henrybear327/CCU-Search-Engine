@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 
 import URLManager
 import parser
-
+import platform
 
 class Fetcher:
     def __init__(self, url_manager: URLManager):
@@ -18,7 +18,15 @@ class Fetcher:
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920x1080")
-        self.driver = webdriver.Chrome("../driver/chromedrivermac", chrome_options=chrome_options)
+
+        if platform.system() == "Darwin":
+            driver_path = "../driver/chromedrivermac"
+        elif platform.system() == "Linux":
+            driver_path = "../driver/chromedriverlinux"
+        else:
+            driver_path = "../driver/"
+            
+        self.driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
         self.parser = parser.Parser(url_manager)
         self.url_manager = url_manager
 
