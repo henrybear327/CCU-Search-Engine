@@ -35,7 +35,7 @@ class Fetcher:
         try:
             self.driver.get(url.url)
         except TimeoutException:
-            sys.stderr.write("Timeout " + url + "\n")
+            sys.stderr.write("Timeout " + url.url + "\n")
             self.url_manager.insert_url(url.url, url.attempts + 1, url.level)
             return
 
