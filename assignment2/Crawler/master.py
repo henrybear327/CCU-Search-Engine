@@ -1,7 +1,7 @@
 import URLManager
 import fetcher
 
-import datetime
+import datetime, sys
 
 # Parameters
 
@@ -34,3 +34,7 @@ if __name__ == '__main__':
         print("fetching ", next_url)
         fetcher.get_page(next_url)
         print("done")
+
+        sys.stdout.flush()
+
+
