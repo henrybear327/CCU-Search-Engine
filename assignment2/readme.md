@@ -8,7 +8,7 @@ Prototype first! Improvements come later!
     - [x] how do get restart working
     - [ ] multi-thread (subprocess)
 * parser
-    - [ ] fix redirect issue (183726490 awards issue)
+    - [x] fix redirect issue (183726490 awards issue)
     - [ ] use readability.js
     - [ ] write my own readability package
 * storage
@@ -43,6 +43,8 @@ Prototype first! Improvements come later!
 
 * [如何入门 Python 爬虫？](https://www.zhihu.com/question/20899988)
 * [DRIVING HEADLESS CHROME WITH PYTHON](https://duo.com/decipher/driving-headless-chrome-with-python)
+* [Resolving a relative url path to its absolute path Ask Question](https://stackoverflow.com/questions/476511/resolving-a-relative-url-path-to-its-absolute-path?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
+    * 3 hours of time wasted
 
 # Notes
 

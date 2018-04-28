@@ -25,7 +25,7 @@ class Fetcher:
             driver_path = "../driver/chromedriverlinux"
         else:
             driver_path = "../driver/"
-            
+
         self.driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
         self.parser = parser.Parser(url_manager)
         self.url_manager = url_manager
