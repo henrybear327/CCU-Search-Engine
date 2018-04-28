@@ -9,11 +9,11 @@ import datetime, sys
 initial_page = "https://www.npr.org/"
 checking_url = "npr.org"
 
-# fetched_set_file = "fetched.txt"
-fetched_set_file = "test.txt"
+fetched_set_file = "fetched.txt"
+# fetched_set_file = "test.txt"
 
 max_retry = 3
-level_threshold = 3
+level_threshold = 2
 
 if __name__ == '__main__':
     print("Master started. Initial page {}".format(initial_page))
