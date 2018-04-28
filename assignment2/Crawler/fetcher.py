@@ -46,7 +46,7 @@ class Fetcher:
         try:
             links = self.driver.find_elements_by_tag_name('a')
         except NoSuchElementException:
-            sys.stderr.write(url + " has no links\n")
+            sys.stderr.write(url.url + " has no links\n")
             return
 
         end_time = datetime.datetime.now()
