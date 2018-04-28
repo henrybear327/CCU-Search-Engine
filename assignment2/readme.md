@@ -5,16 +5,18 @@ Prototype first! Improvements come later!
 * master
 * fetcher
     - [x] get parameters filtering
-    - [ ] how do get restart working
+    - [x] how do get restart working
     - [ ] multi-thread (subprocess)
 * parser
     - [ ] use readability.js
     - [ ] write my own readability package
 * storage
-    - [ ] use mongoDB
-* url pool manager (urlQueue)
+    - [ ] use SQLite
+* url pool manager (urlManager)
     - [ ] use bloom filter
- 
+    - [ ] space complexity improvement
+    - [ ] check inSet before or after enqueuing?
+
 # Packages
 
 ## pip

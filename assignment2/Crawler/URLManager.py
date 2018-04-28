@@ -9,12 +9,20 @@ class URLManager:
         self.in_queue = set()  # urls in queue
         self.fetched = set()  # urls fetched
 
+        with open("fetched.txt", "r") as inputFile:
+            for line in inputFile:
+                line = line.replace("\n", "")
+                if line == "":
+                    continue
+                self.fetched.add(line)
+                print("Add to fetched set", line)
+
         self.queueData = namedtuple('QueueData', ['url', 'attempts', 'level'])
 
         self.max_retry = max_retry
         self.level_threshold = level_threshold
 
-        self.fetchedFile = open('fetched.txt', 'w')
+        self.fetchedFile = open('fetched.txt', 'a')
 
     def __del__(self):
         self.fetchedFile.close()
@@ -34,7 +42,6 @@ class URLManager:
         self.in_queue.discard(url)
 
         # save data
-        print("add fetched url", url)
         # with open('fetched.txt', 'a') as output:
         #     if url.level < self.level_threshold:
         #         return
@@ -42,7 +49,9 @@ class URLManager:
 
         if url.level < self.level_threshold:
             return
-        self.fetchedFile.write(url.url + "\n")
+        line = url.url + "\n"
+        self.fetchedFile.write(line)
+        print("add fetched url", url)
 
     def insert_url(self, url, attempts, level):
         # check for in queue or not
