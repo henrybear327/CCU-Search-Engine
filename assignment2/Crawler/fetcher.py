@@ -51,4 +51,4 @@ class Fetcher:
         print("get content", delta)
 
         self.url_manager.add_fetched_url(url)
-        self.parser.parse(url.url, self.driver.page_source, links, url.level + 1)
+        self.parser.parse(url.url, self.driver.title, self.driver.page_source, links, url.level + 1)

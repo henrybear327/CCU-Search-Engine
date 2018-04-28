@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from selenium.common.exceptions import StaleElementReferenceException
 
 import URLManager
+import storage
 
 
 # import sys
@@ -19,10 +20,11 @@ class Parser:
 
         self.checking_url = checking_url
         self.url_manager = url_manager
+        self.storage = storage.Storage()
 
-    def parse(self, url, page_source, links, level):
-        # new_links = self.get_all_links(url, links)
-        new_links_soup = self.get_all_links_soup(url, page_source)
+    def parse(self, url, title, page_source, links, level):
+        new_links = self.get_all_links(url, links)
+        # new_links_soup = self.get_all_links_soup(url, page_source)
         # print("selenium", len(new_links), "soup", len(new_links_soup))
         #
         # sys.stderr.write("============================\n")
@@ -35,8 +37,11 @@ class Parser:
         #         sys.stderr.write("Selenium has " + link + "\n")
         # sys.stderr.write("============================\n")
         #
-        # self.url_manager.insert_new_urls(new_links, level)
-        self.url_manager.insert_new_urls(new_links_soup, level)
+        if len(new_links) > 0:
+            self.url_manager.insert_new_urls(new_links, level)
+            # self.url_manager.insert_new_urls(new_links_soup, level)
+
+            self.storage.insert_record(url, title, page_source)
 
     def split_url_parameters(self, href):
         url = urlparse(href)
