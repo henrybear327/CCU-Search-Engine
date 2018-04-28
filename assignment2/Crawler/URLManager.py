@@ -4,12 +4,12 @@ import sys
 
 
 class URLManager:
-    def __init__(self, max_retry, level_threshold):
+    def __init__(self, max_retry, level_threshold, fetched_set_file):
         self.url_queue = queue.Queue()
         self.in_queue = set()  # urls in queue
         self.fetched = set()  # urls fetched
 
-        with open("fetched.txt", "r") as inputFile:
+        with open(fetched_set_file, "r") as inputFile:
             for line in inputFile:
                 line = line.replace("\n", "")
                 if line == "":
@@ -22,7 +22,7 @@ class URLManager:
         self.max_retry = max_retry
         self.level_threshold = level_threshold
 
-        self.fetchedFile = open('fetched.txt', 'a')
+        self.fetchedFile = open(fetched_set_file, 'a')
 
     def __del__(self):
         self.fetchedFile.close()

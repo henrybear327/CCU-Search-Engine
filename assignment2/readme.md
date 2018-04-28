@@ -25,6 +25,7 @@ Prototype first! Improvements come later!
 * chrome
 * beautifulsoup4
 * lxml
+* pymongo
 
 ## manual installation
 

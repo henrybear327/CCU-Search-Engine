@@ -9,6 +9,9 @@ import datetime, sys
 initial_page = "https://www.npr.org/"
 checking_url = "npr.org"
 
+# fetched_set_file = "fetched.txt"
+fetched_set_file = "test.txt"
+
 max_retry = 3
 level_threshold = 3
 
@@ -18,7 +21,7 @@ if __name__ == '__main__':
     # init
     start_time = datetime.datetime.now()
 
-    url_manager = URLManager.URLManager(max_retry, level_threshold)
+    url_manager = URLManager.URLManager(max_retry, level_threshold, fetched_set_file)
     url_manager.insert_url(initial_page, 0, 0)
 
     fetcher = fetcher.Fetcher(checking_url, url_manager)
