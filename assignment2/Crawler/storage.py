@@ -68,14 +68,16 @@ class Storage:
         with open(self.path + url + ".html", "w") as outputFile:
             outputFile.write(page_source)
 
+    def test_run(self):
+        storage.insert_record("apple.com", "apple", "<html>")
+        storage.insert_record("google.com", "google", "<html>")
+        storage.display_all_records()
+        storage.search_record("apple.com")
+        storage.search_record("google.com")
+        storage.clear_collection()
+        storage.display_all_records()
+
 
 if __name__ == '__main__':
     storage = Storage()
-    # storage.clear_collection()
-    # storage.insert_record("apple.com", "apple", "<html>")
-    # storage.insert_record("google.com", "google", "<html>")
-    # storage.display_all_records()
-    # storage.search_record("apple.com")
-    # storage.search_record("google.com")
-    storage.clear_collection()
-    storage.display_all_records()
+    storage.test_run()
