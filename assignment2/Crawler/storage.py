@@ -80,4 +80,4 @@ class Storage:
 
 if __name__ == '__main__':
     storage = Storage()
-    storage.test_run()
+    storage.display_all_records()
