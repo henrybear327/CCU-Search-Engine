@@ -106,6 +106,8 @@ class Parser:
             """
             if href.startswith("#") or href.startswith("."):  # case 1, 2
                 continue
+            if href.find("void(0)") != -1:
+                continue
 
             url = urlparse(href)
             # print(link.text)
