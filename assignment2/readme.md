@@ -12,7 +12,8 @@ Prototype first! Improvements come later!
     - [ ] use readability.js
     - [ ] write my own readability package
 * storage
-    - [ ] use SQLite
+    - [ ] use MongoDB
+    - [ ] indexing
 * url pool manager (urlManager)
     - [ ] use bloom filter
     - [ ] space complexity improvement
@@ -23,14 +24,14 @@ Prototype first! Improvements come later!
 ## pip
 
 * selenium
-* chrome
 * beautifulsoup4
 * lxml
 * pymongo
 
 ## manual installation
 
-* [chrome driver](http://chromedriver.storage.googleapis.com/2.38/chromedriver_linux64.zip)
+* chrome
+* [chrome driver](https://chromedriver.storage.googleapis.com/index.html?path=2.38/)
     * Extract
     * `chmod +x chromedriver` 
     * `sudo mv chromedriver /usr/local/bin`

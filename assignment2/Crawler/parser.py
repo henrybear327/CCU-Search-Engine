@@ -1,13 +1,22 @@
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse
-from selenium.common.exceptions import StaleElementReferenceException
+import configparser
 import datetime
+from urllib.parse import urlparse
+
+from bs4 import BeautifulSoup
+from selenium.common.exceptions import StaleElementReferenceException
+
 import URLManager
-import sys
+
+
+# import sys
 
 
 class Parser:
-    def __init__(self, checking_url, url_manager: URLManager):
+    def __init__(self, url_manager: URLManager):
+        config = configparser.ConfigParser()
+        config.read('crawler.config')
+        checking_url = config["DEFAULT"]["checking_url"]
+
         self.checking_url = checking_url
         self.url_manager = url_manager
 

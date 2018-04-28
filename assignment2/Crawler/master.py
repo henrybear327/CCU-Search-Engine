@@ -1,31 +1,23 @@
-import URLManager
-import fetcher
-
+import configparser
 import datetime
 import sys
 
-# Parameters
-
-# initial_page = "https://www.google.com"
-initial_page = "https://www.npr.org/"
-checking_url = "npr.org"
-
-# fetched_set_file = "fetched.txt"
-fetched_set_file = "test.txt"
-
-max_retry = 3
-level_threshold = 2
+import URLManager
+import fetcher
 
 if __name__ == '__main__':
-    print("Master started. Initial page {}".format(initial_page))
+    config = configparser.ConfigParser()
+    config.read('crawler.config')
+
+    print("Master started. Initial page {}".format(config["DEFAULT"]["initial_page"]))
 
     # init
     start_time = datetime.datetime.now()
 
-    url_manager = URLManager.URLManager(max_retry, level_threshold, fetched_set_file)
-    url_manager.insert_url(initial_page, 0, 0)
+    url_manager = URLManager.URLManager()
+    url_manager.insert_url(config["DEFAULT"]["initial_page"], 0, 0)
 
-    fetcher = fetcher.Fetcher(checking_url, url_manager)
+    fetcher = fetcher.Fetcher(url_manager)
 
     end_time = datetime.datetime.now()
     delta = end_time - start_time

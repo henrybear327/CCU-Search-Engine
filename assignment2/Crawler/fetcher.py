@@ -1,28 +1,25 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
-
-from urllib.parse import urlparse
-
+import configparser
 import datetime
-import parser
-import URLManager
-
 import sys
+
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.chrome.options import Options
+
+import URLManager
+import parser
 
 
 class Fetcher:
-    def __init__(self, checking_url, url_manager: URLManager):
-        """
+    def __init__(self, url_manager: URLManager):
+        config = configparser.ConfigParser()
+        config.read('crawler.config')
 
-        :param checking_url:
-        :param url_manager:
-        """
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920x1080")
-        self.driver = webdriver.Chrome(chrome_options=chrome_options)
-        self.parser = parser.Parser(checking_url, url_manager)
+        self.driver = webdriver.Chrome("../driver/chromedrivermac", chrome_options=chrome_options)
+        self.parser = parser.Parser(url_manager)
         self.url_manager = url_manager
 
     def __del__(self):

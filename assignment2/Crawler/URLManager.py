@@ -1,13 +1,23 @@
+import configparser
 import queue
-from collections import namedtuple
 import sys
+from collections import namedtuple
 
 
 class URLManager:
-    def __init__(self, max_retry, level_threshold, fetched_set_file):
+    def __init__(self):
         self.url_queue = queue.Queue()
         self.in_queue = set()  # urls in queue
         self.fetched = set()  # urls fetched
+
+        config = configparser.ConfigParser()
+        config.read('crawler.config')
+        max_retry = int(config["DEFAULT"]["max_retry"])
+        level_threshold = int(config["DEFAULT"]["level_threshold"])
+        fetched_set_file = config["DEFAULT"]["fetched_set_file"]
+
+        with open(fetched_set_file, "w+") as inputFile:
+            pass
 
         with open(fetched_set_file, "r") as inputFile:
             for line in inputFile:
