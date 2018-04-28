@@ -40,5 +40,6 @@ if __name__ == '__main__':
         print("done")
 
         sys.stdout.flush()
+        sys.stderr.flush()
 
 
