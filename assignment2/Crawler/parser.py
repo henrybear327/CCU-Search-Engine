@@ -93,7 +93,7 @@ class Parser:
 
         result = []
         for link in links:
-            href = str(link['href'])
+            href = str(link['href']).strip()
             # print(href)
 
             """
