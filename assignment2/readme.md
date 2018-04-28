@@ -8,6 +8,7 @@ Prototype first! Improvements come later!
     - [x] how do get restart working
     - [ ] multi-thread (subprocess)
 * parser
+    - [ ] fix redirect issue (183726490 awards issue)
     - [ ] use readability.js
     - [ ] write my own readability package
 * storage

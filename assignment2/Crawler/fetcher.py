@@ -39,8 +39,8 @@ class Fetcher:
             self.url_manager.insert_url(url.url, url.attempts + 1, url.level)
             return
 
-        filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
-        self.driver.save_screenshot("../image/" + filename)
+        # filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
+        # self.driver.save_screenshot("../image/" + filename)
 
         # parse links
         try:
