@@ -4,14 +4,15 @@ from selenium.common.exceptions import StaleElementReferenceException
 import datetime
 import URLManager
 
+
 class Parser:
     def __init__(self, checking_url, url_manager: URLManager):
         self.checking_url = checking_url
         self.url_manager = url_manager
 
-    def parse(self, page_source, links):
+    def parse(self, page_source, links, level):
         new_links = self.get_all_links(links)
-        self.url_manager.insert_new_urls(new_links)
+        self.url_manager.insert_new_urls(new_links, level)
 
     def split_url_parameters(self, href):
         url = urlparse(href)

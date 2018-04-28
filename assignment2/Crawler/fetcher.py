@@ -36,7 +36,7 @@ class Fetcher:
             self.driver.get(url.url)
         except TimeoutException:
             sys.stderr.write("Timeout " + url + "\n")
-            self.url_manager.insert_url_with_attempts(url.url, url.attempts + 1)
+            self.url_manager.insert_url(url.url, url.attempts + 1, url.level)
             return
 
         filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
@@ -54,4 +54,4 @@ class Fetcher:
         print("get content", delta)
 
         self.url_manager.add_fetched_url(url.url)
-        self.parser.parse(self.driver.page_source, links)
+        self.parser.parse(self.driver.page_source, links, url.level + 1)

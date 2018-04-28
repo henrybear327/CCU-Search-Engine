@@ -9,7 +9,7 @@ class URLManager:
         self.in_queue = set()  # urls in queue
         self.fetched = set()  # urls fetched
 
-        self.queueData = namedtuple('QueueData', ['url', 'attempts'])
+        self.queueData = namedtuple('QueueData', ['url', 'attempts', 'level'])
 
         self.max_retry = max_retry
 
@@ -31,7 +31,7 @@ class URLManager:
         # remove it from the set now, so we can avoid url being added back to queue during parallel fetching...
         self.in_queue.discard(url)
 
-    def insert_url_with_attempts(self, url, attempts):
+    def insert_url(self, url, attempts, level):
         # check for in queue or not
         if url in self.in_queue or url in self.fetched:
             return
@@ -42,9 +42,9 @@ class URLManager:
         self.in_queue.add(url)
 
         # enqueue
-        self.url_queue.put(self.queueData(url, attempts))
+        self.url_queue.put(self.queueData(url, attempts, level))
 
-    def insert_new_urls(self, urls):
+    def insert_new_urls(self, urls, level):
         for url in urls:
             # check for in queue or not
             if url in self.in_queue or url in self.fetched:
@@ -52,7 +52,7 @@ class URLManager:
             self.in_queue.add(url)
 
             # enqueue
-            self.url_queue.put(self.queueData(url, 0))
+            self.url_queue.put(self.queueData(url, 0, level))
 
     def get_size(self):
         return self.url_queue.qsize()

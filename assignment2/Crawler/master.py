@@ -18,7 +18,7 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
 
     url_manager = URLManager.URLManager(max_retry)
-    url_manager.insert_new_urls([initial_page])
+    url_manager.insert_url(initial_page, 0, 0)
 
     fetcher = fetcher.Fetcher(checking_url, url_manager)
 
