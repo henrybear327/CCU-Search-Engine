@@ -12,21 +12,22 @@ class Parser:
         self.url_manager = url_manager
 
     def parse(self, url, page_source, links, level):
-        new_links = self.get_all_links(url, links)
+        # new_links = self.get_all_links(url, links)
         new_links_soup = self.get_all_links_soup(url, page_source)
-        print("selenium", len(new_links), "soup", len(new_links_soup))
-
-        sys.stderr.write("============================\n")
-        sys.stderr.write(url + "\n")
-        for link in new_links_soup:
-            if link not in new_links:
-                sys.stderr.write("Soup has " + link + "\n")
-        for link in new_links:
-            if link not in new_links_soup:
-                sys.stderr.write("Selenium has " + link + "\n")
-        sys.stderr.write("============================\n")
-
-        self.url_manager.insert_new_urls(new_links, level)
+        # print("selenium", len(new_links), "soup", len(new_links_soup))
+        #
+        # sys.stderr.write("============================\n")
+        # sys.stderr.write(url + "\n")
+        # for link in new_links_soup:
+        #     if link not in new_links:
+        #         sys.stderr.write("Soup has " + link + "\n")
+        # for link in new_links:
+        #     if link not in new_links_soup:
+        #         sys.stderr.write("Selenium has " + link + "\n")
+        # sys.stderr.write("============================\n")
+        #
+        # self.url_manager.insert_new_urls(new_links, level)
+        self.url_manager.insert_new_urls(new_links_soup, level)
 
     def split_url_parameters(self, href):
         url = urlparse(href)
@@ -47,9 +48,9 @@ class Parser:
         return url
 
     def get_all_links(self, base_url, links):
-        base_url = self.trim_trailing_slash(base_url)
-
         start_time = datetime.datetime.now()
+
+        base_url = self.trim_trailing_slash(base_url)
 
         selenium_links = []
         for link in links:
@@ -74,12 +75,14 @@ class Parser:
 
         end_time = datetime.datetime.now()
         delta = end_time - start_time
-        print("get links", delta)
+        print("get selenium links", delta)
 
         # print(selenium_links)
         return selenium_links
 
     def get_all_links_soup(self, base_url, page_source):
+        start_time = datetime.datetime.now()
+
         original_url = self.trim_trailing_slash(base_url)
 
         base_url = urlparse(base_url)
@@ -128,6 +131,10 @@ class Parser:
                 # print(href)
 
         # print(len(links))
+        end_time = datetime.datetime.now()
+        delta = end_time - start_time
+        print("get soup links", delta)
+
         return result
 
     def get_page_content(self, page_source):
