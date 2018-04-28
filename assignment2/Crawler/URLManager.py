@@ -36,7 +36,7 @@ class URLManager:
         if url in self.in_queue or url in self.fetched:
             return
         if attempts >= self.max_retry:
-            sys.stderr.write("Max retries exceeded" + url + "\n")
+            sys.stderr.write("Max retries exceeded " + url + "\n")
             return
 
         self.in_queue.add(url)
