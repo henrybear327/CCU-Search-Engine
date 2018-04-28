@@ -53,5 +53,5 @@ class Fetcher:
         delta = end_time - start_time
         print("get content", delta)
 
-        self.url_manager.add_fetched_url(url.url)
+        self.url_manager.add_fetched_url(url)
         self.parser.parse(self.driver.page_source, links, url.level + 1)

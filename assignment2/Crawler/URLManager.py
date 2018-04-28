@@ -4,7 +4,7 @@ import sys
 
 
 class URLManager:
-    def __init__(self, max_retry):
+    def __init__(self, max_retry, level_threshold):
         self.url_queue = queue.Queue()
         self.in_queue = set()  # urls in queue
         self.fetched = set()  # urls fetched
@@ -12,10 +12,12 @@ class URLManager:
         self.queueData = namedtuple('QueueData', ['url', 'attempts', 'level'])
 
         self.max_retry = max_retry
+        self.level_threshold = level_threshold
+
+        self.fetchedFile = open('fetched.txt', 'w')
 
     def __del__(self):
-        # save data
-        pass
+        self.fetchedFile.close()
 
     def has_next_url(self):
         return self.url_queue.empty() is False
@@ -30,6 +32,17 @@ class URLManager:
 
         # remove it from the set now, so we can avoid url being added back to queue during parallel fetching...
         self.in_queue.discard(url)
+
+        # save data
+        print("add fetched url", url)
+        # with open('fetched.txt', 'a') as output:
+        #     if url.level < self.level_threshold:
+        #         return
+        #     output.write(url.url + "\n")
+
+        if url.level < self.level_threshold:
+            return
+        self.fetchedFile.write(url.url + "\n")
 
     def insert_url(self, url, attempts, level):
         # check for in queue or not
