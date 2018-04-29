@@ -14,28 +14,31 @@ class URLManager:
         config.read('crawler.config')
         max_retry = int(config["RULES"]["max_retry"])
         assumed_non_content_levels = int(config["RULES"]["assumed_non_content_levels"])
-        fetched_set_file = config["STORAGE"]["fetched_set_file"]
 
-        with open(fetched_set_file, "w+") as inputFile:
-            pass
+        # fetched_set_file = config["STORAGE"]["fetched_set_file"]
 
-        with open(fetched_set_file, "r") as inputFile:
-            for line in inputFile:
-                line = line.replace("\n", "")
-                if line == "":
-                    continue
-                self.fetched.add(line)
-                print("Add to fetched set", line)
+        # with open(fetched_set_file, "w+") as inputFile:
+        #     pass
+        #
+        # with open(fetched_set_file, "r") as inputFile:
+        #     for line in inputFile:
+        #         line = line.replace("\n", "")
+        #         if line == "":
+        #             continue
+        #         self.fetched.add(line)
+        #         print("Add to fetched set", line)
+        #
+        # self.fetchedFile = open(fetched_set_file, 'a')
 
         self.queueData = namedtuple('QueueData', ['url', 'attempts', 'level'])
 
         self.max_retry = max_retry
         self.assumed_non_content_levels = assumed_non_content_levels
 
-        self.fetchedFile = open(fetched_set_file, 'a')
 
     def __del__(self):
-        self.fetchedFile.close()
+        # self.fetchedFile.close()
+        pass
 
     def has_next_url(self):
         return self.url_queue.empty() is False
@@ -60,7 +63,7 @@ class URLManager:
         if url.level < self.assumed_non_content_levels:
             return
         line = url.url + "\n"
-        self.fetchedFile.write(line)
+        # self.fetchedFile.write(line)
         print("add fetched url", url)
 
     def add_retry_url(self, url, attempts, level):
