@@ -5,6 +5,9 @@ import sys
 import URLManager
 import fetcher
 
+"""
+Feed the fetcher with url
+"""
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read('crawler.config')
@@ -21,14 +24,14 @@ if __name__ == '__main__':
 
     end_time = datetime.datetime.now()
     delta = end_time - start_time
-    print("Init time " + str(delta))
+    print("Init time", delta)
 
     # start crawling
     while url_manager.has_next_url():  # TODO: change if parallel
         print("queue size", url_manager.get_size())
         next_url = url_manager.get_next_url()
 
-        print("fetching ", next_url)
+        print("fetching", next_url)
         fetcher.get_page(next_url)
         print("done")
 

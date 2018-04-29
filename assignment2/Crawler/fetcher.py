@@ -9,7 +9,10 @@ from selenium.webdriver.chrome.options import Options
 
 import URLManager
 import parser
-import platform
+
+"""
+Simply fetch the data
+"""
 
 
 class Fetcher:
@@ -39,7 +42,6 @@ class Fetcher:
             self.driver.quit()
 
     def get_page(self, url):
-        # get content
         start_time = datetime.datetime.now()
         if self.backend == "chrome":
             try:

@@ -10,18 +10,30 @@ from selenium.common.exceptions import StaleElementReferenceException
 import URLManager
 import storage
 
+"""
+Generate links for queue
+"""
+
 
 class Parser:
     def __init__(self, url_manager: URLManager):
         config = configparser.ConfigParser()
         config.read('crawler.config')
-        checking_url = config["SITE"]["checking_url"]
 
-        self.checking_url = checking_url
         self.url_manager = url_manager
         self.storage = storage.Storage()
 
     def parse(self, url, title, page_source, depth, links=None):
+        """
+        1. generate new links
+        2. TODO: content extraction
+        :param url:
+        :param title:
+        :param page_source:
+        :param depth:
+        :param links:
+        :return:
+        """
         # new_links = self.get_all_links(url, links)
         new_links_soup = self.get_all_links_soup(url, page_source)
         # print("selenium", len(new_links), "soup", len(new_links_soup))
@@ -42,28 +54,8 @@ class Parser:
 
             self.storage.insert_record(url, title, page_source)
 
-    def split_url_parameters(self, href):
-        url = urlparse(href)
-        # print(url.scheme, url.netloc, url.path, url.params, url.query)
-        return url
-
-    def is_current_site_url(self, url):
-        if str(url).find(self.checking_url) != -1:
-            return True
-        else:
-            print("Rejected url ", url)
-            return False
-
-    def trim_trailing_slash(self, url):
-        url = str(url)
-        if url.endswith("/"):  # trim trailing /
-            url = url[0:-1]
-        return url
-
     def get_all_links(self, base_url, links):
         start_time = datetime.datetime.now()
-
-        base_url = self.trim_trailing_slash(base_url)
 
         selenium_links = []
         for link in links:
@@ -75,16 +67,14 @@ class Parser:
                 continue
 
             # print(link.text)
-            split_href = self.split_url_parameters(link.get_attribute("href"))
+            split_href = urlparse(link.get_attribute("href"))
             if split_href.netloc == "":
                 continue  # void(0) case
 
-            path = self.trim_trailing_slash(split_href.path)
-
-            href = split_href.scheme + "://" + split_href.netloc + path
+            href = split_href.scheme + "://" + split_href.netloc + split_href.path
             # print(href)
             # print(link.text, split_href.scheme, split_href.netloc, split_href.path)
-            if self.is_current_site_url(href) and href != base_url:
+            if href != base_url:
                 selenium_links.append(href)
 
         end_time = datetime.datetime.now()
@@ -118,7 +108,7 @@ class Parser:
             url = urlparse(href)
             href = url.scheme + "://" + url.netloc + url.path
 
-            if self.is_current_site_url(href) and href != base_url:
+            if href != base_url:
                 result.append(href)
                 # print(href)
 
@@ -128,6 +118,3 @@ class Parser:
         print("get soup links", delta)
 
         return result
-
-    def get_page_content(self, page_source):
-        pass

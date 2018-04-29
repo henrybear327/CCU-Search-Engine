@@ -3,7 +3,9 @@ import queue
 import sys
 from collections import namedtuple
 
-
+"""
+Decides what url can go into queue 
+"""
 class URLManager:
     def __init__(self):
         self.url_queue = queue.Queue()
@@ -15,6 +17,7 @@ class URLManager:
         self.max_retry = int(config["RULES"]["max_retry"])
         self.assumed_non_content_depth = int(config["RULES"]["assumed_non_content_depth"])
         self.max_overall_depth = int(config["RULES"]["max_overall_depth"])
+        self.checking_url = config["SITE"]["checking_url"]
 
         # fetched_set_file = config["STORAGE"]["fetched_set_file"]
 
@@ -37,6 +40,13 @@ class URLManager:
         # self.fetchedFile.close()
         pass
 
+    def is_current_site_url(self, url):
+        if str(url).find(self.checking_url) != -1:
+            return True
+        else:
+            print("Rejected url ", url)
+            return False
+
     def has_next_url(self):
         return self.url_queue.empty() is False
 
@@ -51,10 +61,12 @@ class URLManager:
         # remove it from the set now, so we can avoid url being added back to queue during parallel fetching...
         self.in_queue.discard(url)
 
-        if url.depth < self.assumed_non_content_depth:
-            return
-        line = url.url + "\n"
+        # when restarting, crawler just need to focus on topic pages and start from there
+        # if url.depth < self.assumed_non_content_depth:
+        #     return
+        # line = url.url + "\n"
         # self.fetchedFile.write(line)
+
         print("add fetched url", url)
 
     def add_retry_url(self, url, attempts, depth):
