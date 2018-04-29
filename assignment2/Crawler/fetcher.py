@@ -42,7 +42,7 @@ class Fetcher:
         except TimeoutException as e:
             sys.stderr.write("Timeout " + url.url + "\n")
             sys.stderr.write(e.msg)
-            self.url_manager.insert_url(url.url, url.attempts + 1, url.level)
+            self.url_manager.add_retry_url(url.url, url.attempts + 1, url.level)
             return
 
         # filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)

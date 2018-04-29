@@ -14,6 +14,7 @@ Prototype first! Improvements come later!
 * storage
     - [ ] use MongoDB
     - [ ] indexing
+    - [ ] simhash
 * url pool manager (urlManager)
     - [ ] use bloom filter
     - [ ] space complexity improvement

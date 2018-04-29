@@ -63,6 +63,10 @@ class URLManager:
         self.fetchedFile.write(line)
         print("add fetched url", url)
 
+    def add_retry_url(self, url, attempts, level):
+        self.in_queue.discard(url)
+        self.insert_url(url, attempts, level)
+
     def insert_url(self, url, attempts, level):
         # check for in queue or not
         if url in self.in_queue or url in self.fetched:

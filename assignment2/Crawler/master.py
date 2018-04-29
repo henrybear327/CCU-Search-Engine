@@ -26,7 +26,7 @@ if __name__ == '__main__':
     # start crawling
     while url_manager.has_next_url():  # TODO: change to empty over 10 seconds
         print("queue size", url_manager.get_size())
-        next_url = url_manager.get_next_url()
+        next_url = url_manager.get_next_url() # TODO: handle "" case
 
         print("fetching ", next_url)
         fetcher.get_page(next_url)
