@@ -9,6 +9,7 @@ Prototype first! Improvements come later!
     - [ ] multi-thread (subprocess)
     - [ ] how to auto switch between requests/chrome headless
     - [ ] solve weird terminating issue on Chrome headless after 4 hours
+    - [ ] selenium status code issue
 * parser
     - [x] fix redirect issue (183726490 awards issue)
     - [ ] use readability.js

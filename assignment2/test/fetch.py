@@ -59,6 +59,7 @@ class Fetcher:
         start_time = datetime.datetime.now()
 
         r = requests.get(url)
+        print(r.status_code)
         self.write_source_code_to_file(r.text, "requests")
 
         end_time = datetime.datetime.now()
@@ -73,6 +74,6 @@ class Fetcher:
 if __name__ == '__main__':
     # url = "https://www.ettoday.net/"
     # url = "https://edition.cnn.com/"
-    url = "https://www.npr.org/"
+    url = "https://news.ycombinator.com/vote?id=16949460&how=up&goto=news"
     fetcher = Fetcher()
     fetcher.get_page(url)

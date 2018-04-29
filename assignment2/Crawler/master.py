@@ -18,7 +18,7 @@ if __name__ == '__main__':
     start_time = datetime.datetime.now()
 
     url_manager = URLManager.URLManager()
-    url_manager.insert_url(config["SITE"]["initial_page"], 0, 0)
+    url_manager.insert_url(config["SITE"]["initial_page"], 0, 0, -1)
 
     fetcher = fetcher.Fetcher(url_manager)
 

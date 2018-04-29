@@ -2,7 +2,7 @@ import configparser
 import datetime
 import sys
 from urllib.parse import urljoin
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import StaleElementReferenceException
@@ -23,7 +23,13 @@ class Parser:
         self.url_manager = url_manager
         self.storage = storage.Storage()
 
-    def parse(self, url, title, page_source, depth, links=None):
+        self.take_queries = config["RULES"]["take_queries"]
+        if self.take_queries == "true":
+            self.take_queries = True
+        else:
+            self.take_queries = False
+
+    def parse(self, title, page_source, url, links=None):
         """
         1. generate new links
         2. TODO: content extraction
@@ -35,11 +41,11 @@ class Parser:
         :return:
         """
         # new_links = self.get_all_links(url, links)
-        new_links_soup = self.get_all_links_soup(url, page_source)
+        new_links_soup = self.get_all_links_soup(url.url, page_source)
         # print("selenium", len(new_links), "soup", len(new_links_soup))
 
         # sys.stderr.write("============================\n")
-        # sys.stderr.write(url + "\n")
+        # sys.stderr.write(url.url + "\n")
         # for link in new_links_soup:
         #     if link not in new_links:
         #         sys.stderr.write("Soup has " + link + "\n")
@@ -50,9 +56,9 @@ class Parser:
 
         if len(new_links_soup) > 0:
             # self.url_manager.insert_new_urls(new_links, depth)
-            self.url_manager.insert_new_urls(new_links_soup, depth)
+            self.url_manager.insert_new_urls(new_links_soup, url)
 
-            self.storage.insert_record(url, title, page_source)
+            self.storage.insert_record(url.url, title, page_source)
 
     def get_all_links(self, base_url, links):
         start_time = datetime.datetime.now()
@@ -84,6 +90,16 @@ class Parser:
         # print(selenium_links)
         return selenium_links
 
+    def is_invalid_link(self, href):
+        if href == "void(0)":
+            return True
+        if href.startswith("mailto://"):
+            return True
+        if href.startswith("javascript://"):
+            return True
+
+        return False
+
     def get_all_links_soup(self, base_url, page_source):
         start_time = datetime.datetime.now()
 
@@ -98,17 +114,17 @@ class Parser:
         result = []
         for link in links:
             href = str(link['href']).strip()
-            if href == "void(0)":
-                continue
-            if href.startswith("mailto://"):
+            if self.is_invalid_link(href):
                 continue
 
             href = urljoin(base_url, href)
-
             url = urlparse(href)
-            href = url.scheme + "://" + url.netloc + url.path
+            if self.take_queries:
+                href = urlunparse((url.scheme, url.netloc, url.path, "", url.query, ""))
+            else:
+                href = urlunparse((url.scheme, url.netloc, url.path, "", "", ""))
 
-            if href != base_url:
+            if href != base_url and not self.is_invalid_link(href):
                 result.append(href)
                 # print(href)
 

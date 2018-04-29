@@ -24,6 +24,7 @@ class Fetcher:
         self.parser = parser.Parser(url_manager)
         self.url_manager = url_manager
 
+        self.timeout = float(config["RULES"]["timeout"])
         if self.backend == "chrome":
             chrome_options = Options()
             chrome_options.add_argument("--headless")
@@ -32,7 +33,7 @@ class Fetcher:
 
             self.driver = webdriver.Chrome(chrome_options=chrome_options)
         elif self.backend == "requests":
-            self.timeout = float(config["RULES"]["timeout"])
+            pass
         else:
             print("unknown backend")
             sys.exit(1)
@@ -41,15 +42,39 @@ class Fetcher:
         if self.backend == "chrome":
             self.driver.quit()
 
+    def is_response_200(self, url):
+        try:
+            r = requests.get(url.url, timeout=self.timeout)
+
+            if r.status_code != 200:
+                sys.stderr.write("Page access error " + url.url + "\n")
+                return False
+        except Timeout:
+            sys.stderr.write("Timeout " + url.url + "\n")
+            self.url_manager.add_retry_url(url)
+            return False
+        except:
+            print("Unexpected requests.get() error:", sys.exc_info()[0])
+            return False
+        return True
+
     def get_page(self, url):
         start_time = datetime.datetime.now()
-        if self.backend == "chrome":
+        if url.external_depth > -1 or self.backend == "chrome":
+            print("Use chrome headless")
+
+            if not self.is_response_200(url):
+                return
+
             try:
                 self.driver.get(url.url)
             except TimeoutException as e:
                 sys.stderr.write("Timeout " + url.url + "\n")
                 sys.stderr.write(e.msg)
-                self.url_manager.add_retry_url(url.url, url.attempts + 1, url.depth)
+                self.url_manager.add_retry_url(url)
+                return
+            except:
+                print("Unexpected self.driver.get() error:", sys.exc_info()[0])
                 return
 
             filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
@@ -68,17 +93,26 @@ class Fetcher:
             print("get content", delta)
 
             self.url_manager.add_fetched_url(url)
-            # self.parser.parse(url.url, self.driver.title, self.driver.page_source, url.depth + 1, links=selenium_links)
-            self.parser.parse(url.url, self.driver.title, self.driver.page_source, url.depth + 1, links=None)
+            # self.parser.parse(self.driver.title, self.driver.page_source, url, links=selenium_links)
+            self.parser.parse(self.driver.title, self.driver.page_source, url, links=None)
         elif self.backend == "requests":
+            print("Use requests")
+
             try:
                 r = requests.get(url.url, timeout=self.timeout)
+
+                if r.status_code != 200:
+                    sys.stderr.write("Page access error " + url.url + "\n")
+                    return
             except Timeout:
                 sys.stderr.write("Timeout " + url.url + "\n")
-                self.url_manager.add_retry_url(url.url, url.attempts + 1, url.depth)
+                self.url_manager.add_retry_url(url)
                 return
             except InvalidSchema:
                 sys.stderr.write("invalid link " + url.url + "\n")
+                return
+            except:
+                print("Unexpected requests.get() error:", sys.exc_info()[0])
                 return
 
             end_time = datetime.datetime.now()
@@ -86,4 +120,7 @@ class Fetcher:
             print("get content", delta)
 
             self.url_manager.add_fetched_url(url)
-            self.parser.parse(url.url, "", r.text, url.depth + 1, links=None)
+            self.parser.parse("", r.text, url, links=None)
+        else:
+            print("What the fuck to fetch with?")
+            sys.exit(1)
