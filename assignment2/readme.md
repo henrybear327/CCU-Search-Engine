@@ -51,3 +51,6 @@ Prototype first! Improvements come later!
 
 * `pkill -f chrome`
     * If you forgot to `quit`... [read me](https://stackoverflow.com/questions/15067107/difference-between-webdriver-dispose-close-and-quit?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
+* backup
+    * dump `mongodump -h 127.0.0.1 -d npr_test -o ./data.dump`
+    * store `mongorestore -h 127.0.0.1 -d npr_test ./data.dump/npr_test/data.bson`
