@@ -70,7 +70,8 @@ class Parser:
             try:
                 if link.get_attribute("href") is None:
                     continue
-            except StaleElementReferenceException:
+            except StaleElementReferenceException as e:
+                sys.stderr.write(e.msg)
                 continue
 
             # print(link.text)

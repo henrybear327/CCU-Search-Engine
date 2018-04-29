@@ -39,8 +39,9 @@ class Fetcher:
 
         try:
             self.driver.get(url.url)
-        except TimeoutException:
+        except TimeoutException as e:
             sys.stderr.write("Timeout " + url.url + "\n")
+            sys.stderr.write(e.msg)
             self.url_manager.insert_url(url.url, url.attempts + 1, url.level)
             return
 
@@ -50,8 +51,9 @@ class Fetcher:
         # parse links
         try:
             links = self.driver.find_elements_by_tag_name('a')
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             sys.stderr.write(url.url + " has no links\n")
+            sys.stderr.write(e.msg)
             return
 
         end_time = datetime.datetime.now()

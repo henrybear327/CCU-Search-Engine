@@ -12,13 +12,16 @@ class Storage:
         Database name = npr_test
         Collection name = data
         """
-        self.client = MongoClient('localhost', 27017)
-        self.db = self.client.npr_test
-        self.collection = self.db.data
-
         config = configparser.ConfigParser()
         config.read('crawler.config')
         self.path = config["FOLDER"]["page_source"]
+
+        database_name = config["STORAGE"]["database_name"]
+        collection_name = config["STORAGE"]["collection_name"]
+
+        self.client = MongoClient('localhost', 27017)
+        self.db = self.client[database_name]
+        self.collection = self.db[collection_name]
 
     def get_sha1(self, url: str):
         hash = hashlib.sha1()
@@ -80,4 +83,5 @@ class Storage:
 
 if __name__ == '__main__':
     storage = Storage()
+    # storage.clear_collection()
     storage.display_all_records()

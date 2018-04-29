@@ -78,13 +78,7 @@ class URLManager:
 
     def insert_new_urls(self, urls, level):
         for url in urls:
-            # check for in queue or not
-            if url in self.in_queue or url in self.fetched:
-                continue
-            self.in_queue.add(url)
-
-            # enqueue
-            self.url_queue.put(self.queueData(url, 0, level))
+            self.insert_url(url, 0, level)
 
     def get_size(self):
         return self.url_queue.qsize()
