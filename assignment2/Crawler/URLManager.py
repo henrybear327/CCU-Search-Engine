@@ -94,7 +94,7 @@ class URLManager:
             sys.stderr.write("Max internal depth exceeded " + url + "\n")
             return
         if external_depth >= self.max_external_depth_:
-            sys.stderr.write("Max external depth exceeded " + url + "\n")
+            # sys.stderr.write("Max external depth exceeded " + url + "\n")
             return
 
         self.in_queue.add(url)
