@@ -12,9 +12,9 @@ class URLManager:
 
         config = configparser.ConfigParser()
         config.read('crawler.config')
-        max_retry = int(config["DEFAULT"]["max_retry"])
-        assumed_non_content_levels = int(config["DEFAULT"]["assumed_non_content_levels"])
-        fetched_set_file = config["DEFAULT"]["fetched_set_file"]
+        max_retry = int(config["RULES"]["max_retry"])
+        assumed_non_content_levels = int(config["RULES"]["assumed_non_content_levels"])
+        fetched_set_file = config["STORAGE"]["fetched_set_file"]
 
         with open(fetched_set_file, "w+") as inputFile:
             pass

@@ -71,6 +71,8 @@ class Fetcher:
 
 
 if __name__ == '__main__':
-    url = "https://www.ettoday.net/"
+    # url = "https://www.ettoday.net/"
+    # url = "https://edition.cnn.com/"
+    url = "https://www.npr.org/"
     fetcher = Fetcher()
     fetcher.get_page(url)

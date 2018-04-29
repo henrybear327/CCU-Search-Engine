@@ -9,13 +9,13 @@ if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read('crawler.config')
 
-    print("Master started. Initial page {}".format(config["DEFAULT"]["initial_page"]))
+    print("Master started. Initial page {}".format(config["SITE"]["initial_page"]))
 
     # init
     start_time = datetime.datetime.now()
 
     url_manager = URLManager.URLManager()
-    url_manager.insert_url(config["DEFAULT"]["initial_page"], 0, 0)
+    url_manager.insert_url(config["SITE"]["initial_page"], 0, 0)
 
     fetcher = fetcher.Fetcher(url_manager)
 

@@ -7,6 +7,8 @@ Prototype first! Improvements come later!
     - [x] get parameters filtering
     - [x] how do get restart working
     - [ ] multi-thread (subprocess)
+    - [ ] how to auto switch between requests/chrome headless
+    - [ ] solve weird terminating issue on Chrome headless after 4 hours
 * parser
     - [x] fix redirect issue (183726490 awards issue)
     - [ ] use readability.js
@@ -54,3 +56,17 @@ Prototype first! Improvements come later!
 * backup
     * dump `mongodump -h 127.0.0.1 -d npr_test -o ./data.dump`
     * store `mongorestore -h 127.0.0.1 -d npr_test ./data.dump/npr_test/data.bson`
+    
+# Sites
+
+* English
+    * News
+        * [NPR](https://www.npr.org/)
+            * Static
+        * CNN
+            * Dynamic
+        * [Hacker news](https://news.ycombinator.com/)
+            * Static / Dynamic
+* Chinese
+    * News
+        * Ettoday

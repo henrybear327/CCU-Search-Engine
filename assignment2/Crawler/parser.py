@@ -15,7 +15,7 @@ class Parser:
     def __init__(self, url_manager: URLManager):
         config = configparser.ConfigParser()
         config.read('crawler.config')
-        checking_url = config["DEFAULT"]["checking_url"]
+        checking_url = config["SITE"]["checking_url"]
 
         self.checking_url = checking_url
         self.url_manager = url_manager
