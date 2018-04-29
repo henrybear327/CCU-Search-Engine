@@ -38,7 +38,7 @@ class Storage:
             "url": url,
             "title": title,
             "page_source": page_source,
-            "date": datetime.datetime.now(),
+            "timestamp": datetime.datetime.now(),
             "url_sha1": url_sha1
         }
 
@@ -54,12 +54,15 @@ class Storage:
 
     def search_record(self, url):
         print("search url", url)
-        # for record in self.collection.find({"url": url}):
-        #     pprint.pprint(record)
 
         url_sha1 = self.get_sha1(url)
-        for record in self.collection.find({"url_sha1": url_sha1}):
+        ret = self.collection.find({"url_sha1": url_sha1})
+        count = ret.count()
+        # for record in ret:
+        #     pprint.pprint(record['timestamp'])
+        for record in self.collection.find({"url": url}):
             pprint.pprint(record)
+        print(count, "record(s)")
 
     def clear_collection(self):
         print("clearing collection")
@@ -85,3 +88,4 @@ if __name__ == '__main__':
     storage = Storage()
     # storage.clear_collection()
     storage.display_all_records()
+    # storage.search_record("https://www.npr.org/")

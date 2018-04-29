@@ -10,6 +10,7 @@ import URLManager
 import parser
 import platform
 
+
 class Fetcher:
     def __init__(self, url_manager: URLManager):
         config = configparser.ConfigParser()
@@ -45,20 +46,21 @@ class Fetcher:
             self.url_manager.add_retry_url(url.url, url.attempts + 1, url.level)
             return
 
-        # filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
-        # self.driver.save_screenshot("../image/" + filename)
+        filename = "{}-{}.png".format(datetime.datetime.today(), self.driver.title)
+        self.driver.save_screenshot("../image/" + filename)
 
-        # parse links
-        try:
-            links = self.driver.find_elements_by_tag_name('a')
-        except NoSuchElementException as e:
-            sys.stderr.write(url.url + " has no links\n")
-            sys.stderr.write(e.msg)
-            return
+        # # parse links (selenium parser)
+        # try:
+        #     selenium_links = self.driver.find_elements_by_tag_name('a')
+        # except NoSuchElementException as e:
+        #     sys.stderr.write(url.url + " has no links\n")
+        #     sys.stderr.write(e.msg)
+        #     return
 
         end_time = datetime.datetime.now()
         delta = end_time - start_time
         print("get content", delta)
 
         self.url_manager.add_fetched_url(url)
-        self.parser.parse(url.url, self.driver.title, self.driver.page_source, links, url.level + 1)
+        # self.parser.parse(url.url, self.driver.title, self.driver.page_source, url.level + 1, links=selenium_links)
+        self.parser.parse(url.url, self.driver.title, self.driver.page_source, url.level + 1, links=None)

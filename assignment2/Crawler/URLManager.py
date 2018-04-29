@@ -13,7 +13,7 @@ class URLManager:
         config = configparser.ConfigParser()
         config.read('crawler.config')
         max_retry = int(config["DEFAULT"]["max_retry"])
-        level_threshold = int(config["DEFAULT"]["level_threshold"])
+        assumed_non_content_levels = int(config["DEFAULT"]["assumed_non_content_levels"])
         fetched_set_file = config["DEFAULT"]["fetched_set_file"]
 
         with open(fetched_set_file, "w+") as inputFile:
@@ -30,7 +30,7 @@ class URLManager:
         self.queueData = namedtuple('QueueData', ['url', 'attempts', 'level'])
 
         self.max_retry = max_retry
-        self.level_threshold = level_threshold
+        self.assumed_non_content_levels = assumed_non_content_levels
 
         self.fetchedFile = open(fetched_set_file, 'a')
 
@@ -53,11 +53,11 @@ class URLManager:
 
         # save data
         # with open('fetched.txt', 'a') as output:
-        #     if url.level < self.level_threshold:
+        #     if url.level < self.assumed_non_content_levels:
         #         return
         #     output.write(url.url + "\n")
 
-        if url.level < self.level_threshold:
+        if url.level < self.assumed_non_content_levels:
             return
         line = url.url + "\n"
         self.fetchedFile.write(line)

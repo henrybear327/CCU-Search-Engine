@@ -21,7 +21,7 @@ class Parser:
         self.url_manager = url_manager
         self.storage = storage.Storage()
 
-    def parse(self, url, title, page_source, links, level):
+    def parse(self, url, title, page_source, level, links=None):
         # new_links = self.get_all_links(url, links)
         new_links_soup = self.get_all_links_soup(url, page_source)
         # print("selenium", len(new_links), "soup", len(new_links_soup))
@@ -111,45 +111,9 @@ class Parser:
             if href == "void(0)":
                 continue
             href = urljoin(base_url, href)
-            href = self.trim_trailing_slash(href)
 
             url = urlparse(href)
-            path = self.trim_trailing_slash(url.path)
-            href = url.scheme + "://" + url.netloc + path
-
-            # # print(href)
-            #
-            # """
-            # Special cases
-            # 1. <a href="#mainContent" class="skiplink">Skip to main content</a>
-            # 2. <a href=".">
-            # 3. <a href="/book" class="nprhome nprhome-news" data-metrics-action="click npr logo">
-            # 4. <a href="book">
-            # 5. <a href="https://google.com>
-            # """
-            # if href.startswith("#") or href.startswith("."):  # case 1, 2
-            #     continue
-            # if href.find("void(0)") != -1:
-            #     continue
-            #
-            # url = urlparse(href)
-            # # print(link.text)
-            # # ParseResult(scheme='https', netloc='www.npr.org', path='/sections/allsongs/2018/04/27/606066039/janelle-mon-e-strips-the-hardware-for-humanity', params='', query='', fragment='')
-            # # print(url)
-            #
-            # netloc = self.trim_trailing_slash(url.netloc)
-            # path = self.trim_trailing_slash(url.path)
-            #
-            # if href.startswith("http"):  # case 5
-            #     # get rid of param
-            #     href = url.scheme + "://" + netloc + path
-            # elif path != "" and not path.startswith("/"):  # case 4, use current url + path
-            #     path = "/" + path
-            #     href = original_url + path
-            # elif url.scheme == "" or (path != "" and path.startswith("/")):  # case 3, use base url + path
-            #     href = base_url + path
-            # else:
-            #     print("parsing failed", link, url)
+            href = url.scheme + "://" + url.netloc + url.path
 
             if self.is_current_site_url(href) and href != base_url:
                 result.append(href)
