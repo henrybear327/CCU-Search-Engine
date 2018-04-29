@@ -21,7 +21,7 @@ class Parser:
         self.url_manager = url_manager
         self.storage = storage.Storage()
 
-    def parse(self, url, title, page_source, level, links=None):
+    def parse(self, url, title, page_source, depth, links=None):
         # new_links = self.get_all_links(url, links)
         new_links_soup = self.get_all_links_soup(url, page_source)
         # print("selenium", len(new_links), "soup", len(new_links_soup))
@@ -37,8 +37,8 @@ class Parser:
         # sys.stderr.write("============================\n")
 
         if len(new_links_soup) > 0:
-            # self.url_manager.insert_new_urls(new_links, level)
-            self.url_manager.insert_new_urls(new_links_soup, level)
+            # self.url_manager.insert_new_urls(new_links, depth)
+            self.url_manager.insert_new_urls(new_links_soup, depth)
 
             self.storage.insert_record(url, title, page_source)
 
@@ -110,6 +110,9 @@ class Parser:
             href = str(link['href']).strip()
             if href == "void(0)":
                 continue
+            if href.startswith("mailto://"):
+                continue
+
             href = urljoin(base_url, href)
 
             url = urlparse(href)
