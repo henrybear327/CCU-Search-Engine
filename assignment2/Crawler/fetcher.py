@@ -34,8 +34,7 @@ class Fetcher:
         self.driver = webdriver.Chrome(chrome_options=chrome_options)
 
     def __del__(self):
-        if self.backend == "chrome":
-            self.driver.quit()
+        self.driver.quit()
 
     def is_response_200(self, url):
         try:
