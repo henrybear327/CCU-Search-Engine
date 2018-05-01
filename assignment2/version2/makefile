@@ -1,6 +1,6 @@
 all: main.go fetcher.go parser.go storage.go url_manager.go info.go
 	time go build -o crawler *.go
-	time ./crawler
-	
+	time ./crawler -cpuprofile=cpu.prof -memprofile=mem.prof
+
 clean: 
 	time go clean

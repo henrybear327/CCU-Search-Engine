@@ -64,3 +64,9 @@ start := time.Now()
 elapsed := time.Since(start)
 log.Printf("GetPageSource took %s", elapsed)
 ```
+
+## Profiler
+
+* [Reading](https://golang.org/pkg/runtime/pprof/)
+* `brew install Graphviz`
+* `go tool pprof cpu.prof` and type web for more detail
