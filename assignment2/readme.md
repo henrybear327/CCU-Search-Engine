@@ -27,17 +27,6 @@ Prototype first! Improvements come later!
     - [ ] space complexity improvement
     - [ ] check inSet before or after enqueuing?
 
-## Version 2
-
-Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
-
-* Master (Scheduler)
-* Fetcher (Downloader)
-* Parser
-    * robots.txt, sitemap.xml
-    * general webpages
-* URL Manager (queuing system)
-
 # Packages
 
 ## python
@@ -51,12 +40,6 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
     * ubuntu
         * `sudo service mongod start`
         * `systemctl enable mongod.service`
-
-## Golang
-
-* chromedp: headless browser
-* viper: config file
-* logrus: logger
 
 ## manual installation
 
