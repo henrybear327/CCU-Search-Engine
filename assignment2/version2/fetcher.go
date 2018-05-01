@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-// GetPageSource is a function that downloads page source and return it as a string
-// For static pages only
-func GetPageSource(url string) ([]byte, time.Duration, int) {
+// GetStaticSitePageSource is a function that downloads page source of assigned url
+// and return it as a []byte
+func GetStaticSitePageSource(url string) ([]byte, time.Duration, int) {
 	// download
 	startDownload := time.Now()
 

@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	pageSource, _, statusCode := GetPageSource("https://www.alexa.com/topsites/countries/TW")
+	pageSource, _, statusCode := GetStaticSitePageSource("https://www.alexa.com/topsites/countries/TW")
 	// fmt.Println(pageSource, elapsed, statusCode)
 	if statusCode == 200 {
 		topURLList := ParseAlexaTopSites(pageSource)

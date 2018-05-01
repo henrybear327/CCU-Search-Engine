@@ -8,8 +8,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// ParseAlexaTopSites is a function that takes a html source code string of Alexa top 50 site
-// and parse the top sites
+// ParseAlexaTopSites is a function that takes html source code of Alexa top 50 site
+// and parse the top sites out to an array of strings
 func ParseAlexaTopSites(pageSource []byte) []string {
 	// Load the HTML document
 	startParsing := time.Now()
