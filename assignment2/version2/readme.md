@@ -13,16 +13,16 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 
 ## external packages
 
-* chromedp: headless browser
+* goquery: html parser
 * toml: config file
-* viper: config file
+* chromedp: headless browser
 * logrus: logger
 * go-sqlite3: sqlite3 driver
 * goOse: main text extraction
-* goquery: html parser
 * Oneliner
 ```bash
 go get github.com/PuerkitoBio/goquery
+go get github.com/BurntSushi/toml
 ```
 
 ## internal packages

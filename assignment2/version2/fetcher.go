@@ -18,7 +18,7 @@ func GetStaticSitePageSource(url string) ([]byte, time.Duration, int) {
 	log.Printf("Downloading %s took %s", url, elapsedDownload)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln("GetStaticSitePageSource http.Get", err)
 	}
 	defer res.Body.Close()
 
@@ -27,7 +27,7 @@ func GetStaticSitePageSource(url string) ([]byte, time.Duration, int) {
 
 	robots, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln("GetStaticSitePageSource ioutil.ReadAll", err)
 	}
 
 	elapsedRead := time.Since(startRead)

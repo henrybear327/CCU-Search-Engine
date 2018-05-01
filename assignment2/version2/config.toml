@@ -1,0 +1,3 @@
+# Crawler config file
+
+AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW"
