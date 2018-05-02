@@ -35,6 +35,5 @@ func ParseAlexaTopSites(pageSource []byte) []string {
 	elapsedParsing := time.Since(startParsing)
 	log.Printf("Parsing top Alexa sites took %s", elapsedParsing)
 
-	OutputSeedingSites(topURLList)
 	return topURLList
 }

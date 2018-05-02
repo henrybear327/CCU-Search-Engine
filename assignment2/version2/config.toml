@@ -1,4 +1,6 @@
 # Crawler config file
 
 [site]
+useAlexaTopSites = false
 AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW"
+manualSeedURL = ["https://www.npr.org", "https://edition.cnn.com"]

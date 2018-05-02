@@ -9,7 +9,7 @@ import (
 
 // GetStaticSitePageSource is a function that downloads page source of assigned url
 // and return it as a []byte
-func GetStaticSitePageSource(url string) ([]byte, time.Duration, int) {
+func GetStaticSitePageSource(url string) ([]byte, int) {
 	// download
 	startDownload := time.Now()
 
@@ -32,5 +32,5 @@ func GetStaticSitePageSource(url string) ([]byte, time.Duration, int) {
 
 	elapsedRead := time.Since(startRead)
 	log.Printf("Extracting page source of %s took %s", url, elapsedRead)
-	return robots, elapsedDownload + elapsedRead, res.StatusCode
+	return robots, res.StatusCode
 }
