@@ -11,6 +11,11 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 
 # Golang
 
+## Development notes
+
+1. map is not thread safe, use go channels to pass data back and forth
+2. robots might be missing in robotsCollection for some url -> no robots.txt -> no limitations
+
 ## external packages
 
 * goquery: html parser

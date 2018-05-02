@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -129,7 +128,6 @@ func prepareSeedSites(seedSiteList []string) {
 	for _, url := range seedSiteList {
 		// parse robots.txt
 		go ParseRobotsTxt(url, done)
-		// <-done
 
 		// parse sitemap.xml
 
@@ -138,11 +136,17 @@ func prepareSeedSites(seedSiteList []string) {
 	}
 
 	robotsCollection := make(map[string]*robotstxt.RobotsData)
+	// cnt := 0
 	for i := 0; i < totalSites; i++ {
 		ret := <-done
 		robotsCollection[ret.url] = ret.robot
+
+		// if ret.robot != nil && len(ret.robot.Sitemaps) > 0 {
+		// 	cnt++
+		// }
 	}
-	fmt.Println(len(robotsCollection)) 
+	// fmt.Println(len(robotsCollection))
+	// fmt.Println("sitemap", cnt)
 }
 
 func main() {
