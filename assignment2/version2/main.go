@@ -15,13 +15,18 @@ import (
 )
 
 type config struct {
-	Site siteConfig // fuck it, need to start with an upper-case letter
+	Site   siteConfig // fuck it, need to start with an upper-case letter
+	Output outputConfig
 }
 
 type siteConfig struct {
 	UseAlexaTopSites bool
 	AlexaTopSitesURL string
 	ManualSeedFile   string
+}
+
+type outputConfig struct {
+	Seedfile string
 }
 
 func startCPUProfiling(cpuprofile *string) {
@@ -105,7 +110,7 @@ func getSeedSites(conf *config) []string {
 		}
 	}
 
-	OutputSeedingSites(seedSiteList)
+	OutputSeedingSites(seedSiteList, conf)
 	return seedSiteList
 }
 
