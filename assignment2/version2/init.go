@@ -26,7 +26,8 @@ type siteConfig struct {
 }
 
 type outputConfig struct {
-	Seedfile string
+	Seedfile          string
+	ParsingResultFile string
 }
 
 type systemConfig struct {
@@ -83,6 +84,8 @@ func parseConfigFile(conf *config) {
 	log.Println("AlexaTopSitesURL", conf.Site.AlexaTopSitesURL)
 	log.Println("ManualSeedURL", conf.Site.ManualSeedFile)
 	log.Println("MaxDistinctPagesToFetchPerSite", conf.System.MaxDistinctPagesToFetchPerSite)
+	log.Println("Seedfile", conf.Output.Seedfile)
+	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
 	log.Println("=====================")
 }
 
@@ -115,7 +118,7 @@ func getSeedSites(conf *config) []string {
 		}
 	}
 
-	OutputSeedingSites(seedSiteList, conf)
+	outputSeedingSites(seedSiteList, conf)
 	return seedSiteList
 }
 

@@ -65,7 +65,7 @@ func (manager *Manager) parseRobotsTxt() {
 		color.Unset()
 	}
 
-	fmt.Println("func", robotFileLink, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
+	// fmt.Println("func", robotFileLink, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
 	manager.robot = robot
 }
 
@@ -163,8 +163,7 @@ func (manager *Manager) parseSiteMap() {
 		manager.enqueue(manager.link)
 	}
 
-	log.Println("initial queue size", manager.urlQueue.Len())
-
 	elapsedParsing := time.Since(startParsing)
-	log.Println("Parsing XML takes", elapsedParsing)
+	fmt.Println(manager.link, "initial queue size", manager.urlQueue.Len())
+	fmt.Println("Parsing XML takes", elapsedParsing)
 }
