@@ -9,15 +9,15 @@ import (
 	"github.com/fatih/color"
 )
 
-// GetStaticSitePageSource is a function that downloads page source of assigned url
+// GetStaticSitePageSource is a function that downloads page source of assigned link
 // and return it as a []byte
-func GetStaticSitePageSource(url string) ([]byte, int) {
+func GetStaticSitePageSource(link string) ([]byte, int) {
 	// download
 	startDownload := time.Now()
 
-	res, err := http.Get(url)
+	res, err := http.Get(link)
 	elapsedDownload := time.Since(startDownload)
-	log.Printf("Downloading %s took %s", url, elapsedDownload)
+	log.Printf("Downloading %s took %s", link, elapsedDownload)
 
 	if err != nil {
 		color.Set(color.FgRed)
@@ -39,6 +39,6 @@ func GetStaticSitePageSource(url string) ([]byte, int) {
 	}
 
 	elapsedRead := time.Since(startRead)
-	log.Printf("Extracting page source of %s took %s", url, elapsedRead)
+	log.Printf("Extracting page source of %s took %s", link, elapsedRead)
 	return robots, res.StatusCode
 }

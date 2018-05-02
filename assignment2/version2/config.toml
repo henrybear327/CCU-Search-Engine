@@ -5,9 +5,22 @@
 # false = manualSeedURL
 useAlexaTopSites = false
  
-AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading protocal... QQ
-manualSeedFile = "data/seedingSites.txt"
-# manualSeedFile = "data/small.txt"
+AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading portocal... QQ
+# manualSeedFile = "data/seedingSites.txt"
+manualSeedFile = "data/small.txt"
+
+[system]
+maxTotalGoRoutines = 100 # during preparation, this is not enforced (seed site processing)
+maxGoRountinesPerSite = 2
+
+maxDistinctPagesToFetchPerSite = 50000
+maxTotalPagesToFetch = 2500000
+
+[behavior]
+timeout = 5 # page load timeout in seconds
+timeInterval = 5 # idle time between fetches in seconds
+
+reseedInterval = 24 # in hours
 
 [output]
 seedfile = "data/currentRunSeedSite.txt"

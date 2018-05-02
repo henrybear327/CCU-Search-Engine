@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 
 // ParseAlexaTopSites is a function that takes html source code of Alexa top 50 site
 // and parse the top sites out to an array of strings
-func ParseAlexaTopSites(pageSource []byte) []string {
+func parseAlexaTopSites(pageSource []byte) []string {
 	// Load the HTML document
 	startParsing := time.Now()
 
@@ -23,39 +24,36 @@ func ParseAlexaTopSites(pageSource []byte) []string {
 	}
 
 	// Find the review items
-	topURLList := make([]string, 0)
+	topLinkList := make([]string, 0)
 	// log.Println("Top Alexa sites are:")
 	// #alx-content > div > div > section.page-product-content.summary > span > span > div > div > div.listings.table > div:nth-child(2) > div.td.DescriptionCell > p > a
 	doc.Find("div.td.DescriptionCell p").Each(func(i int, s *goquery.Selection) {
 		// For each item found, get the band and title
-		url := s.Find("a").Text()
-		// log.Println(url)
+		link := s.Find("a").Text()
+		// log.Println(link)
 
-		topURLList = append(topURLList, url)
-		// topURLList = append(topURLList, "https://www."+url)
+		topLinkList = append(topLinkList, link)
+		// topLinkList = append(topLinkList, "https://www."+link)
 	})
 
 	elapsedParsing := time.Since(startParsing)
 	log.Printf("Parsing top Alexa sites took %s", elapsedParsing)
 
-	return topURLList
+	return topLinkList
 }
 
-func sendBotToChannel(url string, robot *robotstxt.RobotsData, done chan RobotData) {
-	done <- RobotData{url, robot}
-}
-
-// ParseRobotsTxt attempts parses the robots.txt file of the given url
-func ParseRobotsTxt(url string, done chan RobotData) {
-	origURL := url
-
-	url += "/robots.txt"
-	robotsFile, statusCode := GetStaticSitePageSource(url)
+// ParseRobotsTxt attempts parses the robots.txt file of the given link
+func (manager *Manager) parseRobotsTxt(link string, done chan bool) {
+	link += "/robots.txt"
+	robotsFile, statusCode := GetStaticSitePageSource(link)
 	if statusCode != 200 {
 		color.Set(color.FgRed)
-		log.Println("Error fetching robots.txt for site", url, statusCode)
+		log.Println("Error fetching robots.txt for site", link, statusCode)
 		color.Unset()
-		sendBotToChannel(origURL, nil, done)
+
+		manager.robot = nil
+		done <- true
+		return
 	}
 
 	robot, err := robotstxt.FromStatusAndBytes(statusCode, robotsFile)
@@ -65,6 +63,12 @@ func ParseRobotsTxt(url string, done chan RobotData) {
 		color.Unset()
 	}
 
-	// fmt.Println("func", url, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
-	sendBotToChannel(origURL, robot, done)
+	fmt.Println("func", link, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
+	manager.robot = robot
+	done <- true
+}
+
+// ParseSiteMap extracts all links available
+func (manager *Manager) parseSiteMap(link string, done chan bool) {
+
 }
