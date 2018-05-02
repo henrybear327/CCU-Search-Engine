@@ -86,10 +86,8 @@ func getSeedSites(conf *config) []string {
 		} else {
 			log.Fatalln("Top Alexa sites can't be parsed!")
 		}
-	} else {
-		topURLList = make([]string, len(conf.Site.ManualSeedURL))
-		copy(topURLList, conf.Site.ManualSeedURL)
 	}
+	topURLList = append(topURLList, conf.Site.ManualSeedURL...) // cool
 
 	OutputSeedingSites(topURLList)
 	return topURLList
