@@ -80,3 +80,7 @@ log.Printf("GetPageSource took %s", elapsed)
 * [Reading](https://golang.org/pkg/runtime/pprof/)
 * `brew install Graphviz`
 * `go tool pprof cpu.prof` and type web for more detail
+
+## Wait for all goroutines to finish
+
+* [reading](https://nathanleclaire.com/blog/2014/02/15/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing/)

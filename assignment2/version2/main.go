@@ -115,13 +115,20 @@ func getSeedSites(conf *config) []string {
 }
 
 func prepareSeedSites(seedSiteList []string) {
+	done := make(chan bool)
 	for _, url := range seedSiteList {
 		// parse robots.txt
-		ParseRobotsTxt(url)
+		go ParseRobotsTxt(url, done)
+		// <-done
 
 		// parse sitemap.xml
 
 		// prepare queue
+
+	}
+
+	for i := 0; i < len(seedSiteList); i++ {
+		<-done
 	}
 }
 

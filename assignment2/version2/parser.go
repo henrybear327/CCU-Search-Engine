@@ -42,8 +42,14 @@ func ParseAlexaTopSites(pageSource []byte) []string {
 	return topURLList
 }
 
+func sendTrueToChannel(done chan bool) {
+	done <- true
+}
+
 // ParseRobotsTxt attempts parses the robots.txt file of the given url
-func ParseRobotsTxt(url string) {
+func ParseRobotsTxt(url string, done chan bool) {
+	defer sendTrueToChannel(done)
+
 	url += "/robots.txt"
 	robotsFile, statusCode := GetStaticSitePageSource(url)
 	if statusCode != 200 {
