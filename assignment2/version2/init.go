@@ -112,31 +112,20 @@ func getSeedSites(conf *config) []string {
 	return seedSiteList
 }
 
-func prepareSeedSites(seedSiteList []string) {
+func prepareSeedSites(seedSiteList []string) map[string]Manager {
 	totalSites := len(seedSiteList)
 	managers := make(map[string]Manager)
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
 		managers[link] = Manager{link: link}
-
-		// parse robots.txt
 		cur := managers[link]
-		go cur.parseRobotsTxt(link, done)
-
-		// u, err := url.Parse(link)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// fmt.Println("url decompose", u.Scheme, u.Host, u.Path, u.RawQuery)
-
-		// parse sitemap.xml
-
-		// prepare queue
-
+		go cur.preprocess(done)
 	}
 
 	for i := 0; i < totalSites; i++ {
 		<-done
 	}
+
+	return managers
 }

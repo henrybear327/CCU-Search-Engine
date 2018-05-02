@@ -89,3 +89,13 @@ log.Printf("GetPageSource took %s", elapsed)
 ## Wait for all goroutines to finish
 
 * [reading](https://nathanleclaire.com/blog/2014/02/15/how-to-wait-for-all-goroutines-to-finish-executing-before-continuing/)
+
+## URL decomposition
+
+```go
+u, err := url.Parse(link)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println("url decompose", u.Scheme, u.Host, u.Path, u.RawQuery)
+```

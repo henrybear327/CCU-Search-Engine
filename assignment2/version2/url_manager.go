@@ -1,7 +1,10 @@
 package main
 
-import "github.com/temoto/robotstxt"
-import "container/list"
+import (
+	"container/list"
+
+	"github.com/temoto/robotstxt"
+)
 
 // Manager is the heart of every seed website
 type Manager struct {
@@ -9,4 +12,14 @@ type Manager struct {
 	robot    *robotstxt.RobotsData
 	urlQueue *list.List
 	urlSeen  map[string]bool
+}
+
+func (manager *Manager) preprocess(done chan bool) {
+	// parse robots.txt
+	manager.parseRobotsTxt()
+
+	// parse sitemap.xml (prepare queue)
+	manager.parseSiteMap()
+
+	done <- true
 }

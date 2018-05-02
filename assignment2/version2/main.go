@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	_ "net/http/pprof"
 )
 
@@ -10,5 +11,7 @@ func main() {
 
 	// scheduler starts here!
 	seedSiteList := getSeedSites(&conf)
-	prepareSeedSites(seedSiteList)
+	managers := prepareSeedSites(seedSiteList)
+
+	fmt.Println("Manager count", len(managers))
 }

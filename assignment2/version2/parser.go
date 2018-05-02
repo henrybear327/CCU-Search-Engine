@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"container/list"
 	"fmt"
 	"log"
 	"time"
@@ -43,16 +44,15 @@ func parseAlexaTopSites(pageSource []byte) []string {
 }
 
 // ParseRobotsTxt attempts parses the robots.txt file of the given link
-func (manager *Manager) parseRobotsTxt(link string, done chan bool) {
-	link += "/robots.txt"
-	robotsFile, statusCode := GetStaticSitePageSource(link)
+func (manager *Manager) parseRobotsTxt() {
+	robotFileLink := manager.link + "/robots.txt"
+	robotsFile, statusCode := GetStaticSitePageSource(robotFileLink)
 	if statusCode != 200 {
 		color.Set(color.FgRed)
-		log.Println("Error fetching robots.txt for site", link, statusCode)
+		log.Println("Error fetching robots.txt for site", robotFileLink, statusCode)
 		color.Unset()
 
 		manager.robot = nil
-		done <- true
 		return
 	}
 
@@ -63,12 +63,16 @@ func (manager *Manager) parseRobotsTxt(link string, done chan bool) {
 		color.Unset()
 	}
 
-	fmt.Println("func", link, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
+	fmt.Println("func", robotFileLink, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
 	manager.robot = robot
-	done <- true
 }
 
 // ParseSiteMap extracts all links available
-func (manager *Manager) parseSiteMap(link string, done chan bool) {
-
+func (manager *Manager) parseSiteMap() {
+	manager.urlQueue = list.New()
+	if manager.robot == nil || len(manager.robot.Sitemaps) == 0 { // no sitemap
+		manager.urlQueue.PushBack(manager.link)
+	} else {
+		// dfs
+	}
 }
