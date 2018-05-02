@@ -19,6 +19,7 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 * logrus: logger
 * go-sqlite3: sqlite3 driver
 * goOse: main text extraction
+* robotstxt: parse robots.txt rules
 * Oneliner
 ```bash
 go get github.com/PuerkitoBio/goquery

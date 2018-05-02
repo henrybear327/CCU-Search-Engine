@@ -13,19 +13,25 @@ import (
 )
 
 type config struct {
+	Site siteConfig // fuck it, need to start with an upper-case letter
+}
+
+type siteConfig struct {
 	AlexaTopSitesURL string
 }
 
 func parseConfigFile(conf *config) {
 	var configFilePath string
 	flag.StringVar(&configFilePath, "configFile", "config.toml", "path to toml config file")
-	log.Println("Using config file", configFilePath)
 	flag.Parse()
+	log.Println("Using config file", configFilePath)
 
-	if _, err := toml.DecodeFile(configFilePath, conf); err != nil {
+	md, err := toml.DecodeFile(configFilePath, conf)
+	if err != nil {
 		log.Fatalln("Parsing config file error", err)
 	}
-	log.Println("Seed", conf.AlexaTopSitesURL)
+	log.Printf("Undecoded keys: %q\n", md.Undecoded())
+	log.Println("Seed", conf.Site.AlexaTopSitesURL)
 }
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
@@ -50,7 +56,7 @@ func main() {
 	parseConfigFile(&conf)
 
 	// scheduler starts here!
-	pageSource, _, statusCode := GetStaticSitePageSource(conf.AlexaTopSitesURL)
+	pageSource, _, statusCode := GetStaticSitePageSource(conf.Site.AlexaTopSitesURL)
 	// fmt.Println(pageSource, elapsed, statusCode)
 	if statusCode == 200 {
 		topURLList := ParseAlexaTopSites(pageSource)

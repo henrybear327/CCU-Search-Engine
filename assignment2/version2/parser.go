@@ -22,17 +22,19 @@ func ParseAlexaTopSites(pageSource []byte) []string {
 
 	// Find the review items
 	topURLList := make([]string, 0)
-	log.Println("Top Alexa sites are:")
+	// log.Println("Top Alexa sites are:")
 	// #alx-content > div > div > section.page-product-content.summary > span > span > div > div > div.listings.table > div:nth-child(2) > div.td.DescriptionCell > p > a
 	doc.Find("div.td.DescriptionCell p").Each(func(i int, s *goquery.Selection) {
 		// For each item found, get the band and title
 		url := s.Find("a").Text()
-		log.Println(url)
+		// log.Println(url)
 
 		topURLList = append(topURLList, url)
 	})
 
 	elapsedParsing := time.Since(startParsing)
 	log.Printf("Parsing top Alexa sites took %s", elapsedParsing)
+
+	OutputSeedingSites(topURLList)
 	return topURLList
 }
