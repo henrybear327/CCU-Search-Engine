@@ -99,3 +99,7 @@ if err != nil {
 }
 fmt.Println("url decompose", u.Scheme, u.Host, u.Path, u.RawQuery)
 ```
+
+## XML parsing 
+
+* [reading](https://tutorialedge.net/golang/parsing-xml-with-golang/)

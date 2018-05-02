@@ -11,7 +11,7 @@ func main() {
 
 	// scheduler starts here!
 	seedSiteList := getSeedSites(&conf)
-	managers := prepareSeedSites(seedSiteList)
+	managers := prepareSeedSites(seedSiteList, &conf)
 
 	fmt.Println("Manager count", len(managers))
 }

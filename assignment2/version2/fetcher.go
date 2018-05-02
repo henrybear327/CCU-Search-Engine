@@ -11,7 +11,7 @@ import (
 
 // GetStaticSitePageSource is a function that downloads page source of assigned link
 // and return it as a []byte
-func GetStaticSitePageSource(link string) ([]byte, int) {
+func getStaticSitePageSource(link string) ([]byte, int) {
 	// download
 	startDownload := time.Now()
 

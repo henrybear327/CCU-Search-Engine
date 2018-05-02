@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"container/list"
+	"encoding/xml"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -46,7 +48,7 @@ func parseAlexaTopSites(pageSource []byte) []string {
 // ParseRobotsTxt attempts parses the robots.txt file of the given link
 func (manager *Manager) parseRobotsTxt() {
 	robotFileLink := manager.link + "/robots.txt"
-	robotsFile, statusCode := GetStaticSitePageSource(robotFileLink)
+	robotsFile, statusCode := getStaticSitePageSource(robotFileLink)
 	if statusCode != 200 {
 		color.Set(color.FgRed)
 		log.Println("Error fetching robots.txt for site", robotFileLink, statusCode)
@@ -67,12 +69,102 @@ func (manager *Manager) parseRobotsTxt() {
 	manager.robot = robot
 }
 
+type sitemapSection struct {
+	Sitemap []sitemapSectionNode `xml:"sitemap"`
+}
+
+type sitemapSectionNode struct {
+	Loc string `xml:"loc"` // url
+}
+
+type sitemapURL struct {
+	URL []sitemapURLNode `xml:"url"`
+}
+
+type sitemapURLNode struct {
+	Loc string `xml:"loc"` // url
+}
+
+func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
+	if strings.HasSuffix(link, ".xml") == false {
+		manager.enqueue(link)
+
+		done <- true
+		return
+	}
+
+	pageSource, statusCode := getStaticSitePageSource(link)
+	if statusCode != 200 {
+		done <- true
+		return
+	}
+
+	// parse (section xml)
+	var data sitemapSection
+	err := xml.Unmarshal(pageSource, &data)
+	if err != nil {
+		log.Println("XML parsing error", err)
+		done <- true
+		return
+	}
+
+	if len(data.Sitemap) == 0 {
+		// not section xml, it's link xml!
+		var data sitemapURL
+		err := xml.Unmarshal(pageSource, &data)
+		if err != nil {
+			log.Println("XML parsing error", err)
+			done <- true
+			return
+		}
+
+		blocking := make(chan bool)
+		for _, rec := range data.URL {
+			// fmt.Println("link", rec.Loc)
+			go manager.generateLinksFromSitemap(rec.Loc, blocking)
+			<-blocking
+		}
+	} else {
+		blocking := make(chan bool)
+		for _, rec := range data.Sitemap {
+			// fmt.Println("link", rec.Loc)
+			go manager.generateLinksFromSitemap(rec.Loc, blocking)
+		}
+
+		for i := 0; i < len(data.Sitemap); i++ {
+			<-blocking
+		}
+	}
+
+	done <- true
+}
+
 // ParseSiteMap extracts all links available
 func (manager *Manager) parseSiteMap() {
+	startParsing := time.Now()
+
 	manager.urlQueue = list.New()
+
 	if manager.robot == nil || len(manager.robot.Sitemaps) == 0 { // no sitemap
-		manager.urlQueue.PushBack(manager.link)
+		manager.enqueue(manager.link)
 	} else {
-		// dfs
+		done := make(chan bool)
+		for _, mapLink := range manager.robot.Sitemaps {
+			// dfs
+			go manager.generateLinksFromSitemap(mapLink, done)
+		}
+
+		for i := 0; i < len(manager.robot.Sitemaps); i++ {
+			<-done
+		}
 	}
+
+	if manager.urlQueue.Len() == 0 {
+		manager.enqueue(manager.link)
+	}
+
+	log.Println("initial queue size", manager.urlQueue.Len())
+
+	elapsedParsing := time.Since(startParsing)
+	log.Println("Parsing XML takes", elapsedParsing)
 }

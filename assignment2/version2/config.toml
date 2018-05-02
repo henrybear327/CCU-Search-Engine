@@ -16,7 +16,6 @@ maxGoRountinesPerSite = 2
 maxDistinctPagesToFetchPerSite = 50000
 maxTotalPagesToFetch = 2500000
 
-[behavior]
 timeout = 5 # page load timeout in seconds
 timeInterval = 5 # idle time between fetches in seconds
 

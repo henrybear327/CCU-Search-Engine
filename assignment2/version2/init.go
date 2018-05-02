@@ -8,6 +8,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/pprof"
+	"sync"
 
 	"github.com/BurntSushi/toml"
 )
@@ -15,6 +16,7 @@ import (
 type config struct {
 	Site   siteConfig // fuck it, need to start with an upper-case letter
 	Output outputConfig
+	System systemConfig
 }
 
 type siteConfig struct {
@@ -25,6 +27,10 @@ type siteConfig struct {
 
 type outputConfig struct {
 	Seedfile string
+}
+
+type systemConfig struct {
+	MaxDistinctPagesToFetchPerSite int
 }
 
 func startCPUProfiling(cpuprofile *string) {
@@ -76,6 +82,7 @@ func parseConfigFile(conf *config) {
 	log.Println("UseAlexaTopSites", conf.Site.UseAlexaTopSites)
 	log.Println("AlexaTopSitesURL", conf.Site.AlexaTopSitesURL)
 	log.Println("ManualSeedURL", conf.Site.ManualSeedFile)
+	log.Println("MaxDistinctPagesToFetchPerSite", conf.System.MaxDistinctPagesToFetchPerSite)
 	log.Println("=====================")
 }
 
@@ -83,7 +90,7 @@ func getSeedSites(conf *config) []string {
 	var seedSiteList []string
 
 	if conf.Site.UseAlexaTopSites {
-		pageSource, statusCode := GetStaticSitePageSource(conf.Site.AlexaTopSitesURL)
+		pageSource, statusCode := getStaticSitePageSource(conf.Site.AlexaTopSitesURL)
 		// fmt.Println(pageSource, statusCode)
 		if statusCode == 200 {
 			seedSiteList = parseAlexaTopSites(pageSource)
@@ -112,13 +119,13 @@ func getSeedSites(conf *config) []string {
 	return seedSiteList
 }
 
-func prepareSeedSites(seedSiteList []string) map[string]Manager {
+func prepareSeedSites(seedSiteList []string, conf *config) map[string]Manager {
 	totalSites := len(seedSiteList)
 	managers := make(map[string]Manager)
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
-		managers[link] = Manager{link: link}
+		managers[link] = Manager{link: link, conf: conf, urlQueueLock: new(sync.Mutex)}
 		cur := managers[link]
 		go cur.preprocess(done)
 	}
