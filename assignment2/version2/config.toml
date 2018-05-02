@@ -1,9 +1,9 @@
 # Crawler config file
 
 [site]
-# true = AlexaTopSitesURL + manualSeedURL
+# true = AlexaTopSitesURL 
 # false = manualSeedURL
-useAlexaTopSites = true
+useAlexaTopSites = false
  
-AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW"
-manualSeedURL = ["https://www.npr.org", "https://edition.cnn.com"]
+AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading protocal... QQ
+manualSeedFile = "output/seedingSites.txt"

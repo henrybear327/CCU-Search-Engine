@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"flag"
+	"io"
 	"log"
 	"os"
 	"runtime"
@@ -19,7 +21,7 @@ type config struct {
 type siteConfig struct {
 	UseAlexaTopSites bool
 	AlexaTopSitesURL string
-	ManualSeedURL    []string
+	ManualSeedFile   string
 }
 
 func startCPUProfiling(cpuprofile *string) {
@@ -70,27 +72,52 @@ func parseConfigFile(conf *config) {
 	log.Println("=====config file=====")
 	log.Println("UseAlexaTopSites", conf.Site.UseAlexaTopSites)
 	log.Println("AlexaTopSitesURL", conf.Site.AlexaTopSitesURL)
-	log.Println("ManualSeedURL", conf.Site.ManualSeedURL)
+	log.Println("ManualSeedURL", conf.Site.ManualSeedFile)
 	log.Println("=====================")
 }
 
 func getSeedSites(conf *config) []string {
-	var topURLList []string
+	var seedSiteList []string
 
 	if conf.Site.UseAlexaTopSites {
 		pageSource, statusCode := GetStaticSitePageSource(conf.Site.AlexaTopSitesURL)
 		// fmt.Println(pageSource, statusCode)
 		if statusCode == 200 {
-			topURLList = ParseAlexaTopSites(pageSource)
-			log.Println("Total seeding sites", len(topURLList))
+			seedSiteList = ParseAlexaTopSites(pageSource)
+			log.Println("Total seeding sites", len(seedSiteList))
 		} else {
 			log.Fatalln("Top Alexa sites can't be parsed!")
 		}
-	}
-	topURLList = append(topURLList, conf.Site.ManualSeedURL...) // cool
+	} else {
+		f, err := os.Open(conf.Site.ManualSeedFile)
+		check(err)
+		// seedSiteList = append(seedSiteList, conf.Site.ManualSeedURL...) // cool
 
-	OutputSeedingSites(topURLList)
-	return topURLList
+		r := bufio.NewReader(f)
+
+		for {
+			str, _, err := r.ReadLine()
+			if err == io.EOF {
+				break
+			}
+			check(err)
+			seedSiteList = append(seedSiteList, string(str))
+		}
+	}
+
+	OutputSeedingSites(seedSiteList)
+	return seedSiteList
+}
+
+func prepareSeedSites(seedSiteList []string) {
+	for _, url := range seedSiteList {
+		// parse robots.txt
+		ParseRobotsTxt(url)
+
+		// parse sitemap.xml
+
+		// prepare queue
+	}
 }
 
 func main() {
@@ -99,5 +126,6 @@ func main() {
 	parseConfigFile(&conf)
 
 	// scheduler starts here!
-	getSeedSites(&conf)
+	seedSiteList := getSeedSites(&conf)
+	prepareSeedSites(seedSiteList)
 }

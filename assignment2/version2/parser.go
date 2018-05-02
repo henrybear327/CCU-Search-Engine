@@ -2,10 +2,13 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
+	"github.com/temoto/robotstxt"
 )
 
 // ParseAlexaTopSites is a function that takes html source code of Alexa top 50 site
@@ -30,10 +33,30 @@ func ParseAlexaTopSites(pageSource []byte) []string {
 		// log.Println(url)
 
 		topURLList = append(topURLList, url)
+		// topURLList = append(topURLList, "https://www."+url)
 	})
 
 	elapsedParsing := time.Since(startParsing)
 	log.Printf("Parsing top Alexa sites took %s", elapsedParsing)
 
 	return topURLList
+}
+
+// ParseRobotsTxt attempts parses the robots.txt file of the given url
+func ParseRobotsTxt(url string) {
+	url += "/robots.txt"
+	robotsFile, statusCode := GetStaticSitePageSource(url)
+	if statusCode != 200 {
+		color.Set(color.FgRed)
+		log.Println("Error fetching robots.txt for site", url, statusCode)
+		color.Unset()
+		return
+	}
+	robots, err := robotstxt.FromStatusAndBytes(statusCode, robotsFile)
+	if err != nil {
+		color.Set(color.FgRed)
+		log.Println("Error parsing robots.txt", err)
+		color.Unset()
+	}
+	fmt.Println(robots)
 }

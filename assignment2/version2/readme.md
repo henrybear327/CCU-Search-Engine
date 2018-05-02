@@ -14,16 +14,25 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 ## external packages
 
 * goquery: html parser
-* toml: config file
+* BurntSushi/toml: config file
+* robotstxt: parse robots.txt rules
+* color: terminal output color
+
+### candidates 
+
 * chromedp: headless browser
 * logrus: logger
 * go-sqlite3: sqlite3 driver
 * goOse: main text extraction
-* robotstxt: parse robots.txt rules
 * Oneliner
+
+### Installation
+
 ```bash
 go get github.com/PuerkitoBio/goquery
 go get github.com/BurntSushi/toml
+go get github.com/temoto/robotstxt
+go get github.com/fatih/color
 ```
 
 ## internal packages

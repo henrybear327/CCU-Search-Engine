@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 // GetStaticSitePageSource is a function that downloads page source of assigned url
@@ -18,7 +20,10 @@ func GetStaticSitePageSource(url string) ([]byte, int) {
 	log.Printf("Downloading %s took %s", url, elapsedDownload)
 
 	if err != nil {
-		log.Fatalln("GetStaticSitePageSource http.Get", err)
+		color.Set(color.FgRed)
+		log.Println("GetStaticSitePageSource http.Get", err)
+		color.Unset()
+		return make([]byte, 0), -1
 	}
 	defer res.Body.Close()
 
@@ -27,7 +32,10 @@ func GetStaticSitePageSource(url string) ([]byte, int) {
 
 	robots, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatalln("GetStaticSitePageSource ioutil.ReadAll", err)
+		color.Set(color.FgRed)
+		log.Println("GetStaticSitePageSource ioutil.ReadAll", err)
+		color.Unset()
+		return make([]byte, 0), -1
 	}
 
 	elapsedRead := time.Since(startRead)
