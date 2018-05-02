@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"runtime/pprof"
 
 	"github.com/BurntSushi/toml"
+	"github.com/temoto/robotstxt"
 
 	_ "net/http/pprof"
 )
@@ -114,8 +116,16 @@ func getSeedSites(conf *config) []string {
 	return seedSiteList
 }
 
+// RobotData for channel communication
+type RobotData struct {
+	url   string
+	robot *robotstxt.RobotsData
+}
+
 func prepareSeedSites(seedSiteList []string) {
-	done := make(chan bool)
+	totalSites := len(seedSiteList)
+	done := make(chan RobotData, totalSites)
+
 	for _, url := range seedSiteList {
 		// parse robots.txt
 		go ParseRobotsTxt(url, done)
@@ -127,9 +137,12 @@ func prepareSeedSites(seedSiteList []string) {
 
 	}
 
-	for i := 0; i < len(seedSiteList); i++ {
-		<-done
+	robotsCollection := make(map[string]*robotstxt.RobotsData)
+	for i := 0; i < totalSites; i++ {
+		ret := <-done
+		robotsCollection[ret.url] = ret.robot
 	}
+	fmt.Println(len(robotsCollection)) 
 }
 
 func main() {

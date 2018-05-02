@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"time"
 
@@ -42,13 +41,13 @@ func ParseAlexaTopSites(pageSource []byte) []string {
 	return topURLList
 }
 
-func sendTrueToChannel(done chan bool) {
-	done <- true
+func sendBotToChannel(url string, robot *robotstxt.RobotsData, done chan RobotData) {
+	done <- RobotData{url, robot}
 }
 
 // ParseRobotsTxt attempts parses the robots.txt file of the given url
-func ParseRobotsTxt(url string, done chan bool) {
-	defer sendTrueToChannel(done)
+func ParseRobotsTxt(url string, done chan RobotData) {
+	origURL := url
 
 	url += "/robots.txt"
 	robotsFile, statusCode := GetStaticSitePageSource(url)
@@ -56,13 +55,16 @@ func ParseRobotsTxt(url string, done chan bool) {
 		color.Set(color.FgRed)
 		log.Println("Error fetching robots.txt for site", url, statusCode)
 		color.Unset()
-		return
+		sendBotToChannel(origURL, nil, done)
 	}
-	robots, err := robotstxt.FromStatusAndBytes(statusCode, robotsFile)
+
+	robot, err := robotstxt.FromStatusAndBytes(statusCode, robotsFile)
 	if err != nil {
 		color.Set(color.FgRed)
 		log.Println("Error parsing robots.txt", err)
 		color.Unset()
 	}
-	fmt.Println(robots)
+
+	// fmt.Println("func", url, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
+	sendBotToChannel(origURL, robot, done)
 }
