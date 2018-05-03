@@ -15,6 +15,7 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 
 1. map is not thread safe, use go channels to pass data back and forth
 2. robots might be missing in robotsCollection for some url -> no robots.txt -> no limitations
+3. Trim string! Can't emphasize more!
 
 ## external packages
 
@@ -71,6 +72,12 @@ var str string = string(data[:])
 res := bytes.NewReader(pageSource)
 ```
 
+## `io.Reader` to `[]byte`
+
+```go
+robots, err := ioutil.ReadAll(res.Body)
+```
+
 ## Function timer
 
 ```go
@@ -103,3 +110,8 @@ fmt.Println("url decompose", u.Scheme, u.Host, u.Path, u.RawQuery)
 ## XML parsing 
 
 * [reading](https://tutorialedge.net/golang/parsing-xml-with-golang/)
+
+## Map locking
+
+* [reading](https://blog.golang.org/go-maps-in-action)
+    * `RWLock` has `Lock` and `Rlock`

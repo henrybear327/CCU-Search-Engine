@@ -134,7 +134,14 @@ func prepareSeedSites(seedSiteList []string, conf *config) map[string]Manager {
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
-		managers[link] = Manager{link: link, conf: conf, urlQueueLock: new(sync.Mutex)}
+		managers[link] = Manager{
+			link:           link,
+			conf:           conf,
+			urlQueueLock:   new(sync.RWMutex),
+			urlInQueueLock: new(sync.RWMutex),
+			urlFetchedLock: new(sync.RWMutex),
+			urlFetched:     make(map[string]bool),
+			urlInQueue:     make(map[string]bool)}
 		cur := managers[link]
 		go cur.preprocess(done)
 	}

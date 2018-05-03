@@ -2,9 +2,11 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"container/list"
 	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
 	"time"
@@ -85,26 +87,36 @@ type sitemapURLNode struct {
 	Loc string `xml:"loc"` // url
 }
 
-func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
-	if strings.HasSuffix(link, ".xml") == false {
-		manager.enqueue(link)
-
-		done <- true
-		return
-	}
-
-	pageSource, statusCode := getStaticSitePageSource(link)
+func (manager *Manager) processgzFile(link string) {
+	// fmt.Println("processgzFile")
+	compressedPageSource, statusCode := getStaticSitePageSource(link)
 	if statusCode != 200 {
-		done <- true
+		fmt.Println(statusCode)
 		return
 	}
 
+	res := bytes.NewReader(compressedPageSource)
+
+	gzf, err := gzip.NewReader(res)
+	if err != nil {
+		log.Println(err)
+	}
+
+	pageSource, err := ioutil.ReadAll(gzf)
+	if err != nil {
+		log.Println(err)
+	}
+
+	manager.parseXMLContent(pageSource)
+}
+
+func (manager *Manager) parseXMLContent(pageSource []byte) {
+	// fmt.Println("parseXMLContent")
 	// parse (section xml)
 	var data sitemapSection
 	err := xml.Unmarshal(pageSource, &data)
 	if err != nil {
 		log.Println("XML parsing error", err)
-		done <- true
 		return
 	}
 
@@ -114,7 +126,6 @@ func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
 		err := xml.Unmarshal(pageSource, &data)
 		if err != nil {
 			log.Println("XML parsing error", err)
-			done <- true
 			return
 		}
 
@@ -135,7 +146,36 @@ func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
 			<-blocking
 		}
 	}
+}
 
+func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
+	link = strings.TrimSpace(link)
+	// log.Println("Now DFS", link, manager.isInQueueOrFetched(link))
+	if manager.isInQueueOrFetched(link) {
+		done <- true
+		return
+	}
+
+	if strings.HasSuffix(link, ".gz") {
+		manager.processgzFile(link)
+		done <- true
+		return
+	}
+
+	if strings.HasSuffix(link, ".xml") == false {
+		manager.enqueue(link)
+
+		done <- true
+		return
+	}
+
+	pageSource, statusCode := getStaticSitePageSource(link)
+	if statusCode != 200 {
+		done <- true
+		return
+	}
+
+	manager.parseXMLContent(pageSource)
 	done <- true
 }
 
@@ -163,9 +203,9 @@ func (manager *Manager) parseSiteMap() {
 		manager.enqueue(manager.link)
 	}
 
-	for e := manager.urlQueue.Front(); e != nil; e = e.Next() {
-		fmt.Println(e.Value.(string))
-	}
+	// for e := manager.urlQueue.Front(); e != nil; e = e.Next() {
+	// 	fmt.Println(e.Value.(string))
+	// }
 
 	elapsedParsing := time.Since(startParsing)
 	fmt.Println(manager.link, "initial queue size", manager.urlQueue.Len())
