@@ -2,16 +2,20 @@ package main
 
 import (
 	"container/list"
+	"fmt"
+	"net/url"
 	"strings"
 	"sync"
 
 	"github.com/temoto/robotstxt"
+	"golang.org/x/net/publicsuffix"
 )
 
 // Manager is the heart of every seed website
 // Be aware of locking
 type Manager struct {
 	link       string
+	tld        string
 	robot      *robotstxt.RobotsData
 	urlQueue   *list.List
 	urlFetched map[string]bool
@@ -54,7 +58,21 @@ func (manager *Manager) isInQueueOrFetched(link string) bool {
 func (manager *Manager) isExternalSite(link string) bool {
 	link = strings.TrimSpace(link)
 
-	return false
+	parsed, err := url.Parse(link)
+	if err != nil {
+		fmt.Println("isExternalSite url parse err", err)
+		return true // can't parse, disregard
+	}
+
+	// fmt.Println(parsed.Host, parsed.Path)
+	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(parsed.Host)
+	if err != nil {
+		fmt.Println("isExternalSite EffectiveTLDPlusOne err", err)
+		return true // can't parse, disregard
+	}
+	// fmt.Println(manager.tld, link, parsed.Host, "hey", linkTLD)
+
+	return manager.tld == linkTLD
 }
 
 func (manager *Manager) addToFetched(link string) {

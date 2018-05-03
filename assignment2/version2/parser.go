@@ -91,7 +91,6 @@ func (manager *Manager) processgzFile(link string) {
 	// fmt.Println("processgzFile")
 	compressedPageSource, statusCode := getStaticSitePageSource(link)
 	if statusCode != 200 {
-		fmt.Println(statusCode)
 		return
 	}
 
@@ -118,7 +117,7 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 	var data sitemapSection
 	err := xml.Unmarshal(pageSource, &data)
 	if err != nil {
-		log.Println("XML parsing error", err)
+		log.Println("parse sitemapSection error", err)
 		return
 	}
 
@@ -127,7 +126,9 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 		var data sitemapURL
 		err := xml.Unmarshal(pageSource, &data)
 		if err != nil {
-			log.Println("XML parsing error", err)
+			color.Set(color.FgRed)
+			log.Println("parse sitemapURL error", err)
+			color.Unset()
 			return
 		}
 
@@ -135,6 +136,10 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 		for _, rec := range data.URL {
 			// fmt.Println("link", rec.Loc)
 			go manager.generateLinksFromSitemap(rec.Loc, blocking)
+			// <-blocking
+		}
+
+		for i := 0; i < len(data.URL); i++ {
 			<-blocking
 		}
 	} else {
@@ -142,6 +147,7 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 		for _, rec := range data.Sitemap {
 			// fmt.Println("link", rec.Loc)
 			go manager.generateLinksFromSitemap(rec.Loc, blocking)
+			// <-blocking
 		}
 
 		for i := 0; i < len(data.Sitemap); i++ {
@@ -154,6 +160,11 @@ func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
 	link = strings.TrimSpace(link)
 	// log.Println("Now DFS", link, manager.isInQueueOrFetched(link))
 	if manager.isInQueueOrFetched(link) {
+		done <- true
+		return
+	}
+
+	if manager.isExternalSite(link) {
 		done <- true
 		return
 	}
