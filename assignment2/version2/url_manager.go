@@ -51,6 +51,12 @@ func (manager *Manager) isInQueueOrFetched(link string) bool {
 	return false
 }
 
+func (manager *Manager) isExternalSite(link string) bool {
+	link = strings.TrimSpace(link)
+
+	return false
+}
+
 func (manager *Manager) enqueue(link string) {
 	link = strings.TrimSpace(link)
 	/*
@@ -59,10 +65,19 @@ func (manager *Manager) enqueue(link string) {
 		2. v already fetched
 		3. x main text hash collision (?)
 		4. x ending with unwanted filetype
-		5. x link is going to external site
+		5. v link is going to external site
+		6. v against robot rules
 	*/
 
 	if manager.isInQueueOrFetched(link) {
+		return
+	}
+
+	if manager.robot.TestAgent(link, "CCU-Assignment-Bot") == false {
+		return
+	}
+
+	if manager.isExternalSite(link) {
 		return
 	}
 

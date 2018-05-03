@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	_ "net/http/pprof"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 func main() {
@@ -14,4 +16,10 @@ func main() {
 	managers := prepareSeedSites(seedSiteList, &conf)
 
 	fmt.Println("Manager count", len(managers))
+
+	tld, err := publicsuffix.EffectiveTLDPlusOne("https://google.com.tw")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(tld)
 }
