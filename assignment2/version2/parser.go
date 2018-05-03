@@ -165,6 +165,7 @@ func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
 	}
 
 	if manager.isExternalSite(link) {
+		fmt.Println("Is external site", link)
 		done <- true
 		return
 	}

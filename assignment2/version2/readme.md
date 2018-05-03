@@ -16,6 +16,7 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 1. map is not thread safe, use go channels to pass data back and forth
 2. robots might be missing in robotsCollection for some url -> no robots.txt -> no limitations
 3. Trim string! Can't emphasize more!
+4. `google.com.tw` tld != `google.com`
 
 ## external packages
 

@@ -5,7 +5,6 @@ import (
 	"flag"
 	"io"
 	"log"
-	"net/url"
 	"os"
 	"runtime"
 	"runtime/pprof"
@@ -135,11 +134,6 @@ func prepareSeedSites(seedSiteList []string, conf *config) map[string]Manager {
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
-		parsed, err := url.Parse(link)
-		if err != nil {
-			log.Fatalln("Seed site can't be parsed", err)
-		}
-
 		managers[link] = Manager{
 			link:           link,
 			conf:           conf,
@@ -148,7 +142,7 @@ func prepareSeedSites(seedSiteList []string, conf *config) map[string]Manager {
 			urlFetchedLock: new(sync.RWMutex),
 			urlFetched:     make(map[string]bool),
 			urlInQueue:     make(map[string]bool),
-			tld:            parsed.Host}
+			tld:            getTLD(link)}
 
 		cur := managers[link]
 		go cur.preprocess(done)

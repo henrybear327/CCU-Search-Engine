@@ -55,6 +55,15 @@ func (manager *Manager) isInQueueOrFetched(link string) bool {
 	return false
 }
 
+func getTLD(link string) string {
+	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(link)
+	if err != nil {
+		fmt.Println("isExternalSite EffectiveTLDPlusOne err", err)
+		return ""
+	}
+	return linkTLD
+}
+
 func (manager *Manager) isExternalSite(link string) bool {
 	link = strings.TrimSpace(link)
 
@@ -65,14 +74,10 @@ func (manager *Manager) isExternalSite(link string) bool {
 	}
 
 	// fmt.Println(parsed.Host, parsed.Path)
-	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(parsed.Host)
-	if err != nil {
-		fmt.Println("isExternalSite EffectiveTLDPlusOne err", err)
-		return true // can't parse, disregard
-	}
-	// fmt.Println(manager.tld, link, parsed.Host, "hey", linkTLD)
+	linkTLD := getTLD(parsed.Host)
+	// fmt.Println("cmp isExternalSite", manager.tld, link, linkTLD)
 
-	return manager.tld == linkTLD
+	return manager.tld != linkTLD
 }
 
 func (manager *Manager) addToFetched(link string) {
