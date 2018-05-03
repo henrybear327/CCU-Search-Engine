@@ -38,12 +38,13 @@ func (manager *Manager) enqueue(link string) {
 		2. already fetched
 		3. main text hash collision (?)
 		4. ending with unwanted filetype
+		5. going external
 	*/
 
 	manager.urlQueueLock.Lock()
 	defer manager.urlQueueLock.Unlock()
 
-	manager.urlQueue.PushBack(manager.link)
+	manager.urlQueue.PushBack(link)
 	manager.distinctPagesFetched++
 
 	if manager.distinctPagesFetched >= manager.conf.System.MaxDistinctPagesToFetchPerSite {

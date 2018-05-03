@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-// OutputSeedingSites is a function that writes seeding sites to a file
 func outputSeedingSites(seedingSites []string, conf *config) {
 	f, err := os.Create(conf.Output.Seedfile)
 	check(err)

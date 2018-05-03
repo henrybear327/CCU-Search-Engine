@@ -163,6 +163,10 @@ func (manager *Manager) parseSiteMap() {
 		manager.enqueue(manager.link)
 	}
 
+	for e := manager.urlQueue.Front(); e != nil; e = e.Next() {
+		fmt.Println(e.Value.(string))
+	}
+
 	elapsedParsing := time.Since(startParsing)
 	fmt.Println(manager.link, "initial queue size", manager.urlQueue.Len())
 	fmt.Println("Parsing XML takes", elapsedParsing)
