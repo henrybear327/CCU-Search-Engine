@@ -109,7 +109,7 @@ func (manager *Manager) enqueue(link string) {
 		return
 	}
 
-	if manager.robot.TestAgent(link, "CCU-Assignment-Bot") == false {
+	if manager.robot != nil && manager.robot.TestAgent(link, "CCU-Assignment-Bot") == false {
 		return
 	}
 
