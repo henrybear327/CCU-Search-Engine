@@ -67,6 +67,7 @@ func getTLD(link string) string {
 
 func (manager *Manager) isExternalSite(link string) bool {
 	link = strings.TrimSpace(link)
+	link = strings.ToLower(link)
 
 	parsed, err := url.Parse(link)
 	if err != nil {
@@ -76,7 +77,9 @@ func (manager *Manager) isExternalSite(link string) bool {
 
 	// fmt.Println(parsed.Host, parsed.Path)
 	linkTLD := getTLD(parsed.Host)
-	// fmt.Println("cmp isExternalSite", manager.tld, link, linkTLD)
+	// if manager.tld != linkTLD {
+	// 	fmt.Println("cmp isExternalSite", manager.tld, link, linkTLD)
+	// }
 
 	return manager.tld != linkTLD
 }
@@ -102,6 +105,10 @@ func (manager *Manager) isMultimediaFiles(link string) bool {
 	if err != nil {
 		log.Println("isMultimediaFiles", err)
 		return true
+	}
+
+	if matched {
+		log.Println("eliminated", link)
 	}
 	return matched
 }

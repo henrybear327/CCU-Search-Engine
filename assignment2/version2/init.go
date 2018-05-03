@@ -5,9 +5,11 @@ import (
 	"flag"
 	"io"
 	"log"
+	"net/url"
 	"os"
 	"runtime"
 	"runtime/pprof"
+	"strings"
 	"sync"
 
 	"github.com/BurntSushi/toml"
@@ -137,6 +139,12 @@ func prepareSeedSites(seedSiteList []string) map[string]Manager {
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
+		u, err := url.Parse(link)
+		if err != nil {
+			log.Fatalln("Parsing hostname error")
+		}
+		host := u.Hostname()
+
 		managers[link] = Manager{
 			link:           link,
 			urlQueueLock:   new(sync.RWMutex),
@@ -144,9 +152,10 @@ func prepareSeedSites(seedSiteList []string) map[string]Manager {
 			urlFetchedLock: new(sync.RWMutex),
 			urlFetched:     make(map[string]bool),
 			urlInQueue:     make(map[string]bool),
-			tld:            getTLD(link)}
+			tld:            strings.ToLower(getTLD(host))}
 
 		cur := managers[link]
+		// log.Println("tld", link, cur.tld)
 		go cur.preprocess(done)
 	}
 

@@ -106,6 +106,7 @@ if err != nil {
 	log.Fatal(err)
 }
 fmt.Println("url decompose", u.Scheme, u.Host, u.Path, u.RawQuery)
+fmt.Println("get host name", u.Hostname())
 ```
 
 ## XML parsing 
