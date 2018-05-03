@@ -6,12 +6,11 @@
 useAlexaTopSites = false
  
 AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading portocal... QQ
-# manualSeedFile = "data/seedingSites.txt"
+manualSeedFile = "data/seedingSitesSubset.txt"
 # manualSeedFile = "data/small.txt"
-manualSeedFile = "data/test.txt"
+# manualSeedFile = "data/test.txt"
 
 [system]
-maxTotalGoRoutines = 100 # during preparation, this is not enforced (seed site processing)
 maxGoRountinesPerSite = 2
 
 maxDistinctPagesToFetchPerSite = 50000
@@ -21,6 +20,8 @@ timeout = 5 # page load timeout in seconds
 timeInterval = 5 # idle time between fetches in seconds
 
 reseedInterval = 24 # in hours
+
+urlFilterByRegex = false # memory and time issue
 
 [output]
 

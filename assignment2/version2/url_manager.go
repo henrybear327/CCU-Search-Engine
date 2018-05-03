@@ -100,7 +100,7 @@ func (manager *Manager) addToFetched(link string) {
 func (manager *Manager) isMultimediaFiles(link string) bool {
 	// TODO: maybe use (html|php|...) match?
 	// https://fileinfo.com/filetypes/common
-	regex := "^.*(doc|docx|odt|csv|ppt|pptx|wav|wma|jpg|png|gif|jpeg|mp3|mp4|mov|avi|flv)$"
+	regex := "^.*\\.(doc|docx|odt|csv|ppt|pptx|wav|wma|jpg|png|gif|jpeg|mp3|mp4|mov|avi|flv)$"
 	matched, err := regexp.MatchString(regex, link)
 	if err != nil {
 		log.Println("isMultimediaFiles", err)
@@ -137,8 +137,10 @@ func (manager *Manager) enqueue(link string) {
 		return
 	}
 
-	if manager.isMultimediaFiles(link) {
-		return
+	if conf.System.URLFilterByRegex {
+		if manager.isMultimediaFiles(link) {
+			return
+		}
 	}
 
 	manager.urlQueueLock.Lock()

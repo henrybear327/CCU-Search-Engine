@@ -17,6 +17,7 @@ Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
 2. robots might be missing in robotsCollection for some url -> no robots.txt -> no limitations
 3. Trim string! Can't emphasize more!
 4. `google.com.tw` tld != `google.com`
+5. Goroutines still comes with cost! Think twice before creating them
 
 ## external packages
 
