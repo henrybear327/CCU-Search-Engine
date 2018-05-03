@@ -3,7 +3,9 @@ package main
 import (
 	"container/list"
 	"fmt"
+	"log"
 	"net/url"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -92,6 +94,18 @@ func (manager *Manager) addToFetched(link string) {
 	manager.urlFetched[link] = true
 }
 
+func (manager *Manager) isMultimediaFiles(link string) bool {
+	// TODO: maybe use (html|php|...) match?
+	// https://fileinfo.com/filetypes/common
+	regex := ".*(doc|docx|odt|csv|ppt|pptx|wav|wma|jpg|png|gif|jpeg|mp3|mp4|mov|avi)$"
+	matched, err := regexp.MatchString(regex, "seafood")
+	if err != nil {
+		log.Println("isMultimediaFiles", err)
+		return true
+	}
+	return matched
+}
+
 func (manager *Manager) enqueue(link string) {
 	link = strings.TrimSpace(link)
 	/*
@@ -113,6 +127,10 @@ func (manager *Manager) enqueue(link string) {
 	}
 
 	if manager.isExternalSite(link) {
+		return
+	}
+
+	if manager.isMultimediaFiles(link) {
 		return
 	}
 

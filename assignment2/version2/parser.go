@@ -223,5 +223,7 @@ func (manager *Manager) parseSiteMap() {
 
 	elapsedParsing := time.Since(startParsing)
 	fmt.Println(manager.link, "initial queue size", manager.urlQueue.Len())
-	fmt.Println("Parsing XML takes", elapsedParsing)
+	if elapsedParsing.Nanoseconds() >= conf.Output.SlowAction {
+		fmt.Println("Parsing XML takes", elapsedParsing)
+	}
 }

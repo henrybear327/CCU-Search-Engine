@@ -24,7 +24,7 @@ reseedInterval = 24 # in hours
 
 [output]
 
-slowAction = 0.5 # second
+slowAction = 1000000000 # ns (1e-9)
 
 seedfile = "data/currentRunSeedSite.txt"
 parsingResult = "data/parsingResult.txt"

@@ -29,7 +29,7 @@ type outputConfig struct {
 	Seedfile          string
 	ParsingResultFile string
 
-	SlowAction float64
+	SlowAction int64
 }
 
 type systemConfig struct {
