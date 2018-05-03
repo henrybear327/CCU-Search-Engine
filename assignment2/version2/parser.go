@@ -135,7 +135,7 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 		blocking := make(chan bool)
 		for _, rec := range data.URL {
 			// fmt.Println("link", rec.Loc)
-			manager.generateLinksFromSitemap(rec.Loc, blocking)
+			go manager.generateLinksFromSitemap(rec.Loc, blocking)
 			<-blocking // no need to async since it's link!
 		}
 	} else {
