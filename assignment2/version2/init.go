@@ -34,6 +34,12 @@ type systemConfig struct {
 	MaxDistinctPagesToFetchPerSite int
 }
 
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
 func startCPUProfiling(cpuprofile *string) {
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
