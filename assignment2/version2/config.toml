@@ -6,9 +6,9 @@
 useAlexaTopSites = false
  
 AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading portocal... QQ
-manualSeedFile = "data/seedingSites.txt"
+# manualSeedFile = "data/seedingSites.txt"
 # manualSeedFile = "data/small.txt"
-# manualSeedFile = "data/test.txt"
+manualSeedFile = "data/test.txt"
 
 [system]
 maxTotalGoRoutines = 100 # during preparation, this is not enforced (seed site processing)
