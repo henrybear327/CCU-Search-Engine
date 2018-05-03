@@ -57,6 +57,19 @@ func (manager *Manager) isExternalSite(link string) bool {
 	return false
 }
 
+func (manager *Manager) addToFetched(link string) {
+	link = strings.TrimSpace(link)
+
+	if manager.isInQueueOrFetched(link) {
+		return
+	}
+
+	manager.urlFetchedLock.Lock()
+	defer manager.urlFetchedLock.Unlock()
+
+	manager.urlFetched[link] = true
+}
+
 func (manager *Manager) enqueue(link string) {
 	link = strings.TrimSpace(link)
 	/*

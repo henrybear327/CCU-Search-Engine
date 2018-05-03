@@ -95,6 +95,8 @@ func (manager *Manager) processgzFile(link string) {
 		return
 	}
 
+	manager.addToFetched(link) // Crucial! Techbang infinit loop fucking bug
+
 	res := bytes.NewReader(compressedPageSource)
 
 	gzf, err := gzip.NewReader(res)
