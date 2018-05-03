@@ -20,7 +20,6 @@ type Manager struct {
 	urlQueue   *list.List
 	urlFetched map[string]bool
 	urlInQueue map[string]bool
-	conf       *config
 
 	urlQueueLock   *sync.RWMutex
 	urlFetchedLock *sync.RWMutex
@@ -128,7 +127,7 @@ func (manager *Manager) enqueue(link string) {
 		manager.distinctPagesFetched++
 		manager.urlInQueue[link] = true
 
-		if manager.distinctPagesFetched >= manager.conf.System.MaxDistinctPagesToFetchPerSite {
+		if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
 			// TODO: end go routine
 		}
 	}

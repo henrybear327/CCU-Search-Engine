@@ -28,6 +28,8 @@ type siteConfig struct {
 type outputConfig struct {
 	Seedfile          string
 	ParsingResultFile string
+
+	SlowAction float64
 }
 
 type systemConfig struct {
@@ -68,7 +70,7 @@ func startMemProfiling(memprofile *string) {
 	}
 }
 
-func parseConfigFile(conf *config) {
+func parseConfigFile() {
 	var configFilePath string
 	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 	var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
@@ -79,7 +81,7 @@ func parseConfigFile(conf *config) {
 	startCPUProfiling(cpuprofile)
 	startMemProfiling(memprofile)
 
-	md, err := toml.DecodeFile(configFilePath, conf)
+	md, err := toml.DecodeFile(configFilePath, &conf)
 	if err != nil {
 		log.Fatalln("Parsing config file error", err)
 	}
@@ -92,10 +94,11 @@ func parseConfigFile(conf *config) {
 	log.Println("MaxDistinctPagesToFetchPerSite", conf.System.MaxDistinctPagesToFetchPerSite)
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
+	log.Println("SlowAction", conf.Output.SlowAction)
 	log.Println("=====================")
 }
 
-func getSeedSites(conf *config) []string {
+func getSeedSites() []string {
 	var seedSiteList []string
 
 	if conf.Site.UseAlexaTopSites {
@@ -124,11 +127,11 @@ func getSeedSites(conf *config) []string {
 		}
 	}
 
-	outputSeedingSites(seedSiteList, conf)
+	outputSeedingSites(seedSiteList)
 	return seedSiteList
 }
 
-func prepareSeedSites(seedSiteList []string, conf *config) map[string]Manager {
+func prepareSeedSites(seedSiteList []string) map[string]Manager {
 	totalSites := len(seedSiteList)
 	managers := make(map[string]Manager)
 	done := make(chan bool, totalSites)
@@ -136,7 +139,6 @@ func prepareSeedSites(seedSiteList []string, conf *config) map[string]Manager {
 	for _, link := range seedSiteList {
 		managers[link] = Manager{
 			link:           link,
-			conf:           conf,
 			urlQueueLock:   new(sync.RWMutex),
 			urlInQueueLock: new(sync.RWMutex),
 			urlFetchedLock: new(sync.RWMutex),

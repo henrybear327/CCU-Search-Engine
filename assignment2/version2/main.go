@@ -5,12 +5,13 @@ import (
 	_ "net/http/pprof"
 )
 
+var conf config
+
 func main() {
-	var conf config
-	parseConfigFile(&conf)
+	parseConfigFile()
 
 	// scheduler starts here!
-	seedSiteList := getSeedSites(&conf)
-	managers := prepareSeedSites(seedSiteList, &conf)
+	seedSiteList := getSeedSites()
+	managers := prepareSeedSites(seedSiteList)
 	fmt.Println("Manager count", len(managers))
 }

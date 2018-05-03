@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func outputSeedingSites(seedingSites []string, conf *config) {
+func outputSeedingSites(seedingSites []string) {
 	f, err := os.Create(conf.Output.Seedfile)
 	check(err)
 	defer f.Close()

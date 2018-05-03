@@ -23,5 +23,8 @@ timeInterval = 5 # idle time between fetches in seconds
 reseedInterval = 24 # in hours
 
 [output]
+
+slowAction = 0.5 # second
+
 seedfile = "data/currentRunSeedSite.txt"
 parsingResult = "data/parsingResult.txt"
