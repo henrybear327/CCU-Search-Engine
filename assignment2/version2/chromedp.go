@@ -14,7 +14,7 @@ import (
 	"github.com/chromedp/chromedp/client"
 )
 
-func run() {
+func getDynamicSitePageSource(link string) {
 	var err error
 
 	// create context (place to fill data)
@@ -40,17 +40,14 @@ func run() {
 	}
 
 	// run task list
-	var title string
-	var pageSource string
-	// link := "https://edition.cnn.com/2018/05/04/europe/nobel-prize-for-literature-swedish-academy-postponed-intl/index.html"
-	link := "https://www.npr.org/"
-	err = c.Run(ctxt, googleSearch(link, &title, &pageSource))
+	var title, pageSource string
+	err = c.Run(ctxt, getTitleAndPageSourceFromLink(link, &title, &pageSource))
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(title)
 	// fmt.Println(pageSource)
-	saveHTMLFileFromString("sample.html", pageSource)
+	saveHTMLFileFromString(title+".html", pageSource)
 
 	if conf.Chromedp.HeadlessMode == false {
 		// shutdown chrome
@@ -67,7 +64,7 @@ func run() {
 	}
 }
 
-func googleSearch(link string, title *string, pageSource *string) chromedp.Tasks {
+func getTitleAndPageSourceFromLink(link string, title *string, pageSource *string) chromedp.Tasks {
 	var buf []byte
 	return chromedp.Tasks{
 		chromedp.Navigate(link),

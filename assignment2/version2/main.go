@@ -10,7 +10,7 @@ var conf config
 func main() {
 	parseConfigFile()
 
-	run()
+	getDynamicSitePageSource("https://www.npr.org/")
 
 	// scheduler starts here!
 	seedSiteList := getSeedSites()

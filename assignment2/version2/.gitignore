@@ -3,5 +3,5 @@ crawler
 *.svg
 .vscode
 currentRunSeedSite.txt
-sample.html
-screenshot.png
+*.html
+*.png
