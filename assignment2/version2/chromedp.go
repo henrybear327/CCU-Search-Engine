@@ -13,7 +13,7 @@ import (
 	"github.com/chromedp/chromedp/client"
 )
 
-func getDynamicSitePageSource(link string, done chan bool) {
+func getDynamicSitePageSource(link string) {
 	log.Println("Dynamic fetch", link)
 	var err error
 
@@ -21,9 +21,6 @@ func getDynamicSitePageSource(link string, done chan bool) {
 	ctxt, cancel := context.WithCancel(context.Background())
 	// ctxt, cancel := context.WithTimeout(context.Background(), (conf.System.MinFetchTimeInterval+5)*time.Second) // doesn't work for cnn.com GG
 	defer cancel()
-	defer func(done chan bool) {
-		done <- true
-	}(done)
 
 	var c *chromedp.CDP
 	if conf.Chromedp.HeadlessMode {

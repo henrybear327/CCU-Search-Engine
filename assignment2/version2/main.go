@@ -9,11 +9,8 @@ var conf config
 func main() {
 	parseConfigFile()
 
-	done := make(chan bool)
-	go getDynamicSitePageSource("https://edition.cnn.com/", done)
-	<-done
-	go getDynamicSitePageSource("https://www.npr.org/", done)
-	<-done
+	getDynamicSitePageSource("https://edition.cnn.com/")
+	// getDynamicSitePageSource("https://www.npr.org/")
 
 	// // scheduler starts here!
 	// seedSiteList := getSeedSites()

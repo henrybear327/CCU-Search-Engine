@@ -123,3 +123,13 @@ fmt.Println("get host name", u.Hostname())
 
 * [reading](https://blog.golang.org/go-maps-in-action)
     * `RWLock` has `Lock` and `Rlock`
+
+## defer must be a func
+
+There you go
+
+```go
+defer func(done chan bool) {
+    done <- true
+}(done)
+```
