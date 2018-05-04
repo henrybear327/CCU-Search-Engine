@@ -2,7 +2,6 @@ package main
 
 import (
 	"container/list"
-	"fmt"
 	"log"
 	"net/url"
 	"regexp"
@@ -28,6 +27,8 @@ type Manager struct {
 	urlInQueueLock *sync.RWMutex
 
 	distinctPagesFetched int
+
+	useLinksFromXML bool
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
@@ -49,7 +50,7 @@ func (manager *Manager) isInQueueOrFetched(link string) bool {
 func getTLD(link string) string {
 	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(link)
 	if err != nil {
-		fmt.Println("isExternalSite EffectiveTLDPlusOne err", err)
+		log.Println("isExternalSite EffectiveTLDPlusOne err", err)
 		return ""
 	}
 	return linkTLD
@@ -61,7 +62,7 @@ func (manager *Manager) isExternalSite(link string) bool {
 
 	parsed, err := url.Parse(link)
 	if err != nil {
-		fmt.Println("isExternalSite url parse err", err)
+		log.Println("isExternalSite url parse err", err)
 		return true // can't parse, disregard
 	}
 

@@ -105,7 +105,7 @@ func getSeedSites() []string {
 
 	if conf.Site.UseAlexaTopSites {
 		pageSource, statusCode := getStaticSitePageSource(conf.Site.AlexaTopSitesURL)
-		// fmt.Println(pageSource, statusCode)
+		// log.Println(pageSource, statusCode)
 		if statusCode == 200 {
 			seedSiteList = parseAlexaTopSites(pageSource)
 			log.Println("Total seeding sites", len(seedSiteList))
@@ -146,13 +146,14 @@ func prepareSeedSites(seedSiteList []string) map[string]Manager {
 		host := u.Hostname()
 
 		managers[link] = Manager{
-			link:           link,
-			urlQueueLock:   new(sync.RWMutex),
-			urlInQueueLock: new(sync.RWMutex),
-			urlFetchedLock: new(sync.RWMutex),
-			urlFetched:     make(map[string]bool),
-			urlInQueue:     make(map[string]bool),
-			tld:            strings.ToLower(getTLD(host))}
+			link:            link,
+			urlQueueLock:    new(sync.RWMutex),
+			urlInQueueLock:  new(sync.RWMutex),
+			urlFetchedLock:  new(sync.RWMutex),
+			urlFetched:      make(map[string]bool),
+			urlInQueue:      make(map[string]bool),
+			tld:             strings.ToLower(getTLD(host)),
+			useLinksFromXML: false}
 
 		cur := managers[link]
 		// log.Println("tld", link, cur.tld)

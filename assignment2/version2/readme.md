@@ -11,6 +11,8 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
     * general webpages
 * URL Manager (queuing system)
 
+[slide](https://docs.google.com/presentation/d/107ohaNKpRw_JEpvXizm_QLTbT3M12KQYpf_dYtLFDBE/edit?usp=sharing)
+
 # Golang
 
 ## Development notes
@@ -115,6 +117,7 @@ fmt.Println("get host name", u.Hostname())
 ## XML parsing 
 
 * [reading](https://tutorialedge.net/golang/parsing-xml-with-golang/)
+* [what is XML](https://www.awoo.com.tw/blog/2018/01/sitemap-xml/)
 
 ## Map locking
 

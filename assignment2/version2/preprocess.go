@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"container/list"
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -105,7 +104,7 @@ func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
 	}
 
 	if manager.isExternalSite(link) {
-		fmt.Println("Is external site", link)
+		// fmt.Println("Is external site", link)
 		done <- true
 		return
 	}
@@ -142,6 +141,8 @@ func (manager *Manager) parseSitemap() {
 	if manager.robot == nil || len(manager.robot.Sitemaps) == 0 { // no sitemap
 		manager.enqueue(manager.link, true)
 	} else {
+		manager.useLinksFromXML = true
+
 		done := make(chan bool)
 		for _, mapLink := range manager.robot.Sitemaps {
 			// dfs
@@ -162,10 +163,7 @@ func (manager *Manager) parseSitemap() {
 	// }
 
 	elapsedParsing := time.Since(startParsing)
-	fmt.Println(manager.link, "initial queue size", manager.urlQueue.Len())
-	if elapsedParsing.Nanoseconds() >= conf.Output.SlowAction {
-		fmt.Println("Parsing XML takes", elapsedParsing)
-	}
+	log.Println(manager.link, "Initial queue size", manager.urlQueue.Len(), "Parsing XML takes", elapsedParsing)
 }
 
 // ParseRobotsTxt attempts parses the robots.txt file of the given link
