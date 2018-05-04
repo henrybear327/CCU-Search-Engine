@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"sync"
+	"strings"
 	"time"
 
 	"github.com/chromedp/cdproto/cdp"
@@ -34,16 +34,13 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	}
 
 	// loop over the URLs
-	var wg sync.WaitGroup
-	for i := 0; ; i++ {
-		wg.Add(1)
+	boundedWaiting := make(chan bool, 5)
+	for {
 		nextLink := <-link
-		go takeScreenshot(ctxt, &wg, pool, nextLink)
-		log.Println(i, nextLink)
+		boundedWaiting <- true
+		log.Println("gopherGo", nextLink)
+		go gopherGo(ctxt, pool, nextLink, boundedWaiting)
 	}
-
-	// wait for to finish
-	wg.Wait()
 
 	// shutdown pool
 	err = pool.Shutdown()
@@ -52,8 +49,10 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	}
 }
 
-func takeScreenshot(ctxt context.Context, wg *sync.WaitGroup, pool *chromedp.Pool, urlstr string) {
-	defer wg.Done()
+func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedWaiting chan bool) {
+	defer func(boundedWaiting chan bool) {
+		<-boundedWaiting
+	}(boundedWaiting)
 
 	// allocate
 	c, err := pool.Allocate(ctxt,
@@ -72,12 +71,12 @@ func takeScreenshot(ctxt context.Context, wg *sync.WaitGroup, pool *chromedp.Poo
 	// var buf []byte
 	var title, pageSource string
 	err = c.Run(ctxt, getScreenshotAndPageSource(urlstr /*&buf,*/, &title, &pageSource))
-	fmt.Println("Back", title)
+	fmt.Println("Back", urlstr, title)
 	if err != nil {
 		log.Printf("screenshot url `%s` error: %v", urlstr, err)
-		return
+		// return // TODO ??
 	}
-	saveHTMLFileFromString(title+".html", pageSource)
+	saveHTMLFileFromString(strings.Replace(urlstr, "/", " ", -1)+".html", pageSource)
 }
 
 func getScreenshotAndPageSource(urlstr string /*, picbuf *[]byte*/, title *string, pageSource *string) chromedp.Action {
@@ -96,7 +95,7 @@ func getScreenshotAndPageSource(urlstr string /*, picbuf *[]byte*/, title *strin
 		// }),
 		chromedp.CaptureScreenshot(&buf),
 		chromedp.ActionFunc(func(context.Context, cdp.Executor) error {
-			return ioutil.WriteFile(*title+".png", buf, 0644)
+			return ioutil.WriteFile(conf.Output.ScreenshotPath+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
 		}),
 		chromedp.OuterHTML("html", pageSource),
 	}

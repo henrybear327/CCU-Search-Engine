@@ -20,7 +20,7 @@ func outputSeedingSites(seedingSites []string) {
 }
 
 func saveHTMLFileFromString(filename, pageSource string) {
-	f, err := os.Create(filename)
+	f, err := os.Create(conf.Output.PageSourcePath + "/" + filename)
 	check(err)
 	defer f.Close()
 

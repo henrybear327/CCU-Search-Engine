@@ -32,6 +32,8 @@ type siteConfig struct {
 type outputConfig struct {
 	Seedfile          string
 	ParsingResultFile string
+	ScreenshotPath    string
+	PageSourcePath    string
 
 	SlowAction int64
 }
@@ -104,6 +106,8 @@ func parseConfigFile() {
 	log.Println("MinFetchTimeInterval", conf.System.MinFetchTimeInterval)
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
+	log.Println("ScreenshotPath", conf.Output.ScreenshotPath)
+	log.Println("PageSourcePath", conf.Output.PageSourcePath)
 	log.Println("SlowAction", conf.Output.SlowAction)
 	log.Println("HeadlessMode", conf.Chromedp.HeadlessMode)
 	log.Println("=====================")
