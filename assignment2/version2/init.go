@@ -11,6 +11,7 @@ import (
 	"runtime/pprof"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/BurntSushi/toml"
 )
@@ -37,6 +38,7 @@ type outputConfig struct {
 
 type systemConfig struct {
 	MaxDistinctPagesToFetchPerSite int
+	MinFetchTimeInterval           time.Duration
 }
 
 type chromedpConfig struct {
@@ -99,6 +101,7 @@ func parseConfigFile() {
 	log.Println("AlexaTopSitesURL", conf.Site.AlexaTopSitesURL)
 	log.Println("ManualSeedURL", conf.Site.ManualSeedFile)
 	log.Println("MaxDistinctPagesToFetchPerSite", conf.System.MaxDistinctPagesToFetchPerSite)
+	log.Println("MinFetchTimeInterval", conf.System.MinFetchTimeInterval)
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
 	log.Println("SlowAction", conf.Output.SlowAction)
