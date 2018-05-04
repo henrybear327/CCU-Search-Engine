@@ -1,6 +1,8 @@
 # Version 2
 
-Be polite, concurrent, and seed from [Alexa](https://www.alexa.com/topsites)
+> Politeness Performance Scalability 
+
+Seed sites from [Alexa](https://www.alexa.com/topsites)
 
 * Master (Scheduler)
 * Fetcher (Downloader)
