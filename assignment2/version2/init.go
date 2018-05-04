@@ -16,9 +16,10 @@ import (
 )
 
 type config struct {
-	Site   siteConfig // fuck it, need to start with an upper-case letter
-	Output outputConfig
-	System systemConfig
+	Site     siteConfig // fuck it, need to start with an upper-case letter
+	Output   outputConfig
+	System   systemConfig
+	Chromedp chromedpConfig
 }
 
 type siteConfig struct {
@@ -36,6 +37,10 @@ type outputConfig struct {
 
 type systemConfig struct {
 	MaxDistinctPagesToFetchPerSite int
+}
+
+type chromedpConfig struct {
+	HeadlessMode bool
 }
 
 func check(e error) {
@@ -97,6 +102,7 @@ func parseConfigFile() {
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
 	log.Println("SlowAction", conf.Output.SlowAction)
+	log.Println("HeadlessMode", conf.Chromedp.HeadlessMode)
 	log.Println("=====================")
 }
 

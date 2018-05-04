@@ -11,19 +11,31 @@ import (
 
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
+	"github.com/chromedp/chromedp/client"
 )
 
 func run() {
 	var err error
 
-	// create context
+	// create context (place to fill data)
 	ctxt, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// create chrome instance
-	c, err := chromedp.New(ctxt, chromedp.WithLog(log.Printf))
-	if err != nil {
-		log.Fatal(err)
+	var c *chromedp.CDP
+	if conf.Chromedp.HeadlessMode {
+		var err error
+		// create chrome tab
+		c, err = chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)), chromedp.WithLog(log.Printf))
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		var err error
+		// create chrome instance (new browser)
+		c, err = chromedp.New(ctxt, chromedp.WithLog(log.Printf))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// run task list
@@ -38,16 +50,18 @@ func run() {
 	// fmt.Println(pageSource)
 	saveHTMLFileFromString("sample.html", pageSource)
 
-	// shutdown chrome
-	err = c.Shutdown(ctxt)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if conf.Chromedp.HeadlessMode == false {
+		// shutdown chrome
+		err = c.Shutdown(ctxt)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	// wait for chrome to finish
-	err = c.Wait()
-	if err != nil {
-		log.Fatal(err)
+		// wait for chrome to finish
+		err = c.Wait()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
