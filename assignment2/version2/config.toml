@@ -24,8 +24,9 @@ reseedInterval = 24 # in hours
 
 [chromedp]
 # /opt/google/chrome
+# /usr/bin/google-chrome
 # /opt/google/chrome/google-chrome --headless --remote-debugging-port=9222 --disable-gpu
-headlessMode = false
+headlessMode = true
 
 [output]
 
