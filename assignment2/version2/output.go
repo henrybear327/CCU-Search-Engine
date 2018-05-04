@@ -18,3 +18,13 @@ func outputSeedingSites(seedingSites []string) {
 	}
 	w.Flush() // Don't forget to flush!
 }
+
+func saveHTMLFileFromString(filename, pageSource string) {
+	f, err := os.Create(filename)
+	check(err)
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+	fmt.Fprintln(w, pageSource)
+	w.Flush() // Don't forget to flush!
+}

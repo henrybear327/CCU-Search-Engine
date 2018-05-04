@@ -33,10 +33,9 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 ### candidates 
 
 * chromedp: headless browser
-* logrus: logger
 * go-sqlite3: sqlite3 driver
 * goOse: main text extraction
-* Oneliner
+* logrus: logger
 
 ### Installation
 
@@ -45,14 +44,15 @@ go get github.com/PuerkitoBio/goquery
 go get github.com/BurntSushi/toml
 go get github.com/temoto/robotstxt
 go get github.com/fatih/color
+go get -u github.com/chromedp/chromedp
 ```
 
 ## internal packages
 
-* log
-* http
-* url
-* publicsuffix
+* log: print messages like system logs with ease
+* http: static site fetching
+* url: decompose the link into hostname + path + query ...
+* publicsuffix: find out the tld for any given link (determine if the link is a internal/external link)
 
 # Notes
 

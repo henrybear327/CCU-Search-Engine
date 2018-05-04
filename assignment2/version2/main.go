@@ -14,4 +14,6 @@ func main() {
 	seedSiteList := getSeedSites()
 	managers := prepareSeedSites(seedSiteList)
 	log.Println("Manager count", len(managers))
+
+	// run()
 }
