@@ -109,27 +109,36 @@ func (manager *Manager) isMultimediaFiles(link string) bool {
 	return matched
 }
 
+func (manager *Manager) isBannedByRobotTXT(link string) bool {
+	link = strings.ToLower(strings.TrimSpace(link))
+
+	if manager.robot != nil && manager.robot.TestAgent(link, "CCU-Assignment-Bot") == false {
+		return true
+	}
+	return false
+}
+
 func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	link = strings.TrimSpace(link)
 	/*
 		Disgard link if
 		1. v already in queue
 		2. v already fetched
-		3. x main text hash collision (?)
-		4. x ending with unwanted filetype
-		5. v link is going to external site
-		6. v against robot rules
+		3. v ending with unwanted filetype
+		4. v link is going to external site
+		5. v against robot rules
+		6. x main text hash collision (?)
 	*/
 
 	if manager.isInQueueOrFetched(link) {
 		return
 	}
 
-	if manager.robot != nil && manager.robot.TestAgent(link, "CCU-Assignment-Bot") == false {
+	if manager.isExternalSite(link) {
 		return
 	}
 
-	if manager.isExternalSite(link) {
+	if manager.isBannedByRobotTXT(link) {
 		return
 	}
 

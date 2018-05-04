@@ -133,9 +133,9 @@ func getSeedSites() []string {
 	return seedSiteList
 }
 
-func prepareSeedSites(seedSiteList []string) map[string]Manager {
+func prepareSeedSites(seedSiteList []string) map[string]*Manager {
 	totalSites := len(seedSiteList)
-	managers := make(map[string]Manager)
+	managers := make(map[string]*Manager) // pointer bug!!
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
@@ -145,7 +145,7 @@ func prepareSeedSites(seedSiteList []string) map[string]Manager {
 		}
 		host := u.Hostname()
 
-		managers[link] = Manager{
+		newManager := Manager{
 			link:            link,
 			urlQueueLock:    new(sync.RWMutex),
 			urlInQueueLock:  new(sync.RWMutex),
@@ -154,6 +154,8 @@ func prepareSeedSites(seedSiteList []string) map[string]Manager {
 			urlInQueue:      make(map[string]bool),
 			tld:             strings.ToLower(getTLD(host)),
 			useLinksFromXML: false}
+
+		managers[link] = &newManager
 
 		cur := managers[link]
 		// log.Println("tld", link, cur.tld)
@@ -164,5 +166,16 @@ func prepareSeedSites(seedSiteList []string) map[string]Manager {
 		<-done
 	}
 
+	// check for sites that are simply not allowed to parse
+	log.Println("Manager count before removing", len(managers))
+	for _, link := range seedSiteList {
+		cur := managers[link]
+		// fmt.Println(cur.link)
+		if cur.isBannedByRobotTXT(link) {
+			log.Println(link, "is banned from being parsed")
+			delete(managers, link)
+		}
+	}
+	log.Println("Manager count after removing", len(managers))
 	return managers
 }

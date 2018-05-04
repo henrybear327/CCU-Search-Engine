@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"container/list"
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -186,8 +187,8 @@ func (manager *Manager) parseRobotsTxt() {
 		color.Unset()
 	}
 
-	// fmt.Println("func", robotFileLink, robot.TestAgent("/", "CCU-assignment-bot"), robot.Sitemaps)
 	manager.robot = robot
+	fmt.Println("parseRobotsTxt", robotFileLink, manager.robot.TestAgent("/", "CCU-assignment-bot"), manager.robot.Sitemaps)
 }
 
 func (manager *Manager) preprocess(done chan bool) {

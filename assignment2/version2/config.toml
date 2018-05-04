@@ -6,7 +6,8 @@
 useAlexaTopSites = false
  
 AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading portocal... QQ
-manualSeedFile = "data/seedingSitesSubset.txt"
+manualSeedFile = "data/seedingSites.txt"
+# manualSeedFile = "data/seedingSitesSubset.txt"
 # manualSeedFile = "data/small.txt"
 # manualSeedFile = "data/test.txt"
 
