@@ -32,21 +32,29 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	if err != nil {
 		log.Fatalln("New pool", err)
 	}
+	defer pool.Shutdown()
 
 	// loop over the URLs
-	boundedWaiting := make(chan bool, 5)
+	boundedWaiting := make(chan bool, 15)
+	timeout := time.After(1 * time.Minute)
 	for {
-		nextLink := <-link
-		boundedWaiting <- true
-		log.Println("gopherGo", nextLink)
-		go gopherGo(ctxt, pool, nextLink, boundedWaiting)
+		select {
+		case nextLink := <-link:
+			boundedWaiting <- true
+			log.Println("gopherGo", nextLink)
+			go gopherGo(ctxt, pool, nextLink, boundedWaiting)
+		case <-timeout:
+			fmt.Println("timeout! Ending chromedp goroutine")
+			return
+		}
+		time.Sleep(100 * time.Millisecond)
 	}
 
 	// shutdown pool
-	err = pool.Shutdown()
-	if err != nil {
-		log.Fatalln("pool shutdown", err)
-	}
+	// err = pool.Shutdown()
+	// if err != nil {
+	// 	log.Fatalln("pool shutdown", err)
+	// }
 }
 
 func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedWaiting chan bool) {
