@@ -24,24 +24,26 @@ func run() {
 	var c *chromedp.CDP
 	if conf.Chromedp.HeadlessMode {
 		var err error
-		// create chrome tab
 		c, err = chromedp.New(ctxt, chromedp.WithTargets(client.New().WatchPageTargets(ctxt)), chromedp.WithLog(log.Printf))
 		if err != nil {
-			log.Fatal(err)
+			log.Println("headless mode", err)
 		}
-	} else {
+	}
+
+	if conf.Chromedp.HeadlessMode == false || c == nil {
 		var err error
 		// create chrome instance (new browser)
 		c, err = chromedp.New(ctxt, chromedp.WithLog(log.Printf))
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln("non headless mode", err)
 		}
 	}
 
 	// run task list
 	var title string
 	var pageSource string
-	link := "https://edition.cnn.com/2018/05/04/europe/nobel-prize-for-literature-swedish-academy-postponed-intl/index.html"
+	// link := "https://edition.cnn.com/2018/05/04/europe/nobel-prize-for-literature-swedish-academy-postponed-intl/index.html"
+	link := "https://www.npr.org/"
 	err = c.Run(ctxt, googleSearch(link, &title, &pageSource))
 	if err != nil {
 		log.Fatal(err)

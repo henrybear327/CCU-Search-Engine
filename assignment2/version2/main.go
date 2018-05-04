@@ -10,7 +10,7 @@ var conf config
 func main() {
 	parseConfigFile()
 
-	// run()
+	run()
 
 	// scheduler starts here!
 	seedSiteList := getSeedSites()
