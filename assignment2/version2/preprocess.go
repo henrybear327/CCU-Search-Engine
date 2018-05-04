@@ -129,6 +129,7 @@ func (manager *Manager) generateLinksFromSitemap(link string, done chan bool) {
 		return
 	}
 
+	manager.addToFetched(link)
 	manager.parseXMLContent(pageSource)
 	done <- true
 }
