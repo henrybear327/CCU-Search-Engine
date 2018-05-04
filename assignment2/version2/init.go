@@ -170,10 +170,16 @@ func prepareSeedSites(seedSiteList []string) map[string]*Manager {
 	log.Println("Manager count before removing", len(managers))
 	for _, link := range seedSiteList {
 		cur := managers[link]
-		// fmt.Println(cur.link)
+
 		if cur.isBannedByRobotTXT(link) {
 			log.Println(link, "is banned from being parsed")
 			delete(managers, link)
+		} else {
+			if cur.robot != nil {
+				cur.crawlDelay = cur.robot.FindGroup("CCU-Assignment-Bot").CrawlDelay
+			} else {
+				cur.crawlDelay = 0
+			}
 		}
 	}
 	log.Println("Manager count after removing", len(managers))

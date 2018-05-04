@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/temoto/robotstxt"
 	"golang.org/x/net/publicsuffix"
@@ -29,6 +30,8 @@ type Manager struct {
 	distinctPagesFetched int
 
 	useLinksFromXML bool
+
+	crawlDelay time.Duration
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
