@@ -21,8 +21,6 @@ timeInterval = 5 # idle time between fetches in seconds
 
 reseedInterval = 24 # in hours
 
-urlFilterByRegex = false # memory and time issue
-
 [output]
 
 slowAction = 10000000000 # ns (1e-9)

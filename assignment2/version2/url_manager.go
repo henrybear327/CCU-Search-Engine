@@ -30,16 +30,6 @@ type Manager struct {
 	distinctPagesFetched int
 }
 
-func (manager *Manager) preprocess(done chan bool) {
-	// parse robots.txt
-	manager.parseRobotsTxt()
-
-	// parse sitemap.xml (prepare queue)
-	manager.parseSiteMap()
-
-	done <- true
-}
-
 func (manager *Manager) isInQueueOrFetched(link string) bool {
 	manager.urlInQueueLock.RLock()
 	defer manager.urlInQueueLock.RUnlock()
@@ -95,6 +85,11 @@ func (manager *Manager) addToFetched(link string) {
 	defer manager.urlFetchedLock.Unlock()
 
 	manager.urlFetched[link] = true
+
+	manager.distinctPagesFetched++
+	if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
+		// TODO: end go routine
+	}
 }
 
 func (manager *Manager) isMultimediaFiles(link string) bool {
@@ -113,7 +108,7 @@ func (manager *Manager) isMultimediaFiles(link string) bool {
 	return matched
 }
 
-func (manager *Manager) enqueue(link string) {
+func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	link = strings.TrimSpace(link)
 	/*
 		Disgard link if
@@ -137,7 +132,7 @@ func (manager *Manager) enqueue(link string) {
 		return
 	}
 
-	if conf.System.URLFilterByRegex {
+	if isPreprocessing == false {
 		if manager.isMultimediaFiles(link) {
 			return
 		}
@@ -151,11 +146,6 @@ func (manager *Manager) enqueue(link string) {
 
 	if _, ok := manager.urlInQueue[link]; ok == false { // not in queue yet
 		manager.urlQueue.PushBack(link)
-		manager.distinctPagesFetched++
 		manager.urlInQueue[link] = true
-
-		if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
-			// TODO: end go routine
-		}
 	}
 }

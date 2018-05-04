@@ -36,8 +36,6 @@ type outputConfig struct {
 
 type systemConfig struct {
 	MaxDistinctPagesToFetchPerSite int
-
-	URLFilterByRegex bool
 }
 
 func check(e error) {
@@ -99,7 +97,6 @@ func parseConfigFile() {
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
 	log.Println("SlowAction", conf.Output.SlowAction)
-	log.Println("URLFilterByRegex", conf.System.URLFilterByRegex)
 	log.Println("=====================")
 }
 
