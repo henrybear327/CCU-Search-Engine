@@ -147,6 +147,8 @@ func getSeedSites() []string {
 }
 
 func prepareSeedSites(seedSiteList []string) map[string]*Manager {
+	startDownload := time.Now()
+
 	totalSites := len(seedSiteList)
 	managers := make(map[string]*Manager) // pointer bug!!
 	done := make(chan bool, totalSites)
@@ -196,5 +198,8 @@ func prepareSeedSites(seedSiteList []string) map[string]*Manager {
 		}
 	}
 	log.Println("Manager count after removing", len(managers))
+
+	elapsedDownload := time.Since(startDownload)
+	log.Println("Total preprocessing time", elapsedDownload)
 	return managers
 }

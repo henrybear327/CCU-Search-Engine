@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	_ "net/http/pprof"
 )
 
@@ -13,7 +12,6 @@ func main() {
 	// scheduler starts here!
 	seedSiteList := getSeedSites()
 	managers := prepareSeedSites(seedSiteList)
-	log.Println("Manager count", len(managers))
 
 	dynamicLinkChannel := make(chan string)
 	done := make(chan bool)
