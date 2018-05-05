@@ -259,17 +259,21 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 		nextLinkList := manager.getNextURLList(nextLink, pageSoruceForParsing)
 
 		log.Println("Parsed links", len(nextLinkList))
-		for _, rec := range nextLinkList {
-			// log.Println("Parsed link from", nextLink, rec)
-			if manager.useLinksFromXML == false {
-				ret := manager.enqueue(rec, false)
-				if ret {
-					// log.Println("Enqueue parsed link from", nextLink, rec)
+		if len(nextLinkList) == 0 { // W.H.P this is multimedia!
+			// ignore
+		} else {
+			for _, rec := range nextLinkList {
+				// log.Println("Parsed link from", nextLink, rec)
+				if manager.useLinksFromXML == false {
+					ret := manager.enqueue(rec, false)
+					if ret {
+						// log.Println("Enqueue parsed link from", nextLink, rec)
+					}
 				}
+				manager.doInDegreeCounting(rec)
 			}
-			manager.doInDegreeCounting(rec)
+			log.Println("Queue size of", manager.tld, manager.urlQueue.Len())
 		}
-		log.Println("Queue size of", manager.tld, manager.urlQueue.Len())
 
 		if manager.useStaticLoad {
 			time.Sleep(conf.System.minFetchTimeDuration)

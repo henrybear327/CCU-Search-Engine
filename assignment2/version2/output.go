@@ -19,11 +19,16 @@ func outputSeedingSites(seedingSites []string, seedingSitesOption []string) {
 	w.Flush() // Don't forget to flush!
 }
 
-func saveHTMLFileFromString(foldername, filename, pageSource string) {
-	path := conf.Output.PageSourcePath + "/" + foldername
+func createFolderIfNotExist(path string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		os.Mkdir(path, 0777)
 	}
+}
+
+func saveHTMLFileFromString(foldername, filename, pageSource string) {
+	createFolderIfNotExist(conf.Output.PageSourcePath)
+	path := conf.Output.PageSourcePath + "/" + foldername
+	createFolderIfNotExist(path)
 
 	f, err := os.Create(path + "/" + filename)
 	check(err)

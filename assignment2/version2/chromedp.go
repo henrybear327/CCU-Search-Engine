@@ -27,10 +27,9 @@ func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Ac
 
 func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string /*, nodes *[]*cdp.Node*/) chromedp.Action {
 	var buf []byte
+	createFolderIfNotExist(conf.Output.ScreenshotPath)
 	path := conf.Output.ScreenshotPath + "/" + getTopLevelDomain(urlstr)
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.Mkdir(path, 0777)
-	}
+	createFolderIfNotExist(path)
 
 	return chromedp.Tasks{
 		chromedp.Navigate(urlstr),
