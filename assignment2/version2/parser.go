@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -40,12 +41,35 @@ func parseAlexaTopSites(pageSource []byte) []string {
 	return topLinkList
 }
 
+func isInvalidSuffix(link string) bool {
+	if link == "void(0)" {
+		return true
+	}
+	if strings.HasSuffix(link, "mailto://") {
+		return true
+	}
+	if strings.HasSuffix(link, "javascript://") {
+		return true
+	}
+
+	return false
+}
+
+func isValidURL(link string) bool {
+	link = strings.ToLower(strings.TrimSpace(link))
+
+	if isInvalidSuffix(link) {
+		return false
+	}
+
+	return true
+}
+
 func (manager *Manager) generateNextURLList(pageSource []byte) []string {
 	nextURLs := []string{}
 
 	// Load the HTML document
 	res := bytes.NewReader(pageSource)
-
 	doc, err := goquery.NewDocumentFromReader(res)
 	if err != nil {
 		log.Fatal(err)
@@ -53,8 +77,11 @@ func (manager *Manager) generateNextURLList(pageSource []byte) []string {
 
 	// Find the review items
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-		// For each item found, get the band and title
-		fmt.Println(i, s.Text())
+		// 1. must have href
+		// 2. concat url
+		// 3. enqueue
+		// 4. hub counting
+		fmt.Println(i, s, s.Text())
 	})
 
 	return nextURLs

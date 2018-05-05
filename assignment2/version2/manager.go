@@ -78,21 +78,33 @@ func (manager *Manager) isExternalSite(link string) bool {
 	return manager.tld != linkTLD
 }
 
+// call this afer fetching
 func (manager *Manager) addToFetched(link string) {
 	link = strings.TrimSpace(link)
 
-	if manager.isInQueueOrFetched(link) {
+	// if in InQueue map, move it from there to fetched
+	manager.urlInQueueLock.Lock()
+	defer manager.urlInQueueLock.Unlock()
+	if _, ok := manager.urlInQueue[link]; ok == true {
+		// add to fetched set
+		manager.urlFetchedLock.Lock()
+		defer manager.urlFetchedLock.Unlock()
+		manager.urlFetched[link] = true
+
+		// remove from InQueue
+		delete(manager.urlInQueue, link)
+
+		manager.distinctPagesFetched++
+		if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
+			// TODO: end go routine
+		}
 		return
 	}
 
-	manager.urlFetchedLock.Lock()
-	defer manager.urlFetchedLock.Unlock()
-
-	manager.urlFetched[link] = true
-
-	manager.distinctPagesFetched++
-	if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
-		// TODO: end go routine
+	// somehow it's fetched twice?
+	if manager.isInQueueOrFetched(link) {
+		log.Println("Weird shit, fetched twice?")
+		return
 	}
 }
 
@@ -121,6 +133,7 @@ func (manager *Manager) isBannedByRobotTXT(link string) bool {
 	return false
 }
 
+// call this to queue url
 func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	link = strings.TrimSpace(link)
 	/*
@@ -163,22 +176,61 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	}
 }
 
+// for restart
+func (manager *Manager) requeue(link string) {
+	manager.urlQueueLock.Lock()
+	defer manager.urlQueueLock.Unlock()
+
+	manager.urlQueue.PushFront(link)
+}
+
+func (manager *Manager) getNextURLFromQueue() string {
+	manager.urlQueueLock.Lock()
+	defer manager.urlQueueLock.Unlock()
+
+	// dequeue, but don't remove it from InQueue map
+	nextLink := manager.urlQueue.Front()
+	manager.urlQueue.Remove(nextLink)
+
+	return (*nextLink).Value.(string)
+}
+
+func (manager *Manager) hasNextURL() bool {
+	manager.urlQueueLock.Lock()
+	defer manager.urlQueueLock.Unlock()
+
+	return manager.urlQueue.Len() > 0
+}
+
 func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery) {
 	defer func(done chan bool) {
 		done <- true
 	}(done)
 
-	// var title, pageSource string
-	if manager.useLinksFromXML {
-		// simply dequeue and fetch
-	} else {
-		// dequeue -> fetch page -> generate next links
-		resultChannel := make(chan dynamicFetchingDataResult)
-		query := dynamicFetchingDataQuery{link: manager.link, resultChannel: resultChannel}
+	log.Println("Manager of ", manager.link, "is started")
+	for manager.hasNextURL() {
+		// var title, pageSource string
+		if manager.useLinksFromXML {
+			// simply dequeue and fetch
+		} else {
+			nextLink := manager.getNextURLFromQueue()
 
-		dynamicLinkChannel <- query
-		result := <-resultChannel
-		// fmt.Println(result.title, result.pageSource, result.requiresRestart)
-		fmt.Println(result.title, result.requiresRestart)
+			// dequeue -> fetch page -> generate next links
+			resultChannel := make(chan dynamicFetchingDataResult)
+			query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}
+
+			dynamicLinkChannel <- query
+			result := <-resultChannel
+			// fmt.Println(result.title, result.pageSource, result.requiresRestart)
+			fmt.Println(result.title, result.requiresRestart)
+
+			if result.requiresRestart {
+				manager.requeue(nextLink)
+			} else {
+				// TODO: title, pageSource integrity check...
+				manager.addToFetched(nextLink)
+			}
+		}
 	}
+	log.Println("Manager of ", manager.link, "has finished")
 }
