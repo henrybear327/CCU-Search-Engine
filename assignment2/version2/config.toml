@@ -21,7 +21,7 @@ maxDistinctPagesToFetchPerSite = 50000
 # idle time between fetches in second
 minFetchTimeInterval = "5s"
 # in second, starts counting after preprocessing ends
-maxRunningTime = "2m" 
+maxRunningTime = "10m" # starts counting after delayed launching
 
 [chromedp]
 # /opt/google/chrome

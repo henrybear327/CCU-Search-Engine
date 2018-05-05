@@ -269,7 +269,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 			}
 			manager.doInDegreeCounting(rec)
 		}
-		log.Println("Queue size", manager.urlQueue.Len())
+		log.Println("Queue size of", manager.tld, manager.urlQueue.Len())
 
 		if manager.useStaticLoad {
 			time.Sleep(conf.System.minFetchTimeDuration)
