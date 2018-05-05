@@ -30,6 +30,7 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 * robotstxt: parse robots.txt rules
 * color: terminal output color
 * chromedp: headless browser
+    * mac must install `brew install Caskroom/versions/google-chrome-canary`
 
 ### candidates 
 

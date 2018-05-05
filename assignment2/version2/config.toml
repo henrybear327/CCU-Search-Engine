@@ -7,9 +7,9 @@ useAlexaTopSites = false
  
 AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with no leading portocal... QQ
 # manualSeedFile = "data/seedingSites.txt"
-manualSeedFile = "data/seedingSitesSubset.txt"
+# manualSeedFile = "data/seedingSitesSubset.txt"
 # manualSeedFile = "data/small.txt"
-# manualSeedFile = "data/test.txt"
+manualSeedFile = "data/test.txt"
 
 [system]
 
@@ -26,9 +26,14 @@ maxRunningTime = 120000000000 # in ns, starts counting after preprocessing ends
 # /opt/google/chrome
 # /usr/bin/google-chrome
 # /opt/google/chrome/google-chrome --headless --remote-debugging-port=9222 --disable-gpu
+# alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+# /Applications/Google Chrome.app/Contents/MacOS
 headlessMode = true
 
 maxConcurrentJobs = 15
+
+# execPath = "google-chrome" # linux
+execPath = "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary" # mac
 
 [output]
 

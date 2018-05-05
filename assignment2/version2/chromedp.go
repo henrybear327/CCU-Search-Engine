@@ -53,10 +53,10 @@ type dynamicFetchingDataResult struct {
 	requiresRestart bool
 }
 
-func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDataQuery, boundedWaiting chan bool) {
-	defer func(boundedWaiting chan bool) {
-		<-boundedWaiting
-	}(boundedWaiting)
+func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDataQuery, semaphore chan bool) {
+	defer func(semaphore chan bool) {
+		<-semaphore
+	}(semaphore)
 
 	result := dynamicFetchingDataResult{requiresRestart: false}
 
@@ -66,7 +66,8 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 		runner.Flag("no-default-browser-check", true),
 		runner.Flag("no-first-run", true),
 		// runner.Flag("no-sandbox", true),
-		runner.ExecPath("google-chrome"))
+		runner.ExecPath(conf.Chromedp.ExecPath),
+	)
 	if err != nil {
 		log.Printf("allocate url `%s` error: %v", query.link, err)
 
@@ -127,14 +128,14 @@ func getDynamicSitePageSource(data chan dynamicFetchingDataQuery) {
 	defer pool.Shutdown()
 
 	// loop over the URLs
-	boundedWaiting := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
+	semaphore := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
 	timeout := time.After(conf.System.MaxRunningTime)
 	for {
 		select {
 		case nextData := <-data:
-			boundedWaiting <- true
+			semaphore <- true
 			log.Println("gopherGo", nextData.link)
-			go gopherGo(ctxt, pool, nextData, boundedWaiting)
+			go gopherGo(ctxt, pool, nextData, semaphore)
 		case <-timeout:
 			fmt.Println("Chromedp timeout! Ending chromedp goroutine")
 			return
