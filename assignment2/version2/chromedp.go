@@ -27,7 +27,7 @@ func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Ac
 
 func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string /*, nodes *[]*cdp.Node*/) chromedp.Action {
 	var buf []byte
-	ret := chromedp.Tasks{
+	return chromedp.Tasks{
 		chromedp.Navigate(urlstr),
 		chromedp.Sleep(conf.System.MinFetchTimeInterval),
 		chromedp.Title(title),
@@ -38,8 +38,6 @@ func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string
 		}),
 		// chromedp.Nodes(`a`, nodes, chromedp.ByQueryAll),
 	}
-
-	return ret
 }
 
 type dynamicFetchingDataQuery struct {
@@ -85,7 +83,7 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 	} else {
 		err = c.Run(ctxt, getPageSource(query.link, &title, &pageSource))
 	}
-	fmt.Println("Back", query.link, title)
+	log.Println("Back", query.link, title)
 	if err != nil {
 		log.Printf("screenshot url `%s` error: %v", query.link, err)
 		// return // let the save html file continue

@@ -183,15 +183,19 @@ func (manager *Manager) requeue(link string) {
 	manager.urlQueue.PushFront(link)
 }
 
-func (manager *Manager) getNextURLFromQueue() string {
+func (manager *Manager) getNextURLFromQueue() (string, bool) {
 	manager.urlQueueLock.Lock()
 	defer manager.urlQueueLock.Unlock()
 
 	// dequeue, but don't remove it from InQueue map
-	nextLink := manager.urlQueue.Front()
-	manager.urlQueue.Remove(nextLink)
+	if manager.urlQueue.Len() > 0 {
+		nextLink := manager.urlQueue.Front()
+		manager.urlQueue.Remove(nextLink)
 
-	return (*nextLink).Value.(string)
+		return (*nextLink).Value.(string), true
+	}
+
+	return "", false
 }
 
 func (manager *Manager) hasNextURL() bool {
@@ -207,9 +211,23 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 	}(done)
 
 	log.Println("Manager of ", manager.link, "is started")
+
+	// fileName := manager.link[9:13] + ".log"
+	// logFile, err := os.Create(fileName)
+	// defer logFile.Close()
+	// if err != nil {
+	// 	log.Fatalln("manager log", err)
+	// }
+
+	// debugLog := log.New(logFile, manager.link[9:], log.LstdFlags)
+	// debugLog.SetFlags(debugLog.Flags() | log.LstdFlags)
+
 	for manager.hasNextURL() {
 		// dequeue -> fetch
-		nextLink := manager.getNextURLFromQueue()
+		nextLink, ok := manager.getNextURLFromQueue()
+		if ok == false {
+			break
+		}
 
 		resultChannel := make(chan dynamicFetchingDataResult)
 		query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}
@@ -218,6 +236,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 		result := <-resultChannel
 		// fmt.Println(result.title, result.pageSource, result.requiresRestart)
 		log.Println("result", result.title, result.requiresRestart)
+		// debugLog.Println("result", result.title, result.requiresRestart)
 
 		if result.requiresRestart {
 			manager.requeue(nextLink)

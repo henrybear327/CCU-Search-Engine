@@ -24,6 +24,7 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 5. Goroutines still comes with cost! Think twice before creating them
 6. Watch out for deadlock!
     * Acquire locks all following the same sequence
+7. `pkill "Google Chrome"` you will need this!
 
 ## external packages
 

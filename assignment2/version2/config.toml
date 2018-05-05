@@ -13,7 +13,7 @@ manualSeedFile = "data/test.txt"
 
 [system]
 
-maxGoRountinesPerSite = 1
+maxGoRountinesPerSite = 3
 
 maxDistinctPagesToFetchPerSite = 50000
 #### maxTotalPagesToFetch = 2500000
@@ -33,7 +33,8 @@ headlessMode = true
 maxConcurrentJobs = 5 # max 5 linux 15
 
 # execPath = "google-chrome" # linux
-execPath = "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary" # mac
+# execPath = "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary" # mac
+execPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 [output]
 
