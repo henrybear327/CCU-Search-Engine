@@ -2,7 +2,6 @@ package main
 
 import (
 	"container/list"
-	"fmt"
 	"log"
 	"net/url"
 	"regexp"
@@ -209,28 +208,30 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 
 	log.Println("Manager of ", manager.link, "is started")
 	for manager.hasNextURL() {
+		// dequeue -> fetch
+		nextLink := manager.getNextURLFromQueue()
+
+		resultChannel := make(chan dynamicFetchingDataResult)
+		query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}
+
+		dynamicLinkChannel <- query
+		result := <-resultChannel
+		// fmt.Println(result.title, result.pageSource, result.requiresRestart)
+		log.Println("result", result.title, result.requiresRestart)
+
+		if result.requiresRestart {
+			manager.requeue(nextLink)
+		} else {
+			// TODO: title, pageSource integrity check...
+			manager.addToFetched(nextLink)
+		}
+
 		// var title, pageSource string
 		if manager.useLinksFromXML {
-			// simply dequeue and fetch
+			// nothing more to do
 		} else {
-			nextLink := manager.getNextURLFromQueue()
-
-			// dequeue -> fetch page -> generate next links
-			resultChannel := make(chan dynamicFetchingDataResult)
-			query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}
-
-			dynamicLinkChannel <- query
-			result := <-resultChannel
-			// fmt.Println(result.title, result.pageSource, result.requiresRestart)
-			fmt.Println(result.title, result.requiresRestart)
-
-			if result.requiresRestart {
-				manager.requeue(nextLink)
-			} else {
-				// TODO: title, pageSource integrity check...
-				manager.addToFetched(nextLink)
-			}
+			// TODO: generate next links
 		}
 	}
-	log.Println("Manager of ", manager.link, "has finished")
+	log.Println("Manager of", manager.link, "has finished")
 }

@@ -30,7 +30,7 @@ maxRunningTime = 300000000000 # in ns, starts counting after preprocessing ends
 # /Applications/Google Chrome.app/Contents/MacOS
 headlessMode = true
 
-maxConcurrentJobs = 15
+maxConcurrentJobs = 5 # max 5 linux 15
 
 # execPath = "google-chrome" # linux
 execPath = "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary" # mac
