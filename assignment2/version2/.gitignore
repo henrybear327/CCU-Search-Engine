@@ -5,3 +5,4 @@ crawler
 currentRunSeedSite.txt
 *.html
 *.png
+*.log

@@ -28,10 +28,8 @@ type Manager struct {
 	urlInQueueLock *sync.RWMutex
 
 	distinctPagesFetched int
-
-	useLinksFromXML bool
-
-	crawlDelay time.Duration
+	useLinksFromXML      bool
+	crawlDelay           time.Duration
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
@@ -160,5 +158,17 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	if _, ok := manager.urlInQueue[link]; ok == false { // not in queue yet
 		manager.urlQueue.PushBack(link)
 		manager.urlInQueue[link] = true
+	}
+}
+
+func (manager *Manager) start(done chan bool) {
+	defer func(done chan bool) {
+		done <- true
+	}(done)
+
+	if manager.useLinksFromXML {
+		// simply dequeue and fetch
+	} else {
+		// dequeue -> fetch page -> generate next links
 	}
 }

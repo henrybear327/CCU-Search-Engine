@@ -12,15 +12,15 @@ AlexaTopSitesURL = "https://www.alexa.com/topsites/countries/TW" # issues with n
 manualSeedFile = "data/test.txt"
 
 [system]
+
 maxGoRountinesPerSite = 2
 
 maxDistinctPagesToFetchPerSite = 50000
-maxTotalPagesToFetch = 2500000
+#### maxTotalPagesToFetch = 2500000
 
-timeout = 5 # page load timeout in seconds
 minFetchTimeInterval = 5 # idle time between fetches in seconds
 
-reseedInterval = 24 # in hours
+maxRunningTime = 120 # in seconds, starts counting after preprocessing ends
 
 [chromedp]
 # /opt/google/chrome

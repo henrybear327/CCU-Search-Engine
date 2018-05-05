@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -84,7 +85,17 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	defer cancel()
 
 	// create pool
-	pool, err := chromedp.NewPool()
+	fileName := "chromedp.log"
+	logFile, err := os.Create(fileName)
+	defer logFile.Close()
+	if err != nil {
+		log.Fatalln("chromedp log", err)
+	}
+
+	debugLog := log.New(logFile, "[Chromedp]", log.LstdFlags)
+	// debugLog.SetPrefix("[Chromedp]")
+	debugLog.SetFlags(debugLog.Flags() | log.LstdFlags)
+	pool, err := chromedp.NewPool(chromedp.PoolLog(debugLog.Printf, debugLog.Printf, debugLog.Printf))
 	if err != nil {
 		log.Fatalln("New pool", err)
 	}
@@ -92,7 +103,7 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 
 	// loop over the URLs
 	boundedWaiting := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
-	timeout := time.After(1 * time.Minute)
+	timeout := time.After(conf.System.MaxRunningTime * time.Second)
 	for {
 		select {
 		case nextLink := <-link:
@@ -100,7 +111,7 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 			log.Println("gopherGo", nextLink)
 			go gopherGo(ctxt, pool, nextLink, boundedWaiting)
 		case <-timeout:
-			fmt.Println("timeout! Ending chromedp goroutine")
+			fmt.Println("Chromedp timeout! Ending chromedp goroutine")
 			return
 		}
 		time.Sleep(100 * time.Millisecond)

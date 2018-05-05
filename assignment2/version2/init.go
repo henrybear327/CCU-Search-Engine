@@ -43,6 +43,8 @@ type outputConfig struct {
 type systemConfig struct {
 	MaxDistinctPagesToFetchPerSite int
 	MinFetchTimeInterval           time.Duration
+	MaxRunningTime                 time.Duration
+	MaxGoRountinesPerSite          int
 }
 
 type chromedpConfig struct {
@@ -107,6 +109,8 @@ func parseConfigFile() {
 	log.Println("ManualSeedURL", conf.Site.ManualSeedFile)
 	log.Println("MaxDistinctPagesToFetchPerSite", conf.System.MaxDistinctPagesToFetchPerSite)
 	log.Println("MinFetchTimeInterval", conf.System.MinFetchTimeInterval)
+	log.Println("MaxRunningTime", conf.System.MaxRunningTime)
+	log.Println("MaxGoRountinesPerSite", conf.System.MaxGoRountinesPerSite)
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
 	log.Println("ScreenshotPath", conf.Output.ScreenshotPath)
