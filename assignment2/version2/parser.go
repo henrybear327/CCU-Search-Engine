@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"time"
 
@@ -37,4 +38,24 @@ func parseAlexaTopSites(pageSource []byte) []string {
 	log.Printf("Parsing top Alexa sites took %s", elapsedParsing)
 
 	return topLinkList
+}
+
+func (manager *Manager) generateNextURLList(pageSource []byte) []string {
+	nextURLs := []string{}
+
+	// Load the HTML document
+	res := bytes.NewReader(pageSource)
+
+	doc, err := goquery.NewDocumentFromReader(res)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Find the review items
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		// For each item found, get the band and title
+		fmt.Println(i, s.Text())
+	})
+
+	return nextURLs
 }

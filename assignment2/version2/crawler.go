@@ -1,20 +1,20 @@
 package main
 
 func startCrawling(managers map[string]*Manager) {
-	dynamicLinkChannel := make(chan string)
-	chromedpDone := make(chan bool)
+	dynamicLinkChannel := make(chan dynamicFetchingDataQuery)
 	managerDone := make(chan bool)
-	go getDynamicSitePageSource(dynamicLinkChannel, chromedpDone)
-	for _, rec := range managers {
-		dynamicLinkChannel <- rec.link
 
+	// think of creating a daemon
+	// for creating it, we make channels
+	// for using it, we use channels
+	go getDynamicSitePageSource(dynamicLinkChannel)
+	for _, rec := range managers {
 		for i := 0; i < conf.System.MaxGoRountinesPerSite; i++ {
-			go rec.start(managerDone)
+			go rec.start(managerDone, dynamicLinkChannel)
 		}
 	}
 
 	for i := 0; i < conf.System.MaxGoRountinesPerSite*len(managers); i++ {
 		<-managerDone
 	}
-	<-chromedpDone
 }

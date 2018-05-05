@@ -2,6 +2,7 @@ package main
 
 import (
 	"container/list"
+	"fmt"
 	"log"
 	"net/url"
 	"regexp"
@@ -30,6 +31,7 @@ type Manager struct {
 	distinctPagesFetched int
 	useLinksFromXML      bool
 	crawlDelay           time.Duration
+	useStaticLoad        bool
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
@@ -161,14 +163,22 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	}
 }
 
-func (manager *Manager) start(done chan bool) {
+func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery) {
 	defer func(done chan bool) {
 		done <- true
 	}(done)
 
+	// var title, pageSource string
 	if manager.useLinksFromXML {
 		// simply dequeue and fetch
 	} else {
 		// dequeue -> fetch page -> generate next links
+		resultChannel := make(chan dynamicFetchingDataResult)
+		query := dynamicFetchingDataQuery{link: manager.link, resultChannel: resultChannel}
+
+		dynamicLinkChannel <- query
+		result := <-resultChannel
+		// fmt.Println(result.title, result.pageSource, result.requiresRestart)
+		fmt.Println(result.title, result.requiresRestart)
 	}
 }

@@ -29,13 +29,12 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 * BurntSushi/toml: config file
 * robotstxt: parse robots.txt rules
 * color: terminal output color
+* chromedp: headless browser
 
 ### candidates 
 
-* chromedp: headless browser
 * go-sqlite3: sqlite3 driver
 * goOse: main text extraction
-* logrus: logger
 
 ### Installation
 

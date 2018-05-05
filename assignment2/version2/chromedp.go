@@ -25,7 +25,7 @@ func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Ac
 	}
 }
 
-func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string, nodes *[]*cdp.Node) chromedp.Action {
+func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string /*, nodes *[]*cdp.Node*/) chromedp.Action {
 	var buf []byte
 	ret := chromedp.Tasks{
 		chromedp.Navigate(urlstr),
@@ -36,16 +36,29 @@ func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string
 		chromedp.ActionFunc(func(context.Context, cdp.Executor) error {
 			return ioutil.WriteFile(conf.Output.ScreenshotPath+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
 		}),
-		chromedp.Nodes(`a`, nodes, chromedp.ByQueryAll),
+		// chromedp.Nodes(`a`, nodes, chromedp.ByQueryAll),
 	}
 
 	return ret
 }
 
-func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedWaiting chan bool) {
+type dynamicFetchingDataQuery struct {
+	link          string
+	resultChannel chan dynamicFetchingDataResult
+}
+
+type dynamicFetchingDataResult struct {
+	title           string
+	pageSource      string
+	requiresRestart bool
+}
+
+func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDataQuery, boundedWaiting chan bool) {
 	defer func(boundedWaiting chan bool) {
 		<-boundedWaiting
 	}(boundedWaiting)
+
+	result := dynamicFetchingDataResult{requiresRestart: false}
 
 	// allocate
 	c, err := pool.Allocate(ctxt,
@@ -55,62 +68,47 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedW
 		// runner.Flag("no-sandbox", true),
 		runner.ExecPath("google-chrome"))
 	if err != nil {
-		log.Printf("allocate url `%s` error: %v", urlstr, err)
+		log.Printf("allocate url `%s` error: %v", query.link, err)
+
+		result.requiresRestart = true
+		query.resultChannel <- result
 		return
 	}
 	defer c.Release()
 
 	// run tasks
+	// var nodes []*cdp.Node
 	var title, pageSource string
-	var nodes []*cdp.Node
 	if conf.Output.SaveScreenshot {
-		err = c.Run(ctxt, getScreenshotAndPageSource(urlstr, &title, &pageSource, &nodes))
+		err = c.Run(ctxt, getScreenshotAndPageSource(query.link, &title, &pageSource /*, &nodes*/))
 	} else {
-		err = c.Run(ctxt, getPageSource(urlstr, &title, &pageSource))
+		err = c.Run(ctxt, getPageSource(query.link, &title, &pageSource))
 	}
-	fmt.Println("Back", urlstr, title)
+	fmt.Println("Back", query.link, title)
 	if err != nil {
-		log.Printf("screenshot url `%s` error: %v", urlstr, err)
+		log.Printf("screenshot url `%s` error: %v", query.link, err)
 		// return // let the save html file continue
 	}
-	saveHTMLFileFromString(strings.Replace(urlstr, "/", " ", -1)+".html", pageSource)
+	saveHTMLFileFromString(strings.Replace(query.link, "/", " ", -1)+".html", pageSource)
 
-	fmt.Println(len(nodes))
-	for _, n := range nodes {
-		fmt.Println(n.AttributeValue("href"))
-	}
+	result.title = title
+	result.pageSource = pageSource
+
+	query.resultChannel <- result
+
+	// fmt.Println(len(nodes))
+	// for _, n := range nodes {
+	// 	fmt.Println(n.AttributeValue("href"))
+	// }
 }
 
 // https://github.com/chromedp/examples/blob/master/pool/main.go
-func getDynamicSitePageSource(link chan string, done chan bool) {
-	defer func(done chan bool) {
-		done <- true
-	}(done)
-
+func getDynamicSitePageSource(data chan dynamicFetchingDataQuery) {
 	var err error
 
 	// create context
 	ctxt, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	// c, err := chromedp.New(ctxt, chromedp.WithRunnerOptions(
-	// 	runner.Flag("headless", true),
-	// 	runner.Flag("disable-gpu", true)))
-
-	// var nodes []*cdp.Node
-	// t := chromedp.Tasks{
-	// 	chromedp.Navigate("https://www.npr.org/"),
-	// 	chromedp.Sleep(time.Second * 2),
-	// 	chromedp.Nodes("a", &nodes, chromedp.ByQueryAll),
-	// }
-	// err = c.Run(ctxt, t)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(len(nodes))
-	// for _, n := range nodes {
-	// 	fmt.Println(n.AttributeValue("href"))
-	// }
 
 	// create pool
 	fileName := "chromedp.log"
@@ -133,10 +131,10 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	timeout := time.After(conf.System.MaxRunningTime)
 	for {
 		select {
-		case nextLink := <-link:
+		case nextData := <-data:
 			boundedWaiting <- true
-			log.Println("gopherGo", nextLink)
-			go gopherGo(ctxt, pool, nextLink, boundedWaiting)
+			log.Println("gopherGo", nextData.link)
+			go gopherGo(ctxt, pool, nextData, boundedWaiting)
 		case <-timeout:
 			fmt.Println("Chromedp timeout! Ending chromedp goroutine")
 			return
@@ -144,3 +142,28 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 		time.Sleep(100 * time.Millisecond)
 	}
 }
+
+// func testSelectAll() {
+// 	// create context
+// 	ctxt, cancel := context.WithCancel(context.Background())
+// 	defer cancel()
+
+// 	c, err := chromedp.New(ctxt, chromedp.WithRunnerOptions(
+// 		runner.Flag("headless", true),
+// 		runner.Flag("disable-gpu", true)))
+
+// 	var nodes []*cdp.Node
+// 	t := chromedp.Tasks{
+// 		chromedp.Navigate("https://www.npr.org/"),
+// 		chromedp.Sleep(time.Second * 2),
+// 		chromedp.Nodes("a", &nodes, chromedp.ByQueryAll),
+// 	}
+// 	err = c.Run(ctxt, t)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fmt.Println(len(nodes))
+// 	for _, n := range nodes {
+// 		fmt.Println(n.AttributeValue("href"))
+// 	}
+// }
