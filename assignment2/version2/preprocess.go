@@ -31,9 +31,10 @@ type sitemapURLNode struct {
 }
 
 func (manager *Manager) processgzFile(link string) {
-	// fmt.Println("processgzFile")
+	// log.Println("processgzFile")
 	compressedPageSource, statusCode := getStaticSitePageSource(link)
 	if statusCode != 200 {
+		log.Println("gz file download err")
 		return
 	}
 
@@ -55,7 +56,7 @@ func (manager *Manager) processgzFile(link string) {
 }
 
 func (manager *Manager) parseXMLContent(pageSource []byte) {
-	// fmt.Println("parseXMLContent")
+	// log.Println("parseXMLContent")
 	// parse (section xml)
 	var data sitemapSection
 	err := xml.Unmarshal(pageSource, &data)

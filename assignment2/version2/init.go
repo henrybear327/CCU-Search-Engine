@@ -165,6 +165,7 @@ func prepareSeedSites(seedSiteList []string) map[string]*Manager {
 	done := make(chan bool, totalSites)
 
 	for _, link := range seedSiteList {
+		log.Println("Starting", link, "preprocessing")
 		u, err := url.Parse(link)
 		if err != nil {
 			log.Fatalln("Parsing hostname error")

@@ -22,6 +22,8 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 3. Trim string! Can't emphasize more!
 4. `google.com.tw` tld != `google.com`
 5. Goroutines still comes with cost! Think twice before creating them
+6. Watch out for deadlock!
+    * Acquire locks all following the same sequence
 
 ## external packages
 

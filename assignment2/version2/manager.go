@@ -15,7 +15,9 @@ import (
 )
 
 // Manager is the heart of every seed website
-// Be aware of locking
+// Don't forget to acquire lock
+// Be aware of deadlock
+// urlFetchedLock -> urlQueueLock -> urlInQueueLock
 type Manager struct {
 	link       string
 	tld        string
@@ -35,10 +37,10 @@ type Manager struct {
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
-	manager.urlInQueueLock.RLock()
-	defer manager.urlInQueueLock.RUnlock()
 	manager.urlFetchedLock.RLock()
 	defer manager.urlFetchedLock.RUnlock()
+	manager.urlInQueueLock.RLock()
+	defer manager.urlInQueueLock.RUnlock()
 
 	if _, ok := manager.urlInQueue[link]; ok {
 		return true
@@ -80,30 +82,28 @@ func (manager *Manager) isExternalSite(link string) bool {
 
 // call this afer fetching
 func (manager *Manager) addToFetched(link string) {
+	// log.Println("addToFetched", link)
 	link = strings.TrimSpace(link)
+
+	// add to fetched set
+	manager.urlFetchedLock.Lock()
+	defer manager.urlFetchedLock.Unlock()
+	if _, ok := manager.urlFetched[link]; ok == true {
+		return
+	}
+	manager.urlFetched[link] = true
+
+	manager.distinctPagesFetched++
+	if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
+		// TODO: end go routine
+	}
 
 	// if in InQueue map, move it from there to fetched
 	manager.urlInQueueLock.Lock()
 	defer manager.urlInQueueLock.Unlock()
 	if _, ok := manager.urlInQueue[link]; ok == true {
-		// add to fetched set
-		manager.urlFetchedLock.Lock()
-		defer manager.urlFetchedLock.Unlock()
-		manager.urlFetched[link] = true
-
 		// remove from InQueue
 		delete(manager.urlInQueue, link)
-
-		manager.distinctPagesFetched++
-		if manager.distinctPagesFetched >= conf.System.MaxDistinctPagesToFetchPerSite {
-			// TODO: end go routine
-		}
-		return
-	}
-
-	// somehow it's fetched twice?
-	if manager.isInQueueOrFetched(link) {
-		log.Println("Weird shit, fetched twice?")
 		return
 	}
 }
