@@ -1,5 +1,10 @@
 package main
 
+import (
+	"log"
+	"time"
+)
+
 func startCrawling(managers map[string]*Manager) {
 	dynamicLinkChannel := make(chan dynamicFetchingDataQuery)
 	managerDone := make(chan bool)
@@ -14,7 +19,13 @@ func startCrawling(managers map[string]*Manager) {
 		}
 	}
 
+	globalTimeout := time.After(conf.System.maxRunningTimeDuration)
 	for i := 0; i < conf.System.MaxGoRountinesPerSite*len(managers); i++ {
-		<-managerDone
+		select {
+		case <-managerDone:
+		case <-globalTimeout:
+			log.Println("Global timeout! Ending!")
+			return
+		}
 	}
 }
