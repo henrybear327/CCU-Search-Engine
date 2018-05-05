@@ -235,10 +235,11 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 		dynamicLinkChannel <- query
 		result := <-resultChannel
 		// fmt.Println(result.title, result.pageSource, result.requiresRestart)
-		log.Println("result", result.title, result.requiresRestart)
+		log.Println("dynamic query result", result.title, result.requiresRestart)
 		// debugLog.Println("result", result.title, result.requiresRestart)
 
 		if result.requiresRestart {
+			log.Println("put back", nextLink, "to queue front")
 			manager.requeue(nextLink)
 		} else {
 			// TODO: title, pageSource integrity check...

@@ -18,9 +18,10 @@ maxGoRountinesPerSite = 3
 maxDistinctPagesToFetchPerSite = 50000
 #### maxTotalPagesToFetch = 2500000
 
-minFetchTimeInterval = 5000000000 # idle time between fetches in ns
-
-maxRunningTime = 10000000000 # in ns, starts counting after preprocessing ends
+# idle time between fetches in second
+minFetchTimeInterval = "5s"
+# in second, starts counting after preprocessing ends
+maxRunningTime = "120s" 
 
 [chromedp]
 # /opt/google/chrome
@@ -30,11 +31,11 @@ maxRunningTime = 10000000000 # in ns, starts counting after preprocessing ends
 # /Applications/Google Chrome.app/Contents/MacOS
 headlessMode = true
 
-maxConcurrentJobs = 5 # max 5 linux 15
+maxConcurrentJobs = 15 # max 5 linux 15
 
-# execPath = "google-chrome" # linux
+execPath = "google-chrome" # linux
 # execPath = "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary" # mac
-execPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+# execPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 [output]
 

@@ -19,7 +19,7 @@ import (
 func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Action {
 	return chromedp.Tasks{
 		chromedp.Navigate(urlstr),
-		chromedp.Sleep(conf.System.MinFetchTimeInterval),
+		chromedp.Sleep(conf.System.minFetchTimeDuration),
 		chromedp.Title(title),
 		chromedp.OuterHTML("html", pageSource),
 	}
@@ -29,7 +29,7 @@ func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string
 	var buf []byte
 	return chromedp.Tasks{
 		chromedp.Navigate(urlstr),
-		chromedp.Sleep(conf.System.MinFetchTimeInterval),
+		chromedp.Sleep(conf.System.minFetchTimeDuration),
 		chromedp.Title(title),
 		chromedp.OuterHTML("html", pageSource),
 		chromedp.CaptureScreenshot(&buf),
@@ -132,7 +132,7 @@ func getDynamicSitePageSource(data chan dynamicFetchingDataQuery) {
 
 	// loop over the URLs
 	semaphore := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
-	timeout := time.After(conf.System.MaxRunningTime)
+	timeout := time.After(conf.System.maxRunningTimeDuration)
 	for {
 		select {
 		case nextData := <-data:

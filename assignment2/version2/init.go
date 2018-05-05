@@ -42,8 +42,10 @@ type outputConfig struct {
 
 type systemConfig struct {
 	MaxDistinctPagesToFetchPerSite int
-	MinFetchTimeInterval           time.Duration
-	MaxRunningTime                 time.Duration
+	MinFetchTimeInterval           string
+	minFetchTimeDuration           time.Duration
+	MaxRunningTime                 string
+	maxRunningTimeDuration         time.Duration
 	MaxGoRountinesPerSite          int
 }
 
@@ -122,6 +124,18 @@ func parseConfigFile() {
 	log.Println("MaxConcurrentJobs", conf.Chromedp.MaxConcurrentJobs)
 	log.Println("ExecPath", conf.Chromedp.ExecPath)
 	log.Println("=====================")
+	{
+		var err error
+		conf.System.minFetchTimeDuration, err = time.ParseDuration(conf.System.MinFetchTimeInterval)
+		if err != nil {
+			log.Fatalln("MinFetchTimeInterval", err)
+		}
+
+		conf.System.maxRunningTimeDuration, err = time.ParseDuration(conf.System.MaxRunningTime)
+		if err != nil {
+			log.Fatalln("MaxRunningTime", err)
+		}
+	}
 }
 
 func getSeedSites() []string {
