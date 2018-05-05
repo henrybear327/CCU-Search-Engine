@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 	"time"
 
@@ -41,33 +42,25 @@ func parseAlexaTopSites(pageSource []byte) []string {
 	return topLinkList
 }
 
-func isInvalidSuffix(link string) bool {
+func isValidSuffix(link string) bool {
 	if link == "void(0)" {
-		return true
+		return false
 	}
-	if strings.HasSuffix(link, "mailto://") {
-		return true
+	if strings.HasPrefix(link, "mailto://") {
+		return false
 	}
-	if strings.HasSuffix(link, "javascript://") {
-		return true
+	if strings.HasPrefix(link, "javascript://") {
+		return false
 	}
 
-	return false
-}
-
-func isValidURL(link string) bool {
-	link = strings.ToLower(strings.TrimSpace(link))
-
-	if isInvalidSuffix(link) {
+	if strings.HasPrefix(link, "#") {
 		return false
 	}
 
 	return true
 }
 
-func (manager *Manager) generateNextURLList(pageSource []byte) []string {
-	nextURLs := []string{}
-
+func (manager *Manager) getTitleFromPageSource(pageSource []byte) string {
 	// Load the HTML document
 	res := bytes.NewReader(pageSource)
 	doc, err := goquery.NewDocumentFromReader(res)
@@ -83,6 +76,48 @@ func (manager *Manager) generateNextURLList(pageSource []byte) []string {
 		// 4. hub counting
 		fmt.Println(i, s, s.Text())
 	})
+
+	return ""
+}
+
+func (manager *Manager) getNextURLList(link string, pageSource []byte) []string {
+	link = strings.ToLower(strings.TrimSpace(link))
+	nextURLs := []string{}
+
+	// Load the HTML document
+	res := bytes.NewReader(pageSource)
+	doc, err := goquery.NewDocumentFromReader(res)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Find the review items
+	parsedLink, err := url.Parse(link)
+	if err != nil {
+		log.Println("getNextURLList link", err)
+		return nextURLs
+	}
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		// 1. must have href
+		// 2. concat url
+		// 3. enqueue
+		// 4. hub counting
+		// 5. not self
+		str, exists := s.Attr("href")
+		str = strings.ToLower(strings.TrimSpace(str))
+		if isValidSuffix(str) && exists {
+			u, err := parsedLink.Parse(str)
+			if err != nil {
+				log.Println("getNextURLList href", err)
+				return
+			}
+			// fmt.Println(i, u, strings.TrimSpace(s.Text()))
+			// fmt.Println(i, u.String())
+			nextURLs = append(nextURLs, u.String())
+		}
+	})
+
+	// log.Println(len(nextURLs))
 
 	return nextURLs
 }

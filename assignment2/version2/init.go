@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"golang.org/x/net/publicsuffix"
 )
 
 type config struct {
@@ -138,8 +139,9 @@ func parseConfigFile() {
 	}
 }
 
-func getSeedSites() []string {
+func getSeedSites() ([]string, []string) {
 	var seedSiteList []string
+	var seedSiteOptionList []string
 
 	if conf.Site.UseAlexaTopSites {
 		pageSource, statusCode := getStaticSitePageSource(conf.Site.AlexaTopSitesURL)
@@ -163,28 +165,55 @@ func getSeedSites() []string {
 				break
 			}
 			check(err)
-			seedSiteList = append(seedSiteList, string(str))
+
+			line := string(str)
+			lineComponents := strings.Split(line, " ")
+			if len(lineComponents) != 2 {
+				log.Fatalln(line, "in the seed site file is not accepted")
+			}
+
+			seedSiteList = append(seedSiteList, lineComponents[0])
+			seedSiteOptionList = append(seedSiteOptionList, lineComponents[1])
 		}
 	}
 
-	outputSeedingSites(seedSiteList)
-	return seedSiteList
+	outputSeedingSites(seedSiteList, seedSiteOptionList)
+	return seedSiteList, seedSiteOptionList
 }
 
-func prepareSeedSites(seedSiteList []string) map[string]*Manager {
+func getTopLevelDomain(link string) string {
+	link = strings.ToLower(strings.TrimSpace(link))
+
+	u, err := url.Parse(link)
+	if err != nil {
+		log.Fatalln("Parsing hostname error")
+	}
+	host := u.Hostname()
+
+	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(host)
+	if err != nil {
+		log.Println("isExternalSite EffectiveTLDPlusOne err", err)
+		return ""
+	}
+	return linkTLD
+}
+
+func prepareSeedSites(seedSiteList []string, seedSiteOption []string) map[string]*Manager {
 	startDownload := time.Now()
 
 	totalSites := len(seedSiteList)
+	totalOptions := len(seedSiteOption)
 	managers := make(map[string]*Manager) // pointer bug!!
 	done := make(chan bool, totalSites)
 
-	for _, link := range seedSiteList {
-		log.Println("Starting", link, "preprocessing")
-		u, err := url.Parse(link)
-		if err != nil {
-			log.Fatalln("Parsing hostname error")
+	for i, link := range seedSiteList {
+		log.Println("Starting", link, "preprocessing", "TLD =", getTopLevelDomain(link))
+
+		useStaticLoad := true
+		if totalOptions == totalSites && seedSiteOption[i] == "@useChrome" {
+			useStaticLoad = false
 		}
-		host := u.Hostname()
+		log.Println(link, "useStaticLoad", useStaticLoad)
 
 		newManager := Manager{
 			link:            link,
@@ -193,8 +222,9 @@ func prepareSeedSites(seedSiteList []string) map[string]*Manager {
 			urlFetchedLock:  new(sync.RWMutex),
 			urlFetched:      make(map[string]bool),
 			urlInQueue:      make(map[string]bool),
-			tld:             strings.ToLower(getTLD(host)),
-			useLinksFromXML: false}
+			tld:             getTopLevelDomain(link),
+			useLinksFromXML: false,
+			useStaticLoad:   useStaticLoad}
 
 		managers[link] = &newManager
 

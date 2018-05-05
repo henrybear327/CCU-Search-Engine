@@ -1,4 +1,4 @@
-https://www.techbang.com
-https://edition.cnn.com
-https://www.google.com
-https://www.npr.org/
+https://www.techbang.com @useStatic
+https://edition.cnn.com @useChrome
+https://www.google.com @useStatic
+https://www.npr.org/ @useStatic

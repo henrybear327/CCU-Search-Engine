@@ -10,8 +10,8 @@ func main() {
 	parseConfigFile()
 
 	// scheduler starts here!
-	seedSiteList := getSeedSites()
-	managers := prepareSeedSites(seedSiteList)
+	seedSiteList, seedSiteOption := getSeedSites()
+	managers := prepareSeedSites(seedSiteList, seedSiteOption)
 
 	startCrawling(managers)
 }

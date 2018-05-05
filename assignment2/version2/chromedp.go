@@ -27,6 +27,11 @@ func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Ac
 
 func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string /*, nodes *[]*cdp.Node*/) chromedp.Action {
 	var buf []byte
+	path := conf.Output.PageSourcePath + "/" + getTopLevelDomain(urlstr)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.Mkdir(path, 0777)
+	}
+
 	return chromedp.Tasks{
 		chromedp.Navigate(urlstr),
 		chromedp.Sleep(conf.System.minFetchTimeDuration),
@@ -34,7 +39,7 @@ func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string
 		chromedp.OuterHTML("html", pageSource),
 		chromedp.CaptureScreenshot(&buf),
 		chromedp.ActionFunc(func(context.Context, cdp.Executor) error {
-			return ioutil.WriteFile(conf.Output.ScreenshotPath+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
+			return ioutil.WriteFile(path+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
 		}),
 		// chromedp.Nodes(`a`, nodes, chromedp.ByQueryAll),
 	}
@@ -88,7 +93,7 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 		log.Printf("screenshot url `%s` error: %v", query.link, err)
 		// return // let the save html file continue
 	}
-	saveHTMLFileFromString(strings.Replace(query.link, "/", " ", -1)+".html", pageSource)
+	saveHTMLFileFromString(getTopLevelDomain(query.link), strings.Replace(query.link[8:], "/", " ", -1)+".html", pageSource)
 
 	result.title = title
 	result.pageSource = pageSource

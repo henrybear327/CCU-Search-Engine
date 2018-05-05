@@ -3,14 +3,12 @@ package main
 import (
 	"container/list"
 	"log"
-	"net/url"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/temoto/robotstxt"
-	"golang.org/x/net/publicsuffix"
 )
 
 // Manager is the heart of every seed website
@@ -51,27 +49,12 @@ func (manager *Manager) isInQueueOrFetched(link string) bool {
 	return false
 }
 
-func getTLD(link string) string {
-	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(link)
-	if err != nil {
-		log.Println("isExternalSite EffectiveTLDPlusOne err", err)
-		return ""
-	}
-	return linkTLD
-}
-
 func (manager *Manager) isExternalSite(link string) bool {
 	link = strings.TrimSpace(link)
 	link = strings.ToLower(link)
 
-	parsed, err := url.Parse(link)
-	if err != nil {
-		log.Println("isExternalSite url parse err", err)
-		return true // can't parse, disregard
-	}
-
 	// fmt.Println(parsed.Host, parsed.Path)
-	linkTLD := getTLD(parsed.Host)
+	linkTLD := getTopLevelDomain(link)
 	// if manager.tld != linkTLD {
 	// 	fmt.Println("cmp isExternalSite", manager.tld, link, linkTLD)
 	// }
@@ -133,7 +116,7 @@ func (manager *Manager) isBannedByRobotTXT(link string) bool {
 }
 
 // call this to queue url
-func (manager *Manager) enqueue(link string, isPreprocessing bool) {
+func (manager *Manager) enqueue(link string, isPreprocessing bool) bool {
 	link = strings.TrimSpace(link)
 	/*
 		Disgard link if
@@ -146,20 +129,20 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	*/
 
 	if manager.isInQueueOrFetched(link) {
-		return
+		return false
 	}
 
 	if manager.isExternalSite(link) {
-		return
+		return false
 	}
 
 	if manager.isBannedByRobotTXT(link) {
-		return
+		return false
 	}
 
 	if isPreprocessing == false {
 		if manager.isMultimediaFiles(link) {
-			return
+			return false
 		}
 	}
 
@@ -172,7 +155,10 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) {
 	if _, ok := manager.urlInQueue[link]; ok == false { // not in queue yet
 		manager.urlQueue.PushBack(link)
 		manager.urlInQueue[link] = true
+		return true
 	}
+
+	return false
 }
 
 // for restart
@@ -205,6 +191,10 @@ func (manager *Manager) hasNextURL() bool {
 	return manager.urlQueue.Len() > 0
 }
 
+func (manager *Manager) doInDegreeCounting(link string) {
+
+}
+
 func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery) {
 	defer func(done chan bool) {
 		done <- true
@@ -223,34 +213,66 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 	// debugLog.SetFlags(debugLog.Flags() | log.LstdFlags)
 
 	for manager.hasNextURL() {
-		// dequeue -> fetch
+		// dequeue -> fetch -> generate next link
+
+		// dequeue
 		nextLink, ok := manager.getNextURLFromQueue()
 		if ok == false {
 			break
 		}
 
-		resultChannel := make(chan dynamicFetchingDataResult)
-		query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}
-
-		dynamicLinkChannel <- query
-		result := <-resultChannel
-		// fmt.Println(result.title, result.pageSource, result.requiresRestart)
-		log.Println("dynamic query result", result.title, result.requiresRestart)
-		// debugLog.Println("result", result.title, result.requiresRestart)
-
-		if result.requiresRestart {
-			log.Println("put back", nextLink, "to queue front")
-			manager.requeue(nextLink)
+		// fetch
+		var pageSoruceForParsing []byte
+		var titleForStoring string
+		if manager.useStaticLoad {
+			pageSource, statusCode := getStaticSitePageSource(nextLink)
+			if statusCode != 200 {
+				// TODO: disregard?
+				time.Sleep(conf.System.minFetchTimeDuration)
+				continue
+			}
+			saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSource))
+			pageSoruceForParsing = pageSource
 		} else {
-			// TODO: title, pageSource integrity check...
-			manager.addToFetched(nextLink)
+			resultChannel := make(chan dynamicFetchingDataResult)
+			query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}
+
+			dynamicLinkChannel <- query
+			result := <-resultChannel
+			// fmt.Println(result.title, result.pageSource, result.requiresRestart)
+			log.Println("dynamic query result", result.title, result.requiresRestart)
+			// debugLog.Println("result", result.title, result.requiresRestart)
+
+			if result.requiresRestart { // allocation error
+				log.Println("put back", nextLink, "to queue front")
+				manager.requeue(nextLink)
+			} else {
+				// TODO: title, pageSource integrity check...
+				manager.addToFetched(nextLink)
+			}
+			pageSoruceForParsing = []byte(result.pageSource)
+			titleForStoring = result.title
 		}
 
-		// var title, pageSource string
-		if manager.useLinksFromXML {
-			// nothing more to do
-		} else {
-			// TODO: generate next links
+		// generate next link
+		log.Println("Parsed title", titleForStoring)
+		nextLinkList := manager.getNextURLList(nextLink, pageSoruceForParsing)
+
+		log.Println("Parsed links", len(nextLinkList))
+		for _, rec := range nextLinkList {
+			// log.Println("Parsed link from", nextLink, rec)
+			if manager.useLinksFromXML == false {
+				ret := manager.enqueue(rec, false)
+				if ret {
+					// log.Println("Enqueue parsed link from", nextLink, rec)
+				}
+			}
+			manager.doInDegreeCounting(rec)
+		}
+		log.Println("Queue size", manager.urlQueue.Len())
+
+		if manager.useStaticLoad {
+			time.Sleep(conf.System.minFetchTimeDuration)
 		}
 	}
 	log.Println("Manager of", manager.link, "has finished")
