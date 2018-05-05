@@ -28,6 +28,8 @@ reseedInterval = 24 # in hours
 # /opt/google/chrome/google-chrome --headless --remote-debugging-port=9222 --disable-gpu
 headlessMode = true
 
+maxConcurrentJobs = 15
+
 [output]
 
 slowAction = 10000000000 # ns (1e-9)

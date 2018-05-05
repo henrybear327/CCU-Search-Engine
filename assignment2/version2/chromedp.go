@@ -66,7 +66,7 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedW
 	fmt.Println("Back", urlstr, title)
 	if err != nil {
 		log.Printf("screenshot url `%s` error: %v", urlstr, err)
-		// return // TODO ??
+		// return // let the save html file continue
 	}
 	saveHTMLFileFromString(strings.Replace(urlstr, "/", " ", -1)+".html", pageSource)
 }
@@ -91,7 +91,7 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	defer pool.Shutdown()
 
 	// loop over the URLs
-	boundedWaiting := make(chan bool, 15)
+	boundedWaiting := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
 	timeout := time.After(1 * time.Minute)
 	for {
 		select {

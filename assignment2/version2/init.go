@@ -46,7 +46,8 @@ type systemConfig struct {
 }
 
 type chromedpConfig struct {
-	HeadlessMode bool
+	HeadlessMode      bool
+	MaxConcurrentJobs int
 }
 
 func check(e error) {
@@ -113,6 +114,7 @@ func parseConfigFile() {
 	log.Println("SlowAction", conf.Output.SlowAction)
 	log.Println("SaveScreenshot", conf.Output.SaveScreenshot)
 	log.Println("HeadlessMode", conf.Chromedp.HeadlessMode)
+	log.Println("MaxConcurrentJobs", conf.Chromedp.MaxConcurrentJobs)
 	log.Println("=====================")
 }
 
