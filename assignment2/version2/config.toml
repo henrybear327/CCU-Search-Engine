@@ -18,9 +18,9 @@ maxGoRountinesPerSite = 2
 maxDistinctPagesToFetchPerSite = 50000
 #### maxTotalPagesToFetch = 2500000
 
-minFetchTimeInterval = 5 # idle time between fetches in seconds
+minFetchTimeInterval = 5000000000 # idle time between fetches in ns
 
-maxRunningTime = 120 # in seconds, starts counting after preprocessing ends
+maxRunningTime = 120000000000 # in ns, starts counting after preprocessing ends
 
 [chromedp]
 # /opt/google/chrome
@@ -39,4 +39,4 @@ slowAction = 10000000000 # ns (1e-9)
 seedfile = "data/currentRunSeedSite.txt"
 pageSourcePath = "pageSource/"
 screenshotPath = "screenshot/"
-saveScreenshot = false
+saveScreenshot = true

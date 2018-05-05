@@ -19,24 +19,27 @@ import (
 func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Action {
 	return chromedp.Tasks{
 		chromedp.Navigate(urlstr),
-		chromedp.Sleep(conf.System.MinFetchTimeInterval * time.Second),
+		chromedp.Sleep(conf.System.MinFetchTimeInterval),
 		chromedp.Title(title),
 		chromedp.OuterHTML("html", pageSource),
 	}
 }
 
-func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string) chromedp.Action {
+func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string, nodes *[]*cdp.Node) chromedp.Action {
 	var buf []byte
-	return chromedp.Tasks{
+	ret := chromedp.Tasks{
 		chromedp.Navigate(urlstr),
-		chromedp.Sleep(conf.System.MinFetchTimeInterval * time.Second),
+		chromedp.Sleep(conf.System.MinFetchTimeInterval),
 		chromedp.Title(title),
 		chromedp.OuterHTML("html", pageSource),
 		chromedp.CaptureScreenshot(&buf),
 		chromedp.ActionFunc(func(context.Context, cdp.Executor) error {
 			return ioutil.WriteFile(conf.Output.ScreenshotPath+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
 		}),
+		chromedp.Nodes(`a`, nodes, chromedp.ByQueryAll),
 	}
+
+	return ret
 }
 
 func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedWaiting chan bool) {
@@ -59,8 +62,9 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedW
 
 	// run tasks
 	var title, pageSource string
+	var nodes []*cdp.Node
 	if conf.Output.SaveScreenshot {
-		err = c.Run(ctxt, getScreenshotAndPageSource(urlstr, &title, &pageSource))
+		err = c.Run(ctxt, getScreenshotAndPageSource(urlstr, &title, &pageSource, &nodes))
 	} else {
 		err = c.Run(ctxt, getPageSource(urlstr, &title, &pageSource))
 	}
@@ -70,6 +74,11 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedW
 		// return // let the save html file continue
 	}
 	saveHTMLFileFromString(strings.Replace(urlstr, "/", " ", -1)+".html", pageSource)
+
+	fmt.Println(len(nodes))
+	for _, n := range nodes {
+		fmt.Println(n.AttributeValue("href"))
+	}
 }
 
 // https://github.com/chromedp/examples/blob/master/pool/main.go
@@ -84,6 +93,25 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	ctxt, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// c, err := chromedp.New(ctxt, chromedp.WithRunnerOptions(
+	// 	runner.Flag("headless", true),
+	// 	runner.Flag("disable-gpu", true)))
+
+	// var nodes []*cdp.Node
+	// t := chromedp.Tasks{
+	// 	chromedp.Navigate("https://www.npr.org/"),
+	// 	chromedp.Sleep(time.Second * 2),
+	// 	chromedp.Nodes("a", &nodes, chromedp.ByQueryAll),
+	// }
+	// err = c.Run(ctxt, t)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Println(len(nodes))
+	// for _, n := range nodes {
+	// 	fmt.Println(n.AttributeValue("href"))
+	// }
+
 	// create pool
 	fileName := "chromedp.log"
 	logFile, err := os.Create(fileName)
@@ -93,7 +121,6 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	}
 
 	debugLog := log.New(logFile, "[Chromedp]", log.LstdFlags)
-	// debugLog.SetPrefix("[Chromedp]")
 	debugLog.SetFlags(debugLog.Flags() | log.LstdFlags)
 	pool, err := chromedp.NewPool(chromedp.PoolLog(debugLog.Printf, debugLog.Printf, debugLog.Printf))
 	if err != nil {
@@ -103,7 +130,7 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 
 	// loop over the URLs
 	boundedWaiting := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
-	timeout := time.After(conf.System.MaxRunningTime * time.Second)
+	timeout := time.After(conf.System.MaxRunningTime)
 	for {
 		select {
 		case nextLink := <-link:
@@ -116,10 +143,4 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
-
-	// shutdown pool
-	// err = pool.Shutdown()
-	// if err != nil {
-	// 	log.Fatalln("pool shutdown", err)
-	// }
 }
