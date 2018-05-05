@@ -37,3 +37,4 @@ slowAction = 10000000000 # ns (1e-9)
 seedfile = "data/currentRunSeedSite.txt"
 pageSourcePath = "pageSource/"
 screenshotPath = "screenshot/"
+saveScreenshot = false

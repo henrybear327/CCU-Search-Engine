@@ -15,6 +15,62 @@ import (
 	"github.com/chromedp/chromedp/runner"
 )
 
+func getPageSource(urlstr string, title *string, pageSource *string) chromedp.Action {
+	return chromedp.Tasks{
+		chromedp.Navigate(urlstr),
+		chromedp.Sleep(conf.System.MinFetchTimeInterval * time.Second),
+		chromedp.Title(title),
+		chromedp.OuterHTML("html", pageSource),
+	}
+}
+
+func getScreenshotAndPageSource(urlstr string, title *string, pageSource *string) chromedp.Action {
+	var buf []byte
+	return chromedp.Tasks{
+		chromedp.Navigate(urlstr),
+		chromedp.Sleep(conf.System.MinFetchTimeInterval * time.Second),
+		chromedp.Title(title),
+		chromedp.OuterHTML("html", pageSource),
+		chromedp.CaptureScreenshot(&buf),
+		chromedp.ActionFunc(func(context.Context, cdp.Executor) error {
+			return ioutil.WriteFile(conf.Output.ScreenshotPath+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
+		}),
+	}
+}
+
+func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedWaiting chan bool) {
+	defer func(boundedWaiting chan bool) {
+		<-boundedWaiting
+	}(boundedWaiting)
+
+	// allocate
+	c, err := pool.Allocate(ctxt,
+		runner.Flag("headless", conf.Chromedp.HeadlessMode),
+		runner.Flag("no-default-browser-check", true),
+		runner.Flag("no-first-run", true),
+		// runner.Flag("no-sandbox", true),
+		runner.ExecPath("google-chrome"))
+	if err != nil {
+		log.Printf("allocate url `%s` error: %v", urlstr, err)
+		return
+	}
+	defer c.Release()
+
+	// run tasks
+	var title, pageSource string
+	if conf.Output.SaveScreenshot {
+		err = c.Run(ctxt, getScreenshotAndPageSource(urlstr, &title, &pageSource))
+	} else {
+		err = c.Run(ctxt, getPageSource(urlstr, &title, &pageSource))
+	}
+	fmt.Println("Back", urlstr, title)
+	if err != nil {
+		log.Printf("screenshot url `%s` error: %v", urlstr, err)
+		// return // TODO ??
+	}
+	saveHTMLFileFromString(strings.Replace(urlstr, "/", " ", -1)+".html", pageSource)
+}
+
 // https://github.com/chromedp/examples/blob/master/pool/main.go
 func getDynamicSitePageSource(link chan string, done chan bool) {
 	defer func(done chan bool) {
@@ -28,7 +84,7 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	defer cancel()
 
 	// create pool
-	pool, err := chromedp.NewPool( /*chromedp.PoolLog(log.Printf, log.Printf, log.Printf)*/ )
+	pool, err := chromedp.NewPool()
 	if err != nil {
 		log.Fatalln("New pool", err)
 	}
@@ -55,56 +111,4 @@ func getDynamicSitePageSource(link chan string, done chan bool) {
 	// if err != nil {
 	// 	log.Fatalln("pool shutdown", err)
 	// }
-}
-
-func gopherGo(ctxt context.Context, pool *chromedp.Pool, urlstr string, boundedWaiting chan bool) {
-	defer func(boundedWaiting chan bool) {
-		<-boundedWaiting
-	}(boundedWaiting)
-
-	// allocate
-	c, err := pool.Allocate(ctxt,
-		runner.Flag("headless", conf.Chromedp.HeadlessMode),
-		runner.Flag("no-default-browser-check", true),
-		runner.Flag("no-first-run", true),
-		// runner.Flag("no-sandbox", true),
-		runner.ExecPath("google-chrome"))
-	if err != nil {
-		log.Printf("allocate url `%s` error: %v", urlstr, err)
-		return
-	}
-	defer c.Release()
-
-	// run tasks
-	// var buf []byte
-	var title, pageSource string
-	err = c.Run(ctxt, getScreenshotAndPageSource(urlstr /*&buf,*/, &title, &pageSource))
-	fmt.Println("Back", urlstr, title)
-	if err != nil {
-		log.Printf("screenshot url `%s` error: %v", urlstr, err)
-		// return // TODO ??
-	}
-	saveHTMLFileFromString(strings.Replace(urlstr, "/", " ", -1)+".html", pageSource)
-}
-
-func getScreenshotAndPageSource(urlstr string /*, picbuf *[]byte*/, title *string, pageSource *string) chromedp.Action {
-	var buf []byte
-	return chromedp.Tasks{
-		chromedp.Navigate(urlstr),
-		chromedp.Sleep(conf.System.MinFetchTimeInterval * time.Second),
-		chromedp.Title(title),
-		// chromedp.ActionFunc(func(ctxt context.Context, h cdp.Executor) error {
-		// 	buf, err := page.CaptureScreenshot().Do(ctxt, h)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	*picbuf = buf
-		// 	return ioutil.WriteFile(*title+".png", buf, 0644)
-		// }),
-		chromedp.CaptureScreenshot(&buf),
-		chromedp.ActionFunc(func(context.Context, cdp.Executor) error {
-			return ioutil.WriteFile(conf.Output.ScreenshotPath+"/"+strings.Replace(urlstr, "/", " ", -1)+".png", buf, 0644)
-		}),
-		chromedp.OuterHTML("html", pageSource),
-	}
 }

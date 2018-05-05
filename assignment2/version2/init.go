@@ -36,6 +36,8 @@ type outputConfig struct {
 	PageSourcePath    string
 
 	SlowAction int64
+
+	SaveScreenshot bool
 }
 
 type systemConfig struct {
@@ -109,6 +111,7 @@ func parseConfigFile() {
 	log.Println("ScreenshotPath", conf.Output.ScreenshotPath)
 	log.Println("PageSourcePath", conf.Output.PageSourcePath)
 	log.Println("SlowAction", conf.Output.SlowAction)
+	log.Println("SaveScreenshot", conf.Output.SaveScreenshot)
 	log.Println("HeadlessMode", conf.Chromedp.HeadlessMode)
 	log.Println("=====================")
 }
