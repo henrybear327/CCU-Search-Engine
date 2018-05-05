@@ -123,7 +123,12 @@ func getDynamicSitePageSource(data chan dynamicFetchingDataQuery) {
 	if err != nil {
 		log.Fatalln("New pool", err)
 	}
-	defer pool.Shutdown()
+	defer func() {
+		err := pool.Shutdown()
+		if err != nil {
+			log.Println("defer shutdown", err)
+		}
+	}()
 
 	// loop over the URLs
 	semaphore := make(chan bool, conf.Chromedp.MaxConcurrentJobs)
