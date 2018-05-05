@@ -92,7 +92,6 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 		log.Printf("screenshot url `%s` error: %v", query.link, err)
 		// return // let the save html file continue
 	}
-	saveHTMLFileFromString(getTopLevelDomain(query.link), strings.Replace(query.link[8:], "/", " ", -1)+".html", pageSource)
 
 	result.title = title
 	result.pageSource = pageSource

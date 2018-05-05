@@ -231,7 +231,6 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 				time.Sleep(conf.System.minFetchTimeDuration)
 				continue
 			}
-			saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSource))
 			pageSoruceForParsing = pageSource
 		} else {
 			resultChannel := make(chan dynamicFetchingDataResult)
@@ -262,6 +261,8 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 		if len(nextLinkList) == 0 { // W.H.P this is multimedia!
 			// ignore
 		} else {
+			saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSoruceForParsing))
+
 			for _, rec := range nextLinkList {
 				// log.Println("Parsed link from", nextLink, rec)
 				if manager.useLinksFromXML == false {
