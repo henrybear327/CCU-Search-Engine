@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -31,7 +32,10 @@ func saveHTMLFileFromString(foldername, filename, pageSource string) {
 	createFolderIfNotExist(path)
 
 	f, err := os.Create(path + "/" + filename)
-	check(err)
+	if err != nil {
+		log.Println("saveHTMLFileFromString", err)
+		return
+	}
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
