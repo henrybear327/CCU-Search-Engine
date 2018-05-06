@@ -34,6 +34,7 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 * color: terminal output color
 * chromedp: headless browser
     * mac must install `brew install Caskroom/versions/google-chrome-canary`
+* globalsign/mgo: mongodb driver
 
 ### candidates 
 
@@ -48,6 +49,7 @@ go get github.com/BurntSushi/toml
 go get github.com/temoto/robotstxt
 go get github.com/fatih/color
 go get -u github.com/chromedp/chromedp
+go get github.com/globalsign/mgo
 ```
 
 ## internal packages
@@ -56,6 +58,10 @@ go get -u github.com/chromedp/chromedp
 * http: static site fetching
 * url: decompose the link into hostname + path + query ...
 * publicsuffix: find out the tld for any given link (determine if the link is a internal/external link)
+
+## ROBO3T
+
+MongoDB GUI
 
 # Notes
 
@@ -136,3 +142,7 @@ defer func(done chan bool) {
     done <- true
 }(done)
 ```
+
+## SQLite3
+
+* [reading](https://astaxie.gitbooks.io/build-web-application-with-golang/zh/05.3.html)

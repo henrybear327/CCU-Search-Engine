@@ -23,6 +23,8 @@ minFetchTimeInterval = "5s"
 # in second, starts counting after preprocessing ends
 maxRunningTime = "6h" # starts counting after delayed launching
 
+#### hardReset = false
+
 [chromedp]
 # /opt/google/chrome
 # /usr/bin/google-chrome
@@ -47,3 +49,8 @@ seedfile = "data/currentRunSeedSite.txt"
 pageSourcePath = "pageSource/"
 screenshotPath = "screenshot/"
 saveScreenshot = true
+
+[mongodb]
+
+url = "127.0.0.1:27017"
+database = "crawler"

@@ -22,6 +22,7 @@ type config struct {
 	Output   outputConfig
 	System   systemConfig
 	Chromedp chromedpConfig
+	MongoDB  mongoDBConfig
 }
 
 type siteConfig struct {
@@ -54,6 +55,11 @@ type chromedpConfig struct {
 	HeadlessMode      bool
 	MaxConcurrentJobs int
 	ExecPath          string
+}
+
+type mongoDBConfig struct {
+	URL      string
+	Database string
 }
 
 func check(e error) {
@@ -124,6 +130,8 @@ func parseConfigFile() {
 	log.Println("HeadlessMode", conf.Chromedp.HeadlessMode)
 	log.Println("MaxConcurrentJobs", conf.Chromedp.MaxConcurrentJobs)
 	log.Println("ExecPath", conf.Chromedp.ExecPath)
+	log.Println("MongoDB Database", conf.MongoDB.Database)
+	log.Println("MongoDB URL", conf.MongoDB.URL)
 	log.Println("=====================")
 	{
 		var err error
