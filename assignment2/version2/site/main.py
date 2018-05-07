@@ -1,16 +1,17 @@
-from flask import Flask, render_template, url_for, request, session, redirect
+import json
+import pymongo
+import pprint
+from pymongo import MongoClient
 from elasticsearch import Elasticsearch
-
-import os, json
+from flask import Flask, render_template, url_for, request, session, redirect
 
 app = Flask(__name__)
 
+app.config.from_object(__name__)
+app.config.update(dict(
+    DATABASE="crawler",
+))
 
-# app.config.from_object(__name__)
-# app.config.update(dict(
-#     DATABASE=os.path.join(app.root_path, 'code/mining.db'),
-# ))
-# app.config['DATABASE']
 
 @app.route('/query', methods=['POST'])
 @app.route('/query/<int:page>', methods=['GET'])
@@ -52,29 +53,9 @@ def query(page=1):
     }, from_=param_from, size=5)
     print(json.dumps(res, sort_keys=True, indent=4, ensure_ascii=False))
 
-    # # get result based on exact match
-    # res = es.search(index="ettoday", body={
-    #     "query": {
-    #         "match": {
-    #             # "title": session['queryString']
-    #             "body": session['queryString']
-    #         }
-    #     }
-    # }, from_=param_from, size=5)
-
     # print(res)
     data = []
     for record in res['hits']['hits']:
-        # print(record)
-
-        # highlight words that was search
-        # record['_source']['title'] = str(record['_source']['title']).replace(session['queryString'],
-        #                                                                      "<mark>" + session[
-        #                                                                          'queryString'] + "</mark>")
-        #
-        # record['_source']['body'] = str(record['_source']['body']).replace(session['queryString'],
-        #                                                                    "<mark>" + session[
-        #                                                                        'queryString'] + "</mark>")
         data.append(record)
 
     return render_template('index.html', data=data, searchString=session['queryString'], page=page)
@@ -86,9 +67,54 @@ def homepage():
     return render_template('index.html')
 
 
+@app.route('/report/<string:top_level_domain>/<int:start>/<int:end>')
+def mongo_db_query(top_level_domain: str, start: int, end: int):
+    client = MongoClient('localhost', 27017)
+    db = client[app.config['DATABASE']]
+    collection = db["sitePage"]
+
+    res = collection.find({"tld": top_level_domain}).sort('fetchTime', pymongo.DESCENDING).skip(start).limit(
+        end - start)  # [start, end)
+    data = []
+    for post in res:
+        # pprint.pprint(post)
+        data.append(post)
+
+    # 100-199
+    prev_left = start - 100
+    prev_right = end - 100
+    next_left = start + 100
+    next_right = end + 100
+    if prev_left < 0:
+        prev_left = 0
+        prev_right = 100
+
+    return render_template('TLDreport.html', data=data, tld=top_level_domain, prev_left=prev_left, prev_right=prev_right
+                           ,next_left=next_left, next_right=next_right)
+
+
 @app.route('/report')
 def report():
-    return render_template('report.html')
+    client = MongoClient('localhost', 27017)
+    db = client[app.config['DATABASE']]
+    collection = db["sitePage"]
+
+    tld = []
+    for rec in collection.distinct("tld"):
+        # pprint.pprint(rec)
+        tld.append(rec)
+
+    cnt = []
+    last_fetched = []
+    for rec in tld:
+        ret = collection.find({"tld": rec})
+        cnt.append(ret.count())
+        last = ret.sort("fetchTime", pymongo.DESCENDING).limit(1)
+        for tmp in last:
+            last_fetched.append(tmp['fetchTime'])
+            break
+
+    return render_template('TLDListing.html', tld=tld, cnt=cnt, last_fetched=last_fetched)
 
 
 if __name__ == '__main__':

@@ -78,23 +78,27 @@ func getTitleFromPageSource(pageSource []byte) string {
 		text := strings.TrimSpace(s.Text())
 		re := regexp.MustCompile("(\n|\t|\r|[[:space:]][[:space:]]+)")
 		text = re.ReplaceAllString(text, " ")
+		title = text
 		log.Println("title", i)
 		// log.Println("orig", s.Text())
 		log.Println("title trimmed", text)
 	})
 
-	doc.Find("h1").Each(func(i int, s *goquery.Selection) {
-		// 1. must have href
-		// 2. concat url
-		// 3. enqueue
-		// 4. hub counting
-		text := strings.TrimSpace(s.Text())
-		re := regexp.MustCompile("(\n|\t|\r|[[:space:]][[:space:]]+)")
-		text = re.ReplaceAllString(text, " ")
-		log.Println("h1", i)
-		// log.Println("orig", s.Text())
-		log.Println("h1 trimmed", text)
-	})
+	if title == "" {
+		doc.Find("h1").Each(func(i int, s *goquery.Selection) {
+			// 1. must have href
+			// 2. concat url
+			// 3. enqueue
+			// 4. hub counting
+			text := strings.TrimSpace(s.Text())
+			re := regexp.MustCompile("(\n|\t|\r|[[:space:]][[:space:]]+)")
+			text = re.ReplaceAllString(text, " ")
+			title = text
+			// log.Println("h1", i)
+			// log.Println("orig", s.Text())
+			// log.Println("h1 trimmed", text)
+		})
+	}
 
 	return title
 }

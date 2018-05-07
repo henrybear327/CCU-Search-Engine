@@ -278,6 +278,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 			if conf.Output.SavePageSource {
 				saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSoruceForParsing))
 			}
+			log.Println("title", titleForStoring)
 			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), "", "")
 
 			for _, rec := range nextLinkList {
