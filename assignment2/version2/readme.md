@@ -36,6 +36,7 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
     * mac must install `brew install Caskroom/versions/google-chrome-canary`
 * globalsign/mgo: mongodb driver
 * RadhiFadlillah/go-readability: main text extraction
+* github.com/olivere/elastic: elastic search client
 
 ### Installation
 
@@ -47,6 +48,7 @@ go get github.com/fatih/color
 go get -u github.com/chromedp/chromedp
 go get github.com/globalsign/mgo
 go get github.com/henrybear327/go-readability
+go get "github.com/olivere/elastic"
 ```
 
 ## internal packages
@@ -68,6 +70,19 @@ MongoDB GUI `brew cask install robo-3t`
 pip install Flask elasticsearch pymongo
 ```
 
+# ES
+
+* Java
+```bash
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt install oracle-java8-installer
+```
+* ES
+    * [Download from official website](https://www.elastic.co/downloads/elasticsearch)
+* IK
+    * `./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.3/elasticsearch-analysis-ik-6.2.3.zip`
+    * `sudo apt install opencc` and then `opencc -i input.txt -o output.txt` the dictionaries
 # Notes
 
 ## [`[]byte` and `string` conversion](https://studygolang.com/articles/10526)

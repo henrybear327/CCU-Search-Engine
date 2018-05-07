@@ -38,6 +38,7 @@ type Manager struct {
 	useStaticLoad        bool
 
 	storage *mongoDBStorage
+	es      *elasticSearchStorage
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
@@ -305,6 +306,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 				// log.Println("main text", mainText)
 			}
 			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), mainText, mainTextSHA1)
+			manager.es.insert(manager.tld, nextLink, titleForStoring, mainText)
 
 			for _, rec := range nextLinkList {
 				// log.Println("Parsed link from", nextLink, rec)

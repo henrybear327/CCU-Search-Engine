@@ -17,6 +17,9 @@ func startCrawling(managers map[string]*Manager) {
 	storage.ensureIndex("hub", "tld", "link")
 	storage.ensureIndex("sitePage", "tld", "link", "fetchTime")
 
+	var es elasticSearchStorage
+	es.init()
+
 	// think of creating a daemon
 	// for creating it, we make channels
 	// for using it, we use channels
@@ -24,6 +27,7 @@ func startCrawling(managers map[string]*Manager) {
 	for i := 0; i < conf.System.MaxGoRountinesPerSite; i++ {
 		for _, rec := range managers {
 			rec.storage = &storage
+			rec.es = &es
 			go rec.start(managerDone, dynamicLinkChannel)
 		}
 		// if no sitemap.xml, only one thread will be alive since queue size = 1 can only serve 1 thread QQ (e.g. npr.org)

@@ -35,11 +35,11 @@ def query(page=1):
     # print(session)
 
     # get result based on exact match
-    res = es.search(index="ettoday", body={
+    res = es.search(index="crawler", body={
         "query": {
             "multi_match": {
                 "query": session['queryString'],
-                "fields": ["title", "body"]
+                "fields": ["title", "mainText"]
             }
         },
         "highlight": {
@@ -47,7 +47,7 @@ def query(page=1):
             "fragment_size": 200,
             "fields": {
                 "title": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]},
-                "body": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
+                "mainText": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
             }
         }
     }, from_=param_from, size=5)
@@ -73,8 +73,9 @@ def mongo_db_query(top_level_domain: str, start: int, end: int):
     db = client[app.config['DATABASE']]
     collection = db["sitePage"]
 
-    res = collection.find({"tld": top_level_domain}).sort('fetchTime', pymongo.DESCENDING).skip(start).limit(
-        end - start)  # [start, end)
+    # res = collection.find({"tld": top_level_domain}).sort('fetchTime', pymongo.DESCENDING).skip(start).limit(
+    #     end - start)  # [start, end)
+    res = collection.find({"tld": top_level_domain}).skip(start).limit(end - start)  # [start, end)
     data = []
     for post in res:
         # pprint.pprint(post)

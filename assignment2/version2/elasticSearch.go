@@ -1,0 +1,128 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/olivere/elastic"
+)
+
+type pageRecord struct {
+	tld      string `json:"tld"`
+	link     string `json:"link"`
+	title    string `json:"title,omitempty"`
+	mainText string `json:"mainText,omitempty"`
+
+	Created time.Time             `json:"created,omitempty"`
+	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
+}
+
+type elasticSearchStorage struct {
+	client *elastic.Client
+	ctx    *context.Context
+}
+
+// TODO: to string?
+const mapping = `
+{
+	"mappings":{
+		"crawler" :{
+			"properties": {
+				"tld":{
+					"type":"text"
+				},
+				"link":{
+					"type":"text"
+				},
+				"title":{
+					"type":"text",
+					"analyzer": "ik_max_word",
+					"search_analyzer": "ik_max_word"
+				},
+				"mainText":{
+					"type":"text",
+					"analyzer": "ik_max_word",
+					"search_analyzer": "ik_max_word"
+				}
+			}
+		}
+	}
+}`
+
+func (es *elasticSearchStorage) init() {
+	// Starting with elastic.v5, you must pass a context to execute each service
+	ctx := context.Background()
+	es.ctx = &ctx
+
+	// Obtain a client and connect to the default Elasticsearch installation
+	// on 127.0.0.1:9200. Of course you can configure your client to connect
+	// to other hosts and configure it in various other ways.
+	client, err := elastic.NewClient()
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+	es.client = client
+
+	// Getting the ES version number is quite common, so there's a shortcut
+	esversion, err := es.client.ElasticsearchVersion("http://127.0.0.1:9200")
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+	log.Printf("Elasticsearch version %s\n", esversion)
+
+	// Use the IndexExists service to check if a specified index exists.
+	exists, err := es.client.IndexExists(conf.MongoDB.Database).Do(ctx)
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+	if !exists {
+		// Create a new index.
+		createIndex, err := es.client.CreateIndex(conf.MongoDB.Database).BodyString(mapping).Do(ctx)
+		if err != nil {
+			// Handle error
+			panic(err)
+		}
+		if !createIndex.Acknowledged {
+			// Not acknowledged
+		}
+	}
+}
+
+func (es *elasticSearchStorage) insert(tld, link, title, mainText string) {
+	record := pageRecord{
+		tld:      tld,
+		link:     link,
+		title:    title,
+		mainText: mainText,
+	}
+	put, err := es.client.Index().
+		Index(conf.MongoDB.Database).
+		Type("crawler").
+		BodyJson(record).
+		Do(*es.ctx)
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+	fmt.Printf("Indexed record %s to index %s, type %s\n", put.Id, put.Index, put.Type)
+
+	// Get tweet with specified ID
+	get1, err := es.client.Get().
+		Index(conf.MongoDB.Database).
+		Type("crawler").
+		Id(put.Id).
+		Do(*es.ctx)
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+	if get1.Found {
+		fmt.Printf("Got document %s in version %d from index %s, type %s\n", get1.Id, get1.Version, get1.Index, get1.Type)
+		fmt.Println(get1.Fields)
+	}
+}

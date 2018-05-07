@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
@@ -60,7 +62,13 @@ func (storage *mongoDBStorage) sitePageUpsert(tld, link, fetchTime, title, htmlP
 			"mainTextSHA1":   mainTextSHA1,
 		},
 	}
-	collection.Upsert(selector, data)
+
+	_, err := collection.Upsert(selector, data)
+	if err != nil {
+		// TODO
+		log.Println("sitePageUpsert", err)
+		return
+	}
 }
 
 func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
@@ -72,7 +80,12 @@ func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
 
 	selector := bson.M{"tld": tld, "link": link}
 	data := bson.M{"$set": bson.M{"tld": tld, "link": link, "count": count}}
-	collection.Upsert(selector, data)
+	_, err := collection.Upsert(selector, data)
+	if err != nil {
+		// TODO
+		log.Println("hubUpsert", err)
+		return
+	}
 }
 
 func (storage *mongoDBStorage) insert(collectionName string, data interface{}) {
