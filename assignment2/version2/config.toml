@@ -15,7 +15,7 @@ manualSeedFile = "data/test.txt"
 
 maxGoRountinesPerSite = 3
 
-maxConcurrentFetch = 950
+maxConcurrentFetch = 900
 
 maxDistinctPagesToFetchPerSite = 50000
 #### maxTotalPagesToFetch = 2500000
