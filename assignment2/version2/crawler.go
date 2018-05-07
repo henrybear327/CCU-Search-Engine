@@ -15,7 +15,7 @@ func startCrawling(managers map[string]*Manager) {
 	storage.init()
 	defer storage.deinit()
 	storage.ensureIndex("hub", "tld", "link")
-	storage.ensureIndex("sitePage", "tld", "link")
+	storage.ensureIndex("sitePage", "tld", "link", "fetchTime")
 
 	// think of creating a daemon
 	// for creating it, we make channels

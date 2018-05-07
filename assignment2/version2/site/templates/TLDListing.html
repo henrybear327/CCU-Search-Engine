@@ -21,7 +21,7 @@
                     <tbody>
                     {% for record in tld %}
                     <tr>
-                        <td><a href="{{ url_for('report') }}/{{ record }}/0/100">{{ record }}</a></td>
+                        <td><a target="_blank" href="{{ url_for('report') }}/{{ record }}/0/100">{{ record }}</a></td>
                         <td>{{ cnt[loop.index0] }}</td>
                         <td>{{ last_fetched[loop.index0] }}</td>
                     </tr>

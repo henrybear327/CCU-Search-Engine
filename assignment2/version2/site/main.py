@@ -110,7 +110,7 @@ def report():
         print(rec)
         ret = collection.find({"tld": rec})
         cnt.append(ret.count())
-        last = ret.sort("_id", pymongo.DESCENDING).limit(1)
+        last = ret.sort("fetchTime", pymongo.DESCENDING).limit(1)
         for tmp in last:
             last_fetched.append(tmp['fetchTime'])
             break

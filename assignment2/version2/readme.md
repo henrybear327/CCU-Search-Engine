@@ -60,6 +60,14 @@ go get github.com/henrybear327/go-readability
 
 MongoDB GUI `brew cask install robo-3t`
 
+# Virtual env
+
+* `sudo pip3 install virtualenv `
+* install
+```bash
+pip install Flask elasticsearch pymongo
+```
+
 # Notes
 
 ## [`[]byte` and `string` conversion](https://studygolang.com/articles/10526)
