@@ -40,6 +40,29 @@ func (storage *mongoDBStorage) restore(tld string) {
 	// hub, fetched - hub -> return map
 }
 
+func (storage *mongoDBStorage) sitePageUpsert(tld, link, fetchTime, title, htmlPageSource, mainText, mainTextSHA1 string) {
+	session := storage.session.Copy()
+	defer session.Close()
+	collection := session.DB(conf.MongoDB.Database).C("sitePage")
+
+	selector := bson.M{
+		"tld":  tld,
+		"link": link,
+	}
+	data := bson.M{
+		"$set": bson.M{
+			"tld":            tld,
+			"link":           link,
+			"fetchTime":      fetchTime,
+			"title":          title,
+			"htmlPageSource": htmlPageSource,
+			"mainText":       mainText,
+			"mainTextSHA1":   mainTextSHA1,
+		},
+	}
+	collection.Upsert(selector, data)
+}
+
 func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
 	session := storage.session.Copy()
 	defer session.Close()

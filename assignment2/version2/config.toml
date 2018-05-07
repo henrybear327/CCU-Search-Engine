@@ -49,6 +49,7 @@ seedfile = "data/currentRunSeedSite.txt"
 pageSourcePath = "pageSource/"
 screenshotPath = "screenshot/"
 saveScreenshot = true
+savePageSource = true
 
 [mongodb]
 

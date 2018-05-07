@@ -146,3 +146,17 @@ defer func(done chan bool) {
 ## SQLite3
 
 * [reading](https://astaxie.gitbooks.io/build-web-application-with-golang/zh/05.3.html)
+
+## Time
+
+* to string
+```go
+fetchTime.Format(time.RFC3339)
+```
+* from string
+```go
+fetchTime, e := time.Parse(
+    time.RFC3339,
+    "2012-11-01T22:08:41+00:00")
+p(fetchTime)
+```

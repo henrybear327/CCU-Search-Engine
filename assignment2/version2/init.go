@@ -41,6 +41,7 @@ type outputConfig struct {
 	SlowActionDuration time.Duration
 
 	SaveScreenshot bool
+	SavePageSource bool
 }
 
 type systemConfig struct {
@@ -128,6 +129,7 @@ func parseConfigFile() {
 	log.Println("PageSourcePath", conf.Output.PageSourcePath)
 	log.Println("SlowAction", conf.Output.SlowAction)
 	log.Println("SaveScreenshot", conf.Output.SaveScreenshot)
+	log.Println("SavePageSource", conf.Output.SavePageSource)
 	log.Println("HeadlessMode", conf.Chromedp.HeadlessMode)
 	log.Println("MaxConcurrentJobs", conf.Chromedp.MaxConcurrentJobs)
 	log.Println("ExecPath", conf.Chromedp.ExecPath)

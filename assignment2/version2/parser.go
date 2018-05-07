@@ -69,7 +69,8 @@ func (manager *Manager) getTitleFromPageSource(pageSource []byte) string {
 	}
 
 	// Find the review items
-	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+	var title string
+	doc.Find("title").Each(func(i int, s *goquery.Selection) {
 		// 1. must have href
 		// 2. concat url
 		// 3. enqueue
@@ -77,7 +78,15 @@ func (manager *Manager) getTitleFromPageSource(pageSource []byte) string {
 		fmt.Println(i, s, s.Text())
 	})
 
-	return ""
+	doc.Find("h1").Each(func(i int, s *goquery.Selection) {
+		// 1. must have href
+		// 2. concat url
+		// 3. enqueue
+		// 4. hub counting
+		fmt.Println(i, s, s.Text())
+	})
+
+	return title
 }
 
 func (manager *Manager) getNextURLList(link string, pageSource []byte) []string {

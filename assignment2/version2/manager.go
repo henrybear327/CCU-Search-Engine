@@ -234,6 +234,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 		}
 
 		// fetch
+		fetchTime := time.Now()
 		var pageSoruceForParsing []byte
 		var titleForStoring string
 		if manager.useStaticLoad {
@@ -273,7 +274,10 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 		if len(nextLinkList) == 0 { // W.H.P this is multimedia!
 			// ignore
 		} else {
-			saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSoruceForParsing))
+			if conf.Output.SavePageSource {
+				saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSoruceForParsing))
+			}
+			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), "", "")
 
 			for _, rec := range nextLinkList {
 				// log.Println("Parsed link from", nextLink, rec)
