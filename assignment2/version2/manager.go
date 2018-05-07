@@ -149,10 +149,6 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) bool {
 		}
 	}
 
-	if isPreprocessing == false {
-		manager.doInDegreeCounting(link)
-	}
-
 	if manager.isInQueueOrFetched(link) {
 		return false
 	}
@@ -203,6 +199,20 @@ func (manager *Manager) hasNextURL() bool {
 }
 
 func (manager *Manager) doInDegreeCounting(link string) {
+	if manager.isExternalSite(link) {
+		return false
+	}
+
+	if manager.isBannedByRobotTXT(link) {
+		return false
+	}
+
+	if isPreprocessing == false {
+		if manager.isMultimediaFiles(link) {
+			return false
+		}
+	}
+
 	manager.hubLock.Lock()
 	defer manager.hubLock.Unlock()
 
@@ -306,6 +316,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 						// log.Println("Enqueue parsed link from", nextLink, rec)
 					}
 				}
+				manager.doInDegreeCounting(rec)
 			}
 			log.Println("Queue size of", manager.tld, manager.urlQueue.Len())
 		}

@@ -13,7 +13,7 @@ manualSeedFile = "data/test.txt"
 
 [system]
 
-maxGoRountinesPerSite = 5
+maxGoRountinesPerSite = 1
 
 maxConcurrentFetch = 900
 

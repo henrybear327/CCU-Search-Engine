@@ -81,13 +81,13 @@ def mongo_db_query(top_level_domain: str, start: int, end: int):
         data.append(post)
 
     # 100-199
-    prev_left = start - 100
-    prev_right = end - 100
-    next_left = start + 100
-    next_right = end + 100
+    prev_left = start - 50
+    prev_right = end - 50
+    next_left = start + 50
+    next_right = end + 50
     if prev_left < 0:
         prev_left = 0
-        prev_right = 100
+        prev_right = 50
 
     return render_template('TLDreport.html', data=data, tld=top_level_domain, prev_left=prev_left, prev_right=prev_right
                            , next_left=next_left, next_right=next_right)

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
@@ -64,6 +66,8 @@ func (storage *mongoDBStorage) sitePageUpsert(tld, link, fetchTime, title, htmlP
 }
 
 func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
+	log.Println("hubupsert", tld, link)
+
 	session := storage.session.Copy()
 	defer session.Close()
 	collection := session.DB(conf.MongoDB.Database).C("hub")
@@ -93,7 +97,19 @@ func (storage *mongoDBStorage) ensureIndex(collectionName string, key ...string)
 	defer session.Close()
 	collection := session.DB(conf.MongoDB.Database).C(collectionName)
 
-	err := collection.EnsureIndexKey(key...)
+	keys := []string{}
+	for _, rec := range key {
+		keys = append(keys, rec)
+	}
+	index := mgo.Index{
+		Key:        keys,
+		Unique:     true,
+		DropDups:   true,
+		Background: true, // See notes.
+		Sparse:     true,
+	}
+
+	err := collection.EnsureIndex(index)
 	if err != nil {
 		panic(err)
 	}
