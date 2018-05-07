@@ -51,6 +51,7 @@ type systemConfig struct {
 	MaxRunningTime                 string
 	maxRunningTimeDuration         time.Duration
 	MaxGoRountinesPerSite          int
+	MaxConcurrentFetch             int
 }
 
 type chromedpConfig struct {
@@ -123,6 +124,7 @@ func parseConfigFile() {
 	log.Println("MinFetchTimeInterval", conf.System.MinFetchTimeInterval)
 	log.Println("MaxRunningTime", conf.System.MaxRunningTime)
 	log.Println("MaxGoRountinesPerSite", conf.System.MaxGoRountinesPerSite)
+	log.Println("MaxConcurrentFetch", conf.System.MaxConcurrentFetch)
 	log.Println("Seedfile", conf.Output.Seedfile)
 	log.Println("ParsingResultFile", conf.Output.ParsingResultFile)
 	log.Println("ScreenshotPath", conf.Output.ScreenshotPath)

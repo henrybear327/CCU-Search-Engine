@@ -90,7 +90,7 @@ def mongo_db_query(top_level_domain: str, start: int, end: int):
         prev_right = 100
 
     return render_template('TLDreport.html', data=data, tld=top_level_domain, prev_left=prev_left, prev_right=prev_right
-                           ,next_left=next_left, next_right=next_right)
+                           , next_left=next_left, next_right=next_right)
 
 
 @app.route('/report')
@@ -107,9 +107,10 @@ def report():
     cnt = []
     last_fetched = []
     for rec in tld:
+        print(rec)
         ret = collection.find({"tld": rec})
         cnt.append(ret.count())
-        last = ret.sort("fetchTime", pymongo.DESCENDING).limit(1)
+        last = ret.sort("_id", pymongo.DESCENDING).limit(1)
         for tmp in last:
             last_fetched.append(tmp['fetchTime'])
             break

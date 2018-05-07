@@ -3,6 +3,7 @@ package main
 import (
 	"container/list"
 	"crypto/sha1"
+	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -292,7 +293,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 				h := sha1.New()
 				h.Write([]byte(mainText))
 				bs := h.Sum(nil)
-				mainTextSHA1 = string(bs)
+				mainTextSHA1 = fmt.Sprintf("%x\n", bs)
 				// log.Println("main text", mainText)
 			}
 			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), mainText, mainTextSHA1)

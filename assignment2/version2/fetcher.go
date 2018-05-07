@@ -5,14 +5,32 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fatih/color"
 )
 
+var fetchingCounter struct {
+	sync.Mutex
+	n int
+}
+
 // GetStaticSitePageSource is a function that downloads page source of assigned link
 // and return it as a []byte
 func getStaticSitePageSource(link string) ([]byte, int) {
+	fetchingCounter.Lock()
+	for fetchingCounter.n >= conf.System.MaxConcurrentFetch {
+		time.Sleep(100 * time.Millisecond)
+	}
+	fetchingCounter.n++
+	fetchingCounter.Unlock()
+	defer func() {
+		fetchingCounter.Lock()
+		fetchingCounter.n--
+		fetchingCounter.Unlock()
+	}()
+
 	link = strings.TrimSpace(link)
 	// download
 	startDownload := time.Now()
