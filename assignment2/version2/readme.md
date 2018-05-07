@@ -35,11 +35,7 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 * chromedp: headless browser
     * mac must install `brew install Caskroom/versions/google-chrome-canary`
 * globalsign/mgo: mongodb driver
-
-### candidates 
-
-* go-sqlite3: sqlite3 driver
-* goOse: main text extraction
+* RadhiFadlillah/go-readability: main text extraction
 
 ### Installation
 
@@ -50,6 +46,7 @@ go get github.com/temoto/robotstxt
 go get github.com/fatih/color
 go get -u github.com/chromedp/chromedp
 go get github.com/globalsign/mgo
+go get github.com/henrybear327/go-readability
 ```
 
 ## internal packages

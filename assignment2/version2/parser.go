@@ -79,9 +79,9 @@ func getTitleFromPageSource(pageSource []byte) string {
 		re := regexp.MustCompile("(\n|\t|\r|[[:space:]][[:space:]]+)")
 		text = re.ReplaceAllString(text, " ")
 		title = text
-		log.Println("title", i)
+		// log.Println("title", i)
 		// log.Println("orig", s.Text())
-		log.Println("title trimmed", text)
+		// log.Println("title trimmed", text)
 	})
 
 	if title == "" {

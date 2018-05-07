@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/henrybear327/go-readability"
 	"github.com/temoto/robotstxt"
 )
 
@@ -278,8 +279,17 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 			if conf.Output.SavePageSource {
 				saveHTMLFileFromString(getTopLevelDomain(nextLink), strings.Replace(nextLink[8:], "/", " ", -1)+".html", string(pageSoruceForParsing))
 			}
-			log.Println("title", titleForStoring)
-			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), "", "")
+			// log.Println("title", titleForStoring)
+
+			test, err := readability.ParseFromPageSource(nextLink, pageSoruceForParsing, 5*time.Second)
+			var mainText string
+			if err != nil {
+				log.Println("failed.", err)
+			} else {
+				mainText = test.Content
+				// log.Println("main text", mainText)
+			}
+			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), mainText, "")
 
 			for _, rec := range nextLinkList {
 				// log.Println("Parsed link from", nextLink, rec)
