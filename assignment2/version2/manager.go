@@ -200,17 +200,15 @@ func (manager *Manager) hasNextURL() bool {
 
 func (manager *Manager) doInDegreeCounting(link string) {
 	if manager.isExternalSite(link) {
-		return false
+		return
 	}
 
 	if manager.isBannedByRobotTXT(link) {
-		return false
+		return
 	}
 
-	if isPreprocessing == false {
-		if manager.isMultimediaFiles(link) {
-			return false
-		}
+	if manager.isMultimediaFiles(link) {
+		return
 	}
 
 	manager.hubLock.Lock()
