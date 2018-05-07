@@ -46,10 +46,10 @@ func isValidSuffix(link string) bool {
 	if link == "void(0)" {
 		return false
 	}
-	if strings.HasPrefix(link, "mailto://") {
+	if strings.HasPrefix(link, "mailto:") {
 		return false
 	}
-	if strings.HasPrefix(link, "javascript://") {
+	if strings.HasPrefix(link, "javascript:") {
 		return false
 	}
 

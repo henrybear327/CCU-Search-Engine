@@ -210,7 +210,7 @@ func getTopLevelDomain(link string) string {
 
 	linkTLD, err := publicsuffix.EffectiveTLDPlusOne(host)
 	if err != nil {
-		log.Println("isExternalSite EffectiveTLDPlusOne err", err)
+		log.Println("isExternalSite EffectiveTLDPlusOne err", err, link)
 		return ""
 	}
 	return linkTLD

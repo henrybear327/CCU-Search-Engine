@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
@@ -66,7 +64,7 @@ func (storage *mongoDBStorage) sitePageUpsert(tld, link, fetchTime, title, htmlP
 }
 
 func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
-	log.Println("hubupsert", tld, link)
+	// log.Println("hubupsert", tld, link)
 
 	session := storage.session.Copy()
 	defer session.Close()
