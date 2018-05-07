@@ -50,8 +50,8 @@ slowAction = "10s" # ns (1e-9)
 seedfile = "data/currentRunSeedSite.txt"
 pageSourcePath = "pageSource/"
 screenshotPath = "screenshot/"
-saveScreenshot = true
-savePageSource = true
+saveScreenshot = false
+savePageSource = false
 
 [mongodb]
 
