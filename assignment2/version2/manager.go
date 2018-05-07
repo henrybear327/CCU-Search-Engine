@@ -245,6 +245,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 				continue
 			}
 			pageSoruceForParsing = pageSource
+			titleForStoring = getTitleFromPageSource(pageSource)
 		} else {
 			resultChannel := make(chan dynamicFetchingDataResult)
 			query := dynamicFetchingDataQuery{link: nextLink, resultChannel: resultChannel}

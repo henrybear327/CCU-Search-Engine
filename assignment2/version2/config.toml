@@ -19,7 +19,7 @@ maxDistinctPagesToFetchPerSite = 50000
 #### maxTotalPagesToFetch = 2500000
 
 # idle time between fetches in second
-minFetchTimeInterval = "5s"
+minFetchTimeInterval = "3s"
 # in second, starts counting after preprocessing ends
 maxRunningTime = "6h" # starts counting after delayed launching
 

@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -60,7 +60,7 @@ func isValidSuffix(link string) bool {
 	return true
 }
 
-func (manager *Manager) getTitleFromPageSource(pageSource []byte) string {
+func getTitleFromPageSource(pageSource []byte) string {
 	// Load the HTML document
 	res := bytes.NewReader(pageSource)
 	doc, err := goquery.NewDocumentFromReader(res)
@@ -75,7 +75,12 @@ func (manager *Manager) getTitleFromPageSource(pageSource []byte) string {
 		// 2. concat url
 		// 3. enqueue
 		// 4. hub counting
-		fmt.Println(i, s, s.Text())
+		text := strings.TrimSpace(s.Text())
+		re := regexp.MustCompile("(\n|\t|\r|[[:space:]][[:space:]]+)")
+		text = re.ReplaceAllString(text, " ")
+		log.Println("title", i)
+		// log.Println("orig", s.Text())
+		log.Println("title trimmed", text)
 	})
 
 	doc.Find("h1").Each(func(i int, s *goquery.Selection) {
@@ -83,7 +88,12 @@ func (manager *Manager) getTitleFromPageSource(pageSource []byte) string {
 		// 2. concat url
 		// 3. enqueue
 		// 4. hub counting
-		fmt.Println(i, s, s.Text())
+		text := strings.TrimSpace(s.Text())
+		re := regexp.MustCompile("(\n|\t|\r|[[:space:]][[:space:]]+)")
+		text = re.ReplaceAllString(text, " ")
+		log.Println("h1", i)
+		// log.Println("orig", s.Text())
+		log.Println("h1 trimmed", text)
 	})
 
 	return title
