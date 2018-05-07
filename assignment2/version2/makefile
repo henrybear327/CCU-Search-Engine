@@ -1,4 +1,4 @@
-all: main.go init.go fetcher.go parser.go storage.go manager.go output.go preprocess.go chromedp.go crawler.go
+all: chromedp.go crawler.go fetcher.go init.go main.go manager.go output.go parser.go preprocess.go storage.go
 	mkdir -p output
 	time go build -o crawler *.go
 	# time ./crawler -cpuprofile=cpu.prof -memprofile=mem.prof 

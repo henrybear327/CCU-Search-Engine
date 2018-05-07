@@ -37,7 +37,8 @@ type outputConfig struct {
 	ScreenshotPath    string
 	PageSourcePath    string
 
-	SlowAction int64
+	SlowAction         string
+	SlowActionDuration time.Duration
 
 	SaveScreenshot bool
 }
@@ -143,6 +144,11 @@ func parseConfigFile() {
 		conf.System.maxRunningTimeDuration, err = time.ParseDuration(conf.System.MaxRunningTime)
 		if err != nil {
 			log.Fatalln("MaxRunningTime", err)
+		}
+
+		conf.Output.SlowActionDuration, err = time.ParseDuration(conf.Output.SlowAction)
+		if err != nil {
+			log.Fatalln("SlowActionDuration", err)
 		}
 	}
 }

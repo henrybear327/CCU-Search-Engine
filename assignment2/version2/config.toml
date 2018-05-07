@@ -41,7 +41,7 @@ execPath = "google-chrome" # linux
 
 [output]
 
-slowAction = 10000000000 # ns (1e-9)
+slowAction = "10s" # ns (1e-9)
 
 # please create the folder manually!
 

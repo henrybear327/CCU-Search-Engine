@@ -1,7 +1,6 @@
 crawler
 *.prof
 *.svg
-.vscode
 currentRunSeedSite.txt
 *.html
 *.png

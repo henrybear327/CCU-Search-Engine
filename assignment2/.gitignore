@@ -1,6 +1,5 @@
 __pycache__
 image*
 error*
-output*
-*.txt
+output
 page_source

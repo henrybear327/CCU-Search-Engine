@@ -19,7 +19,7 @@ func getStaticSitePageSource(link string) ([]byte, int) {
 
 	res, err := http.Get(link)
 	elapsedDownload := time.Since(startDownload)
-	if elapsedDownload.Nanoseconds() >= conf.Output.SlowAction {
+	if elapsedDownload >= conf.Output.SlowActionDuration {
 		log.Printf("Downloading %s took %s", link, elapsedDownload)
 	}
 
@@ -43,7 +43,7 @@ func getStaticSitePageSource(link string) ([]byte, int) {
 	}
 
 	elapsedRead := time.Since(startRead)
-	if elapsedRead.Nanoseconds() >= conf.Output.SlowAction {
+	if elapsedRead >= conf.Output.SlowActionDuration {
 		log.Printf("Extracting page source of %s took %s", link, elapsedRead)
 	}
 	return robots, res.StatusCode
