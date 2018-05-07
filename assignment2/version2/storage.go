@@ -9,17 +9,34 @@ type mongoDBStorage struct {
 }
 
 type hub struct {
+	tld   string `bson:"tld"`
 	link  string `bson:"link"`
 	count int    `bson:"count"`
 }
 
 type sitePage struct {
+	tld            string `bson:"tld"`
 	link           string `bson:"link"`
 	fetchTime      string `bson:"fetchTime"`
 	title          string `bson:"title"`
 	htmlPageSource string `bson:"htmlPageSource"`
 	mainText       string `bson:"mainText"`
 	mainTextSHA1   string `bson:"mainTextSHA1"`
+}
+
+func (storage *mongoDBStorage) getHubData(tld string) {
+
+}
+
+func (storage *mongoDBStorage) getFetchedData(tld string) {
+
+}
+
+func (storage *mongoDBStorage) restore(tld string) {
+	// get Hub
+	// get fetched
+
+	// hub, fetched - hub -> return map
 }
 
 func (storage *mongoDBStorage) insert(collectionName string, data interface{}) {

@@ -14,10 +14,4 @@ func main() {
 	managers := prepareSeedSites(seedSiteList, seedSiteOption)
 
 	startCrawling(managers)
-
-	// var storage mongoDBStorage
-	// storage.init()
-	// // storage.ensureIndex("for every tld hub table", []string{"link"})
-	// // storage.ensureIndex("for every tld page table", []string{"link"})
-	// storage.deinit()
 }

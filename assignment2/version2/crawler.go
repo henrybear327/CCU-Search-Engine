@@ -6,8 +6,16 @@ import (
 )
 
 func startCrawling(managers map[string]*Manager) {
+	// init channels
 	dynamicLinkChannel := make(chan dynamicFetchingDataQuery)
 	managerDone := make(chan bool)
+
+	// init storage
+	var storage mongoDBStorage
+	storage.init()
+	defer storage.deinit()
+	storage.ensureIndex("hub", "tld", "link")
+	storage.ensureIndex("sitePage", "tld", "link")
 
 	// think of creating a daemon
 	// for creating it, we make channels
@@ -15,7 +23,7 @@ func startCrawling(managers map[string]*Manager) {
 	go getDynamicSitePageSource(dynamicLinkChannel)
 	for i := 0; i < conf.System.MaxGoRountinesPerSite; i++ {
 		for _, rec := range managers {
-			go rec.start(managerDone, dynamicLinkChannel)
+			go rec.start(managerDone, dynamicLinkChannel, &storage)
 		}
 		// if no sitemap.xml, only one thread will be alive since queue size = 1 can only serve 1 thread QQ (e.g. npr.org)
 		// reduce system load

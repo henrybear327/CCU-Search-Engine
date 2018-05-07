@@ -195,7 +195,7 @@ func (manager *Manager) doInDegreeCounting(link string) {
 
 }
 
-func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery) {
+func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery, storage *mongoDBStorage) {
 	defer func(done chan bool) {
 		done <- true
 	}(done)

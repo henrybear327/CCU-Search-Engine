@@ -1,4 +1,1 @@
-https://www.techbang.com @useStatic
-https://edition.cnn.com @useChrome
 https://www.npr.org/ @useStatic
-https://www.Ettoday.net @useChrome

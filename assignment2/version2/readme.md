@@ -61,7 +61,7 @@ go get github.com/globalsign/mgo
 
 ## ROBO3T
 
-MongoDB GUI
+MongoDB GUI `brew cask install robo-3t`
 
 # Notes
 
