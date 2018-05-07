@@ -13,7 +13,7 @@ manualSeedFile = "data/test.txt"
 
 [system]
 
-maxGoRountinesPerSite = 5
+maxGoRountinesPerSite = 4
 
 maxConcurrentFetch = 900
 
@@ -23,7 +23,7 @@ maxDistinctPagesToFetchPerSite = 50000
 # idle time between fetches in second
 minFetchTimeInterval = "5s"
 # in second, starts counting after preprocessing ends
-maxRunningTime = "6h" # starts counting after delayed launching
+maxRunningTime = "7h" # starts counting after delayed launching
 
 #### hardReset = false
 

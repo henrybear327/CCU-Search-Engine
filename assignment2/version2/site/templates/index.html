@@ -50,11 +50,11 @@
                                     <span class="badge badge-primary">{{ loop.index }}</span>
 
                                     {% if record['highlight']['title'] is defined %}
-                                        <a href="{{ record['_source']['url'] }}" target="_blank">
+                                        <a href="{{ record['_source']['link'] }}" target="_blank">
                                             {{ record['highlight']['title'][0]|safe }}
                                         </a>
                                     {% else %}
-                                        <a href="{{ record['_source']['url'] }}" target="_blank">
+                                        <a href="{{ record['_source']['link'] }}" target="_blank">
                                             {{ record['_source']['title']|safe }}
                                         </a>
                                     {% endif %}
