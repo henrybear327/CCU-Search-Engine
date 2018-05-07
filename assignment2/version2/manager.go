@@ -22,15 +22,19 @@ type Manager struct {
 	urlQueue   *list.List
 	urlFetched map[string]bool
 	urlInQueue map[string]bool
+	hub        map[string]int
 
 	urlQueueLock   *sync.RWMutex
 	urlFetchedLock *sync.RWMutex
 	urlInQueueLock *sync.RWMutex
+	hubLock        *sync.RWMutex
 
 	distinctPagesFetched int
 	useLinksFromXML      bool
 	crawlDelay           time.Duration
 	useStaticLoad        bool
+
+	storage *mongoDBStorage
 }
 
 func (manager *Manager) isInQueueOrFetched(link string) bool {
@@ -128,10 +132,6 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) bool {
 		6. x main text hash collision (?)
 	*/
 
-	if manager.isInQueueOrFetched(link) {
-		return false
-	}
-
 	if manager.isExternalSite(link) {
 		return false
 	}
@@ -144,6 +144,14 @@ func (manager *Manager) enqueue(link string, isPreprocessing bool) bool {
 		if manager.isMultimediaFiles(link) {
 			return false
 		}
+	}
+
+	if isPreprocessing == false {
+		manager.doInDegreeCounting(link)
+	}
+
+	if manager.isInQueueOrFetched(link) {
+		return false
 	}
 
 	manager.urlQueueLock.Lock()
@@ -192,10 +200,14 @@ func (manager *Manager) hasNextURL() bool {
 }
 
 func (manager *Manager) doInDegreeCounting(link string) {
+	manager.hubLock.Lock()
+	defer manager.hubLock.Unlock()
 
+	manager.hub[link]++
+	manager.storage.hubUpsert(manager.tld, link, manager.hub[link])
 }
 
-func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery, storage *mongoDBStorage) {
+func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFetchingDataQuery) {
 	defer func(done chan bool) {
 		done <- true
 	}(done)
@@ -271,7 +283,6 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 						// log.Println("Enqueue parsed link from", nextLink, rec)
 					}
 				}
-				manager.doInDegreeCounting(rec)
 			}
 			log.Println("Queue size of", manager.tld, manager.urlQueue.Len())
 		}

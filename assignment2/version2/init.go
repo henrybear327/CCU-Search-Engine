@@ -234,8 +234,10 @@ func prepareSeedSites(seedSiteList []string, seedSiteOption []string) map[string
 			urlQueueLock:    new(sync.RWMutex),
 			urlInQueueLock:  new(sync.RWMutex),
 			urlFetchedLock:  new(sync.RWMutex),
+			hubLock:         new(sync.RWMutex),
 			urlFetched:      make(map[string]bool),
 			urlInQueue:      make(map[string]bool),
+			hub:             make(map[string]int),
 			tld:             getTopLevelDomain(link),
 			useLinksFromXML: false,
 			useStaticLoad:   useStaticLoad}

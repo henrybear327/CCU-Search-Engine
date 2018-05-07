@@ -23,7 +23,8 @@ func startCrawling(managers map[string]*Manager) {
 	go getDynamicSitePageSource(dynamicLinkChannel)
 	for i := 0; i < conf.System.MaxGoRountinesPerSite; i++ {
 		for _, rec := range managers {
-			go rec.start(managerDone, dynamicLinkChannel, &storage)
+			rec.storage = &storage
+			go rec.start(managerDone, dynamicLinkChannel)
 		}
 		// if no sitemap.xml, only one thread will be alive since queue size = 1 can only serve 1 thread QQ (e.g. npr.org)
 		// reduce system load
@@ -35,7 +36,7 @@ func startCrawling(managers map[string]*Manager) {
 	}
 
 	globalTimeout := time.After(conf.System.maxRunningTimeDuration)
-	log.Println("Global timeout", globalTimeout)
+	log.Println("Global timeout", conf.System.maxRunningTimeDuration.String())
 	for i := 0; i < conf.System.MaxGoRountinesPerSite*len(managers); i++ {
 		select {
 		case <-managerDone:

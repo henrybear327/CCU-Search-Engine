@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 )
 
 type mongoDBStorage struct {
@@ -39,10 +40,19 @@ func (storage *mongoDBStorage) restore(tld string) {
 	// hub, fetched - hub -> return map
 }
 
+func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
+	session := storage.session.Copy()
+	defer session.Close()
+	collection := session.DB(conf.MongoDB.Database).C("hub")
+
+	selector := bson.M{"tld": tld, "link": link}
+	data := bson.M{"$set": bson.M{"tld": tld, "link": link, "count": count}}
+	collection.Upsert(selector, data)
+}
+
 func (storage *mongoDBStorage) insert(collectionName string, data interface{}) {
 	session := storage.session.Copy()
 	defer session.Close()
-
 	collection := session.DB(conf.MongoDB.Database).C(collectionName)
 
 	err := collection.Insert(data)
@@ -58,7 +68,6 @@ func (storage *mongoDBStorage) deinit() {
 func (storage *mongoDBStorage) ensureIndex(collectionName string, key ...string) {
 	session := storage.session.Copy()
 	defer session.Close()
-
 	collection := session.DB(conf.MongoDB.Database).C(collectionName)
 
 	err := collection.EnsureIndexKey(key...)
