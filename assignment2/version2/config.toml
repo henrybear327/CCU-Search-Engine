@@ -57,3 +57,7 @@ savePageSource = false
 
 url = "127.0.0.1:27017"
 database = "crawler"
+
+# elastic search
+# curl -XDELETE 'localhost:9200/crawler?pretty'
+# http://localhost:9200/crawler/_search/?size=1000&pretty

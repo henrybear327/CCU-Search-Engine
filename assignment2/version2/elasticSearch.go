@@ -10,10 +10,10 @@ import (
 )
 
 type pageRecord struct {
-	tld      string `json:"tld"`
-	link     string `json:"link"`
-	title    string `json:"title,omitempty"`
-	mainText string `json:"mainText,omitempty"`
+	Tld      string `json:"tld"`
+	Link     string `json:"link"`
+	Title    string `json:"title,omitempty"`
+	MainText string `json:"mainText,omitempty"`
 
 	Created time.Time             `json:"created,omitempty"`
 	Suggest *elastic.SuggestField `json:"suggest_field,omitempty"`
@@ -95,10 +95,10 @@ func (es *elasticSearchStorage) init() {
 
 func (es *elasticSearchStorage) insert(tld, link, title, mainText string) {
 	record := pageRecord{
-		tld:      tld,
-		link:     link,
-		title:    title,
-		mainText: mainText,
+		Tld:      tld,
+		Link:     link,
+		Title:    title,
+		MainText: mainText,
 	}
 	put, err := es.client.Index().
 		Index(conf.MongoDB.Database).
@@ -110,19 +110,4 @@ func (es *elasticSearchStorage) insert(tld, link, title, mainText string) {
 		panic(err)
 	}
 	fmt.Printf("Indexed record %s to index %s, type %s\n", put.Id, put.Index, put.Type)
-
-	// Get tweet with specified ID
-	get1, err := es.client.Get().
-		Index(conf.MongoDB.Database).
-		Type("crawler").
-		Id(put.Id).
-		Do(*es.ctx)
-	if err != nil {
-		// Handle error
-		panic(err)
-	}
-	if get1.Found {
-		fmt.Printf("Got document %s in version %d from index %s, type %s\n", get1.Id, get1.Version, get1.Index, get1.Type)
-		fmt.Println(get1.Fields)
-	}
 }

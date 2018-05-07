@@ -25,6 +25,7 @@ Seed sites from [Alexa](https://www.alexa.com/topsites)
 6. Watch out for deadlock!
     * Acquire locks all following the same sequence
 7. `pkill "Google Chrome"` you will need this!
+8. When working with toml, elastic, STRUCT MUST START WITH CAPITAL LETTERS! WTFFF
 
 ## external packages
 

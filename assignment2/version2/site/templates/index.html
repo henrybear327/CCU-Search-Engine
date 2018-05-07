@@ -62,10 +62,10 @@
                                 <div class="card-body">
                                     <h5 class="card-title"></h5>
                                     <p class="card-text">
-                                        {% if record['highlight']['body'] is defined %}
-                                            {{ record['highlight']['body'][0]|safe }}
+                                        {% if record['highlight']['mainText'] is defined %}
+                                            {{ record['highlight']['mainText'][0]|safe }}
                                         {% else %}
-                                            {{ record['_source']['body']|safe }}
+                                            {{ record['_source']['mainText']|safe }}
                                         {% endif %}
                                     </p>
                                 </div>
