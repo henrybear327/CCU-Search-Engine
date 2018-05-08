@@ -29,6 +29,7 @@ func startCrawling(managers map[string]*Manager) {
 			rec.storage = &storage
 			rec.es = &es
 			go rec.start(managerDone, dynamicLinkChannel)
+			time.Sleep(50 * time.Millisecond)
 		}
 		// if no sitemap.xml, only one thread will be alive since queue size = 1 can only serve 1 thread QQ (e.g. npr.org)
 		// reduce system load
@@ -47,6 +48,9 @@ func startCrawling(managers map[string]*Manager) {
 		case <-globalTimeout:
 			log.Println("Global timeout! Ending!")
 			return
+		case <-time.After(conf.System.keepAliveDuration):
+			log.Println("System still alive")
+			i--
 		}
 	}
 }

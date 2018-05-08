@@ -49,7 +49,7 @@ go get github.com/fatih/color
 go get -u github.com/chromedp/chromedp
 go get github.com/globalsign/mgo
 go get github.com/henrybear327/go-readability
-go get "github.com/olivere/elastic"
+go get github.com/olivere/elastic
 ```
 
 ## internal packages

@@ -52,6 +52,8 @@ type systemConfig struct {
 	maxRunningTimeDuration         time.Duration
 	MaxGoRountinesPerSite          int
 	MaxConcurrentFetch             int
+	KeepAlive                      string
+	keepAliveDuration              time.Duration
 }
 
 type chromedpConfig struct {
@@ -148,6 +150,11 @@ func parseConfigFile() {
 		conf.System.maxRunningTimeDuration, err = time.ParseDuration(conf.System.MaxRunningTime)
 		if err != nil {
 			log.Fatalln("MaxRunningTime", err)
+		}
+
+		conf.System.keepAliveDuration, err = time.ParseDuration(conf.System.KeepAlive)
+		if err != nil {
+			log.Fatalln("KeepAliveDuration", err)
 		}
 
 		conf.Output.SlowActionDuration, err = time.ParseDuration(conf.Output.SlowAction)
