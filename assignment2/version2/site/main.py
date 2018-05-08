@@ -44,7 +44,7 @@ def query(page=1):
         },
         "highlight": {
             "number_of_fragments": 5,
-            "fragment_size": 200,
+            "fragment_size": 500,
             "fields": {
                 "title": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]},
                 "mainText": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
