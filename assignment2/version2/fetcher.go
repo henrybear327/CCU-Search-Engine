@@ -19,9 +19,12 @@ var fetchingCounter struct {
 // GetStaticSitePageSource is a function that downloads page source of assigned link
 // and return it as a []byte
 func getStaticSitePageSource(link string) ([]byte, int) {
+	log.Println("getStaticSitePageSource start", link)
+
 	fetchingCounter.Lock()
 	for fetchingCounter.n >= conf.System.MaxConcurrentFetch {
 		time.Sleep(100 * time.Millisecond)
+		log.Println("Waiting for fetchingCounter lock")
 	}
 	fetchingCounter.n++
 	fetchingCounter.Unlock()
@@ -64,5 +67,7 @@ func getStaticSitePageSource(link string) ([]byte, int) {
 	if elapsedRead >= conf.Output.SlowActionDuration {
 		log.Printf("Extracting page source of %s took %s", link, elapsedRead)
 	}
+
+	log.Println("getStaticSitePageSource end", link, res.StatusCode)
 	return robots, res.StatusCode
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -109,5 +108,5 @@ func (es *elasticSearchStorage) insert(tld, link, title, mainText string) {
 		// Handle error
 		panic(err)
 	}
-	fmt.Printf("Indexed record %s to index %s, type %s\n", put.Id, put.Index, put.Type)
+	log.Printf("Link %s: Indexed record %s to index %s, type %s\n", link, put.Id, put.Index, put.Type)
 }

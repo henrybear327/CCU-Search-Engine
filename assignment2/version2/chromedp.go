@@ -87,14 +87,14 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 	} else {
 		err = c.Run(ctxt, getPageSource(query.link, &title, &pageSource))
 	}
-	log.Println("Back", query.link, title)
 	if err != nil {
-		log.Printf("screenshot url `%s` error: %v", query.link, err)
+		log.Printf("chromedp back `%s` error: %v", query.link, err)
 		// return // let the save html file continue
 	}
-
 	result.title = title
 	result.pageSource = pageSource
+
+	log.Println("Back", query.link, title)
 
 	query.resultChannel <- result
 
