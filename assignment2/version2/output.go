@@ -33,7 +33,7 @@ func saveHTMLFileFromString(foldername, filename, pageSource string) {
 
 	f, err := os.Create(path + "/" + filename)
 	if err != nil {
-		log.Println("saveHTMLFileFromString", err)
+		log.Println("[error] saveHTMLFileFromString", err)
 		return
 	}
 	defer f.Close()

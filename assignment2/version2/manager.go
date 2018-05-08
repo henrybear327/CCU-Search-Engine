@@ -296,7 +296,7 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 			var mainText string
 			var mainTextSHA1 string
 			if err != nil {
-				log.Println("failed.", err)
+				log.Println("[error] failed.", err)
 			} else {
 				mainText = test.Content
 				h := sha1.New()

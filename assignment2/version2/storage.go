@@ -66,7 +66,7 @@ func (storage *mongoDBStorage) sitePageUpsert(tld, link, fetchTime, title, htmlP
 	_, err := collection.Upsert(selector, data)
 	if err != nil {
 		// TODO
-		log.Println("sitePageUpsert", err)
+		log.Println("[error] sitePageUpsert", err)
 		return
 	}
 }
@@ -83,7 +83,7 @@ func (storage *mongoDBStorage) hubUpsert(tld, link string, count int) {
 	_, err := collection.Upsert(selector, data)
 	if err != nil {
 		// TODO
-		log.Println("hubUpsert", err)
+		log.Println("[error] hubUpsert", err)
 		return
 	}
 }

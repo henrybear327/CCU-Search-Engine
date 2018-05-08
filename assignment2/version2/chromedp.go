@@ -4,7 +4,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -71,7 +70,7 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 		runner.ExecPath(conf.Chromedp.ExecPath),
 	)
 	if err != nil {
-		log.Printf("allocate url `%s` error: %v", query.link, err)
+		log.Printf("[error] allocate url `%s` error: %v", query.link, err)
 
 		result.requiresRestart = true
 		query.resultChannel <- result
@@ -88,7 +87,7 @@ func gopherGo(ctxt context.Context, pool *chromedp.Pool, query dynamicFetchingDa
 		err = c.Run(ctxt, getPageSource(query.link, &title, &pageSource))
 	}
 	if err != nil {
-		log.Printf("chromedp back `%s` error: %v", query.link, err)
+		log.Printf("[error] chromedp back `%s` error: %v", query.link, err)
 		// return // let the save html file continue
 	}
 	result.title = title
@@ -117,19 +116,19 @@ func getDynamicSitePageSource(data chan dynamicFetchingDataQuery) {
 	logFile, err := os.Create(fileName)
 	defer logFile.Close()
 	if err != nil {
-		log.Fatalln("chromedp log", err)
+		log.Fatalln("[error] chromedp log", err)
 	}
 
 	debugLog := log.New(logFile, "[Chromedp]", log.LstdFlags)
 	debugLog.SetFlags(debugLog.Flags() | log.LstdFlags)
 	pool, err := chromedp.NewPool(chromedp.PoolLog(debugLog.Printf, debugLog.Printf, debugLog.Printf))
 	if err != nil {
-		log.Fatalln("New pool", err)
+		log.Fatalln("[error] New pool", err)
 	}
 	defer func() {
 		err := pool.Shutdown()
 		if err != nil {
-			log.Println("defer shutdown", err)
+			log.Println("[error] defer shutdown", err)
 		}
 	}()
 
@@ -143,7 +142,7 @@ func getDynamicSitePageSource(data chan dynamicFetchingDataQuery) {
 			log.Println("gopherGo", nextData.link)
 			go gopherGo(ctxt, pool, nextData, semaphore)
 		case <-timeout:
-			fmt.Println("Chromedp timeout! Ending chromedp goroutine")
+			log.Println("[error] Chromedp timeout! Ending chromedp goroutine")
 			return
 		}
 		time.Sleep(100 * time.Millisecond)

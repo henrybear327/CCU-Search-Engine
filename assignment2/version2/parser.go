@@ -117,7 +117,7 @@ func (manager *Manager) getNextURLList(link string, pageSource []byte) []string 
 	// Find the review items
 	parsedLink, err := url.Parse(link)
 	if err != nil {
-		log.Println("getNextURLList link", err)
+		log.Println("[error] getNextURLList link", err)
 		return nextURLs
 	}
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
@@ -131,7 +131,7 @@ func (manager *Manager) getNextURLList(link string, pageSource []byte) []string 
 		if isValidSuffix(str) && exists {
 			u, err := parsedLink.Parse(str)
 			if err != nil {
-				log.Println("getNextURLList href", err)
+				log.Println("[error] getNextURLList href", err)
 				return
 			}
 			// fmt.Println(i, u, strings.TrimSpace(s.Text()))

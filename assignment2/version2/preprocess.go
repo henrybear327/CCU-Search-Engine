@@ -34,7 +34,7 @@ func (manager *Manager) processgzFile(link string) {
 	// log.Println("processgzFile")
 	compressedPageSource, statusCode := getStaticSitePageSource(link)
 	if statusCode != 200 {
-		log.Println("gz file download err")
+		log.Println("[error] gz file download err")
 		return
 	}
 
@@ -44,12 +44,12 @@ func (manager *Manager) processgzFile(link string) {
 
 	gzf, err := gzip.NewReader(res)
 	if err != nil {
-		log.Println(err)
+		log.Println("[error] gzip new reader", err)
 	}
 
 	pageSource, err := ioutil.ReadAll(gzf)
 	if err != nil {
-		log.Println(err)
+		log.Println("[error] gzip readAll", err)
 	}
 
 	manager.parseXMLContent(pageSource)
@@ -61,7 +61,7 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 	var data sitemapSection
 	err := xml.Unmarshal(pageSource, &data)
 	if err != nil {
-		log.Println("parse sitemapSection error", err)
+		log.Println("[error] parse sitemapSection error", err)
 		return
 	}
 
@@ -71,7 +71,7 @@ func (manager *Manager) parseXMLContent(pageSource []byte) {
 		err := xml.Unmarshal(pageSource, &data)
 		if err != nil {
 			color.Set(color.FgRed)
-			log.Println("parse sitemapURL error", err)
+			log.Println("[error] parse sitemapURL error", err)
 			color.Unset()
 			return
 		}
@@ -174,7 +174,7 @@ func (manager *Manager) parseRobotsTxt() {
 	robotsFile, statusCode := getStaticSitePageSource(robotFileLink)
 	if statusCode != 200 {
 		color.Set(color.FgRed)
-		log.Println("Error fetching robots.txt for site", robotFileLink, statusCode)
+		log.Println("[error] error fetching robots.txt for site", robotFileLink, statusCode)
 		color.Unset()
 
 		manager.robot = nil
@@ -184,7 +184,7 @@ func (manager *Manager) parseRobotsTxt() {
 	robot, err := robotstxt.FromStatusAndBytes(statusCode, robotsFile)
 	if err != nil {
 		color.Set(color.FgRed)
-		log.Println("Error parsing robots.txt", err)
+		log.Println("[error] Error parsing robots.txt", err)
 		color.Unset()
 	}
 

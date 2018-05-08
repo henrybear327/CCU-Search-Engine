@@ -46,7 +46,7 @@ func getStaticSitePageSource(link string) ([]byte, int) {
 
 	if err != nil {
 		color.Set(color.FgRed)
-		log.Println("GetStaticSitePageSource http.Get", err)
+		log.Println("[error] GetStaticSitePageSource http.Get", err)
 		color.Unset()
 		return make([]byte, 0), -1
 	}
@@ -58,7 +58,7 @@ func getStaticSitePageSource(link string) ([]byte, int) {
 	robots, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		color.Set(color.FgRed)
-		log.Println("GetStaticSitePageSource ioutil.ReadAll", err)
+		log.Println("[error] GetStaticSitePageSource ioutil.ReadAll", err)
 		color.Unset()
 		return make([]byte, 0), -1
 	}
