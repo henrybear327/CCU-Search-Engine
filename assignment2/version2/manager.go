@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/henrybear327/go-readability"
 	"github.com/temoto/robotstxt"
@@ -101,7 +102,7 @@ func (manager *Manager) addToFetched(link string) {
 func (manager *Manager) isMultimediaFiles(link string) bool {
 	// TODO: maybe use (html|php|...) match?
 	// https://fileinfo.com/filetypes/common
-	regex := "^.*\\.(doc|docx|odt|csv|ppt|pptx|wav|wma|jpg|png|gif|jpeg|mp3|mp4|mov|avi|flv)$"
+	regex := "^.*\\.(doc|docx|odt|csv|ppt|pptx|wav|wma|jpg|png|gif|jpeg|mp3|mp4|mov|avi|flv|pdf)$"
 	matched, err := regexp.MatchString(regex, link)
 	if err != nil {
 		log.Println("isMultimediaFiles", err)
@@ -305,8 +306,21 @@ func (manager *Manager) start(done chan bool, dynamicLinkChannel chan dynamicFet
 				mainTextSHA1 = fmt.Sprintf("%x\n", bs)
 				// log.Println("main text", mainText)
 			}
-			manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), mainText, mainTextSHA1)
-			manager.es.insert(manager.tld, nextLink, titleForStoring, mainText)
+
+			if utf8.ValidString(string(pageSoruceForParsing)) && utf8.ValidString(titleForStoring) && utf8.ValidString(mainText) {
+				manager.storage.sitePageUpsert(manager.tld, nextLink, fetchTime.Format(time.RFC3339), titleForStoring, string(pageSoruceForParsing), mainText, mainTextSHA1)
+				manager.es.insert(manager.tld, nextLink, titleForStoring, mainText)
+			} else {
+				if utf8.ValidString(string(pageSoruceForParsing)) == false {
+					log.Println("[error] invalid utf8 pageSoruceForParsing", pageSoruceForParsing)
+				}
+				if utf8.ValidString(titleForStoring) == false {
+					log.Println("[error] invalid utf8 titleForStoring", titleForStoring)
+				}
+				if utf8.ValidString(mainText) == false {
+					log.Println("[error] invalid utf8 mainText", mainText)
+				}
+			}
 
 			for _, rec := range nextLinkList {
 				// log.Println("Parsed link from", nextLink, rec)

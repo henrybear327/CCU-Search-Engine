@@ -43,21 +43,17 @@ func parseAlexaTopSites(pageSource []byte) []string {
 }
 
 func isValidSuffix(link string) bool {
-	if link == "void(0)" {
-		return false
-	}
-	if strings.HasPrefix(link, "mailto:") {
-		return false
-	}
-	if strings.HasPrefix(link, "javascript:") {
-		return false
+	regex := "^(void(0)|mailto:|javascript:|#|file://|tel:|email:|applewebdata://|feed://).*$"
+	matched, err := regexp.MatchString(regex, link)
+	if err != nil {
+		log.Println("[error] isValidSuffix", err)
+		return true
 	}
 
-	if strings.HasPrefix(link, "#") {
-		return false
+	if matched {
+		// log.Println("isInvalidSuffix", link)
 	}
-
-	return true
+	return matched == false
 }
 
 func getTitleFromPageSource(pageSource []byte) string {
