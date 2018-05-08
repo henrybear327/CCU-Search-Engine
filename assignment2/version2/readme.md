@@ -185,3 +185,7 @@ p(fetchTime)
 ## Elastic search
 
 * [reading](http://olivere.github.io/elastic/)
+
+## UTF8 string checking
+
+* [reference](https://golang.org/pkg/unicode/utf8/#ValidString)

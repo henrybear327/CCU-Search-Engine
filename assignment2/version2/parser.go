@@ -43,7 +43,7 @@ func parseAlexaTopSites(pageSource []byte) []string {
 }
 
 func isValidSuffix(link string) bool {
-	regex := "^(void(0)|mailto:|javascript:|#|file://|tel:|email:|applewebdata://|feed://).*$"
+	regex := "^(void\\(|mailto:|javascript:|#|file://|tel:|email:|applewebdata://|feed://)"
 	matched, err := regexp.MatchString(regex, link)
 	if err != nil {
 		log.Println("[error] isValidSuffix", err)
