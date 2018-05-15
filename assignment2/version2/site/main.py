@@ -51,7 +51,7 @@ def query(page=1):
             }
         }
     }, from_=param_from, size=5)
-    print(json.dumps(res, sort_keys=True, indent=4, ensure_ascii=False))
+    # print(json.dumps(res, sort_keys=True, indent=4, ensure_ascii=False))
 
     # print(res)
     data = []
