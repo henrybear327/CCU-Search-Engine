@@ -1,5 +1,4 @@
 https://www.techbang.com @useStatic
 https://www.npr.org/ @useStatic
 https://www.Ettoday.net @useStatic
-https://edition.cnn.com @useStatic
 https://www.Ltn.com.tw @useStatic
