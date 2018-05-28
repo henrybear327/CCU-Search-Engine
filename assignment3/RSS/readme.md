@@ -6,7 +6,9 @@ Manager, downloader, and parser
 
 * Fetcher   
     * Fetch periodically
-    * Able to handle restart!
+    * Able to handle restart
+    * Fetch the external link
+    * Respect the update delay
 * Storage
     * Duplication detection
 
