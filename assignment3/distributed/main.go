@@ -1,5 +1,6 @@
 package main
 
+// netstat -vanp tcp | grep -e "50507"
 // source code from https://confusedcoders.com/go/create-a-basic-distributed-system-in-go-lang-part-1
 
 /* Al useful imports */
@@ -102,7 +103,7 @@ func connectToCluster(me NodeInfo, dest NodeInfo) bool {
 		}
 	} else {
 		fmt.Println("Connected to cluster. Sending message to node.")
-		text := "Hi nody.. please add me to the cluster.."
+		text := "Hi nody! please add me to the cluster."
 		requestMessage := getAddToClusterMessage(me, dest, text)
 		json.NewEncoder(connOut).Encode(&requestMessage)
 
@@ -132,7 +133,7 @@ func listenOnPort(me NodeInfo) {
 			json.NewDecoder(connIn).Decode(&requestMessage)
 			fmt.Println("Got request:\n" + requestMessage.String())
 
-			text := "Sure buddy.. too easy.."
+			text := "Sure buddy! Too easy."
 			responseMessage := getAddToClusterMessage(me, requestMessage.Source, text)
 			json.NewEncoder(connIn).Encode(&responseMessage)
 			connIn.Close()
