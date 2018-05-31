@@ -1,9 +1,8 @@
-package main
-
 // netstat -vanp tcp | grep -e "50507"
 // source code from https://confusedcoders.com/go/create-a-basic-distributed-system-in-go-lang-part-1
 
-/* Al useful imports */
+package main
+
 import (
 	"encoding/json"
 	"flag"
