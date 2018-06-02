@@ -10,7 +10,10 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -83,25 +86,6 @@ func setupNodes(clusterip, myport string) (int, NodeInfo, NodeInfo) {
 	return myID, me, dest
 }
 
-func main() {
-	makeMasterOnError, clusterip, myport := praseCommandLine()
-
-	myID, me, dest := setupNodes(clusterip, myport)
-
-	ableToConnect := connectToCluster(me, dest)
-
-	if ableToConnect || (!ableToConnect && makeMasterOnError) {
-		if makeMasterOnError {
-			log.Println("Will start this node as master.")
-			me.NodeID = 0 // master ID = 0
-		}
-
-		listenOnPort(me)
-	} else {
-		log.Println("Quitting system. Set makeMasterOnError flag to make the node master.", myID)
-	}
-}
-
 func getAddToClusterMessage(source, dest NodeInfo, message string) AddToClusterMessage {
 	return AddToClusterMessage{
 		Source: NodeInfo{
@@ -163,7 +147,34 @@ func listenOnPort(me NodeInfo) {
 			log.Println("Error received while listening.", me.NodeID)
 			continue
 		}
-
+		log.Println("Accepted one connection")
 		go handleConnection(connIn, me)
+	}
+}
+
+func main() {
+	makeMasterOnError, clusterip, myport := praseCommandLine()
+
+	myID, me, dest := setupNodes(clusterip, myport)
+
+	ableToConnect := connectToCluster(me, dest)
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT)
+	go func() {
+		sig := <-sigs
+		log.Println(sig)
+		os.Exit(0)
+	}()
+
+	if ableToConnect || (!ableToConnect && makeMasterOnError) {
+		if makeMasterOnError {
+			log.Println("Will start this node as master.")
+			me.NodeID = 0 // master ID = 0
+		}
+
+		listenOnPort(me)
+	} else {
+		log.Println("Quitting system. Set makeMasterOnError flag to make the node master.", myID)
 	}
 }
