@@ -17,7 +17,7 @@ Start with building a prototype that is working first, and then try to improve i
 
 ## Main components
 
-* Page analyzer
+* Page analyzer (parser)
     * `page` to `page index tuples`
     * 斷詞
         * Segmentation (cppJieba)
@@ -30,8 +30,10 @@ Start with building a prototype that is working first, and then try to improve i
                 * unit occurrence score
                 * position score
                     * early occurrence > late occurrence
+                    * title 
                 * tag score (webpage specific, e.g. `<span>`)
                 * user-defined special terms
+                * key term score
             * site
                 * meta info score
                 * site score
@@ -39,7 +41,7 @@ Start with building a prototype that is working first, and then try to improve i
                 * format score
                     * Responsive Web Design (RWD), https, etc. add bonus score
                 * behaviour score (user score)
-* Posting file manager
+* Posting file manager (indexer)
     * Fine grain
     * Merge page index files
         * in memory - use map (hashing)
@@ -50,7 +52,7 @@ Start with building a prototype that is working first, and then try to improve i
     * Save run by time interval
         * search latest run first
             * search second run if first run has insufficent results
-* Query processing
+* Query processing (interface)
     * Segmentation
     * Perform searching
 * Master slave
