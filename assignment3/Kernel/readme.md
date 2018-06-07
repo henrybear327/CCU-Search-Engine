@@ -20,10 +20,13 @@ Start with building a prototype that is working first, and then try to improve i
 * Page analyzer
     * `page` to `page index`
     * 斷詞
-        * cppJieba
+        * Segmentation (cppJieba)
+    * bigram
+        * take high frquency terms as segmentation
     * scoring mechanism
         * baseline version: by term frequency count
 * Posting file manager
+    * Fine grain
     * Merge page index files
 * Query processing
     * Segmentation
