@@ -17,10 +17,15 @@ Start with building a prototype that is working first, and then try to improve i
 
 ## Main components
 
+Design 好 interface! e.g. Segmentation 就要有 interface ，這樣才能輕易地換底層元件
+
+Logging by service, don't only use general log!
+
 * Page analyzer (parser)
     * `page` to `page index tuples`
     * 斷詞
         * Segmentation (cppJieba)
+        * n-gram
     * bigram
         * take high frquency terms as segmentation
     * scoring mechanism
@@ -55,7 +60,4 @@ Start with building a prototype that is working first, and then try to improve i
 * Query processing (interface)
     * Segmentation
     * Perform searching
-* Master slave
-    * Two slaves
-        * Query slave
-        * Indexer slave
+    * Listen to specific port for indexing and querying
