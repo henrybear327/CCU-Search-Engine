@@ -23,9 +23,35 @@ Logging by service, don't only use general log!
 
 * Page analyzer (parser)
     * `page` to `page index tuples`
-    * 斷詞
+    * 斷詞 (segmentation)
         * Segmentation (cppJieba)
-        * n-gram
+        * n-gram (e.g. 杜斯妥也夫斯基, 7-gram is sufficient)
+        * Do-it-yourself 
+            * Data structure
+                * Trie, using hash/skiplist for node data
+                * Hash
+                    * if max = 5
+                        * 中正大學資工系
+                            * n = 5 中正大學資 no match
+                            * n = 4 中正大學 match, skip to 資工系
+                            * n = 5 ... cont.
+            * Chinese
+                * 長詞優先
+                    * 正向
+                    * 正向 + 反向
+                        * conflict resolution
+                            * by score
+                        * e.g. 研究生物理論
+                            * 正向: 研究生 物理 論
+                            * 反向: 研究 生物 理論
+                            * 比詞頻 / 分數
+                                * 落單通常不會高分 (論)
+                * 容錯：音典
+                    * e.g. 畢業典禮 打成 閉業典禮
+                * 辭典很重要
+            * English
+                * Spelling error
+                    * Transposition error, e.g. that -> taht
     * bigram
         * take high frquency terms as segmentation
     * scoring mechanism
@@ -39,6 +65,8 @@ Logging by service, don't only use general log!
                 * tag score (webpage specific, e.g. `<span>`)
                 * user-defined special terms
                 * key term score
+                * near score
+                    * for terms that is not in the term
             * site
                 * meta info score
                 * site score
