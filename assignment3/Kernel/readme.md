@@ -2,8 +2,6 @@
 
 Simple inverted page searching kernel
 
-# TODO
-
 Let's start with simple things. Compressions and the like are not the main priority here. 
 
 Start with building a prototype that is working first, and then try to improve it!
@@ -52,6 +50,7 @@ Logging by service, don't only use general log!
             * English
                 * Spelling error
                     * Transposition error, e.g. that -> taht
+                * Case issue
     * bigram
         * take high frquency terms as segmentation
     * scoring mechanism
@@ -89,3 +88,7 @@ Logging by service, don't only use general log!
     * Segmentation
     * Perform searching
     * Listen to specific port for indexing and querying
+
+# Great resources
+
+* [Learn and code](https://www.rosettacode.org/wiki/Inverted_index)
