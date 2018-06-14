@@ -88,6 +88,7 @@ Logging by service, don't only use general log!
     * Segmentation
     * Perform searching
     * Listen to specific port for indexing and querying
+    * Highlighting
 
 # Great resources
 
