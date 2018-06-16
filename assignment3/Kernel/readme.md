@@ -8,6 +8,15 @@ Start with building a prototype that is working first, and then try to improve i
 
 [Presentation slides](https://docs.google.com/presentation/d/1YRgBzzz5Y6f5qyWeQRvchEjwKv-QTGtD_-AugWRorFE/edit?usp=sharing)
 
+## Usage
+
+* Insertion: 
+```bash
+curl -X POST \
+-d '{"title":"title", "body":"hello world", "url":"google.com"}' \
+http://localhost:8001/insert
+```
+
 ## Things to consider
 
 * [index](https://www.elastic.co/guide/en/elasticsearch/guide/current/inverted-index.html)  

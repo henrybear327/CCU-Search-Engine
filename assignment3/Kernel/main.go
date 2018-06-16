@@ -13,12 +13,12 @@ func main() {
 	source, port := parse()
 	loadDataFromFile()
 
-	// build index
+	// build index (debug only)
 	go indexFromDirectory(source)
 
-	// run user interface
+	// run user interface for searching
 	go ui()
 
 	// let's start!
-	listenOnPort(port)
+	listen(port)
 }

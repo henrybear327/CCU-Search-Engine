@@ -15,7 +15,7 @@ type document struct {
 }
 
 func indexFromDirectory(dir string) {
-	log.Println("indexing directory", dir)
+	log.Println("Indexing directory", dir)
 
 	directory, err := os.Open(dir) // open directory
 	check("os.Open", err)
@@ -45,4 +45,6 @@ func indexFromDirectory(dir string) {
 			log.Println("Recursive is not supported")
 		}
 	}
+
+	log.Println("Indexing directory, done")
 }
