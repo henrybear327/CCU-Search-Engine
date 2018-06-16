@@ -2,12 +2,16 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"io"
+	"log"
 	"os"
 )
 
-func indexFile(filename string, docID int) {
+func parseFile(filename string, docID int) {
+	// segmenter
+	segmenter := segmentationGSE{}
+	segmenter.init()
+
 	// open file
 	f, err := os.Open(filename)
 	check("os.Open", err)
@@ -36,22 +40,28 @@ func indexFile(filename string, docID int) {
 				str = append(str, b...)
 			}
 
-			for _, bword := range bytes.Fields(b) {
-				bword := bytes.Trim(bword, ".,-~?!\"'`;:()<>[]{}\\|/=_+*&^%$#@")
-				if len(bword) > 0 {
-					word := string(bword)
-					docs := index[word]
+			// Split by space
+			// for _, bword := range bytes.Fields(str) {
+			// 	bword := bytes.Trim(bword, ".,-~?!\"'`;:()<>[]{}\\|/=_+*&^%$#@")
+			// 	if len(bword) > 0 {
+			// 		word := string(bword)
+			// 		docs := index[word]
 
-					if len(docs) == 0 {
-						index[word] = make(map[int]bool)
-						docs = index[word]
-					}
+			// 		if len(docs) == 0 {
+			// 			index[word] = make(map[int]bool)
+			// 			docs = index[word]
+			// 		}
 
-					_, ok := docs[docID]
-					if ok == false {
-						docs[docID] = true
-					}
-				}
+			// 		_, ok := docs[docID]
+			// 		if ok == false {
+			// 			docs[docID] = true
+			// 		}
+			// 	}
+			// }
+
+			// Split by segmentation
+			for _, token := range segmenter.getSegmentedText(str) {
+				log.Println(token)
 			}
 
 			str = make([]byte, 0)

@@ -40,7 +40,7 @@ func indexFromDirectory(dir string) {
 
 			filename := dir + "/" + file.Name()
 			log.Println("indexing", filename)
-			indexFile(filename, docID)
+			parseFile(filename, docID)
 		} else {
 			log.Println("Recursive is not supported")
 		}

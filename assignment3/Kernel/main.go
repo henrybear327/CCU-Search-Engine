@@ -25,5 +25,5 @@ func main() {
 	indexFromDirectory(*source)
 
 	// run user interface
-	ui()
+	// ui()
 }
