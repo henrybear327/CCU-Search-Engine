@@ -104,4 +104,4 @@ Logging by service, don't only use general log!
 # Great resources
 
 * [Learn and code](https://www.rosettacode.org/wiki/Inverted_index)
-* [http networking for decoding JSON payload(https://gist.github.com/aodin/9493190)
+* [http networking for decoding JSON payload](https://gist.github.com/aodin/9493190)
