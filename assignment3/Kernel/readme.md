@@ -6,6 +6,8 @@ Let's start with simple things. Compressions and the like are not the main prior
 
 Start with building a prototype that is working first, and then try to improve it!
 
+[Presentation slides](https://docs.google.com/presentation/d/1YRgBzzz5Y6f5qyWeQRvchEjwKv-QTGtD_-AugWRorFE/edit?usp=sharing)
+
 ## Things to consider
 
 * [index](https://www.elastic.co/guide/en/elasticsearch/guide/current/inverted-index.html)  
