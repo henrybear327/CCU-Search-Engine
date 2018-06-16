@@ -21,15 +21,9 @@ func check(functionName string, err error) {
 func main() {
 	source := parse()
 
-	log.Println("Currently, persistent data structure is not supported")
-
 	// build index
-	if source != nil {
-		indexFromDirectory(*source)
-	} else {
-		log.Fatalln("No source folder to load")
-	}
+	indexFromDirectory(*source)
 
 	// run user interface
-	// ui()
+	ui()
 }
