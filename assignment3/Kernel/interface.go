@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func ui() {
-	fmt.Println(len(index), "words indexed in", len(indexedFiles), "files")
+	// fmt.Println(len(index), "words indexed in", len(indexedFiles), "files")
 	for {
 		fmt.Print("Search: ")
 		var word string

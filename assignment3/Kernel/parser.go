@@ -3,11 +3,10 @@ package main
 import (
 	"bufio"
 	"io"
-	"log"
 	"os"
 )
 
-func parseFile(filename string, docID int) {
+func parseDocument(filename string, docID int) {
 	// segmenter
 	segmenter := segmentationGSE{}
 	segmenter.init()
@@ -61,7 +60,20 @@ func parseFile(filename string, docID int) {
 
 			// Split by segmentation
 			for _, token := range segmenter.getSegmentedText(str) {
-				log.Println(token)
+				// log.Println(token)
+				if len(token) > 0 {
+					docs := index[token]
+
+					if len(docs) == 0 {
+						index[token] = make(map[int]bool)
+						docs = index[token]
+					}
+
+					_, ok := docs[docID]
+					if ok == false {
+						docs[docID] = true
+					}
+				}
 			}
 
 			str = make([]byte, 0)

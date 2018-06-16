@@ -1,16 +1,6 @@
 package main
 
-import (
-	"flag"
-	"log"
-)
-
-func parse() *string {
-	source := flag.String("source", "docs", "the source folder to index")
-	flag.Parse()
-
-	return source
-}
+import "log"
 
 func check(functionName string, err error) {
 	if err != nil {
@@ -19,11 +9,16 @@ func check(functionName string, err error) {
 }
 
 func main() {
-	source := parse()
+	// init
+	source, port := parse()
+	loadDataFromFile()
 
 	// build index
-	indexFromDirectory(*source)
+	go indexFromDirectory(source)
 
 	// run user interface
-	// ui()
+	go ui()
+
+	// let's start!
+	listenOnPort(port)
 }
