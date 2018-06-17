@@ -27,7 +27,7 @@ func (results *SearchResult) String() string {
 }
 
 func textSearch(query string) *SearchResult {
-	dl := index[query]
+	dl := invertedIndex[query]
 
 	var results SearchResult
 	results.Count = len(dl)

@@ -10,6 +10,10 @@ type document struct {
 	filename string
 }
 
+func indexFromJSON(payload string) {
+
+}
+
 func indexFromDirectory(dir string) {
 	log.Println("Indexing directory", dir)
 
@@ -25,7 +29,7 @@ func indexFromDirectory(dir string) {
 		log.Fatalf("There are no files in %s", dir)
 	}
 
-	index = make(map[string]map[int]bool)
+	invertedIndex = make(map[string]map[int]bool)
 	indexedFiles = make(map[int]document)
 	for docID, file := range filesInDirectory {
 		if file.IsDir() == false { // non-recursive

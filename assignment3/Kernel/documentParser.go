@@ -58,11 +58,11 @@ func parseDocument(filename string, docID int) {
 			for _, token := range option.segmenter.getSegmentedText(str) {
 				// log.Println(token)
 				if len(token) > 0 {
-					docs := index[token]
+					docs := invertedIndex[token]
 
 					if len(docs) == 0 {
-						index[token] = make(map[int]bool)
-						docs = index[token]
+						invertedIndex[token] = make(map[int]bool)
+						docs = invertedIndex[token]
 					}
 
 					_, ok := docs[docID]
