@@ -16,19 +16,17 @@ var (
 )
 
 func main() {
-	// config
-	// setup the segmentation program to use
-	option.segmenter = &segmentationGSE{}
-	option.segmenter.init()
-
-	// init
+	/* parse command line */
 	source, port := parse()
-	loadDataFromFile()
 
-	// build index (debug only)
-	go indexFromDirectory(source)
+	/* config */
+	option.segmenter = &segmentationGSE{}
+	option.storage = &storageInitFromFolder{folderName: source}
 
-	// run user interface for searching
+	/* init */
+	option.init()
+
+	// run command line interface for searching
 	go searchCLI()
 
 	// let's start!
