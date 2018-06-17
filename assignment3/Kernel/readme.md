@@ -10,11 +10,17 @@ Start with building a prototype that is working first, and then try to improve i
 
 ## Usage
 
-* Insertion: 
+* Insertion
 ```bash
 curl -X POST \
 -d '{"title":"title", "body":"hello world", "url":"google.com"}' \
 http://localhost:8001/insert
+```
+* Search
+```bash
+curl -X POST \
+-d '{"query":"ettoday"}' \
+http://localhost:8001/search
 ```
 
 ## Package

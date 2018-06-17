@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-// coarse grain
-var index map[string]map[int]bool
-var indexedFiles map[int]document
-
 type document struct {
 	filename string
 }

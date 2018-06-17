@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,10 +16,18 @@ type insertionRequestMessage struct {
 }
 
 func (r *insertionRequestMessage) String() string {
-	return "\nTitle: " + r.Title + "\n" + "Body: " + r.Body + "\n" + "URL: " + r.URL
+	return "Title: " + r.Title + "\n" + "Body: " + r.Body + "\n" + "URL: " + r.URL
 }
 
-func handleInsertionRequestConnection(w http.ResponseWriter, r *http.Request) {
+type searchRequestMessage struct {
+	Query string `json:"query"`
+}
+
+func (r *searchRequestMessage) String() string {
+	return "Query: " + r.Query
+}
+
+func handleInsertionRequest(w http.ResponseWriter, r *http.Request) {
 	// Read body
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -44,12 +53,48 @@ func handleInsertionRequestConnection(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	w.Write(output)
 
-	log.Println("One insertion request is received:", msg.String())
+	// print log
+	log.Println("One insertion request is received", "\n"+msg.String())
+}
+
+func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
+	// Read body
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	// Unmarshal JSON
+	var msg searchRequestMessage
+	err = json.Unmarshal(b, &msg)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	log.Println("One search request is received", "\n"+msg.String())
+
+	// Perform searching
+	results := textSearch(msg.Query)
+	for _, res := range results.Results {
+		fmt.Println("\t", res)
+	}
+
+	// return result
+	output, err := json.Marshal(results)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	w.Header().Set("content-type", "application/json")
+	w.Write(output)
 }
 
 func listen(port int) {
 	// define route
-	http.HandleFunc("/insert", handleInsertionRequestConnection)
+	http.HandleFunc("/insert", handleInsertionRequest)
+	http.HandleFunc("/search", handleSearchRequest)
 
 	// define port
 	address := ":" + strconv.Itoa(port)

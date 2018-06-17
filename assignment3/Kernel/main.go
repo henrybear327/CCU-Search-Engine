@@ -10,6 +10,9 @@ func check(functionName string, err error) {
 
 var (
 	option Option
+	// coarse grain
+	index        map[string]map[int]bool
+	indexedFiles map[int]document
 )
 
 func main() {
