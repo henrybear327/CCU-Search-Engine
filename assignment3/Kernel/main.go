@@ -32,5 +32,5 @@ func main() {
 	go searchCLI()
 
 	// let's start!
-	listen(port)
+	listen(port) // blocking!
 }

@@ -52,7 +52,7 @@ Design 好 interface! e.g. Segmentation 就要有 interface ，這樣才能輕�
 
 Logging by service, don't only use general log!
 
-* Page analyzer (parser)
+* Page analyzer 
     * `page` to `page index tuples`
     * 斷詞 (segmentation)
         * Segmentation (cppJieba)
@@ -106,7 +106,7 @@ Logging by service, don't only use general log!
                 * format score
                     * Responsive Web Design (RWD), https, etc. add bonus score
                 * behaviour score (user score)
-* Posting file manager (indexer)
+* Posting file manager 
     * Fine grain
     * Merge page index files
         * in memory - use map (hashing)
@@ -117,7 +117,7 @@ Logging by service, don't only use general log!
     * Save run by time interval
         * search latest run first
             * search second run if first run has insufficent results
-* Query processing (interface)
+* Query processing 
     * Segmentation
     * Perform searching
     * Listen to specific port for indexing and querying
