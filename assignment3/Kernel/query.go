@@ -4,21 +4,33 @@ import "fmt"
 
 // SearchResult is the query result
 type SearchResult struct {
+	Count   int      `json:"count"`
 	Results []string `json:"results"`
+}
+
+func (results *SearchResult) String() string {
+	str := ""
+
+	switch results.Count {
+	case 0:
+		str = fmt.Sprintln("No match")
+	case 1:
+		str = fmt.Sprintln("One match:")
+	default:
+		str = fmt.Sprintln(results.Count, "matches:")
+	}
+	for _, res := range results.Results {
+		str += fmt.Sprintln("\t", res)
+	}
+
+	return str
 }
 
 func textSearch(query string) *SearchResult {
 	dl := index[query]
-	switch len(dl) {
-	case 0:
-		fmt.Println("No match")
-	case 1:
-		fmt.Println("One match:")
-	default:
-		fmt.Println(len(dl), "matches:")
-	}
 
 	var results SearchResult
+	results.Count = len(dl)
 	for key := range dl {
 		// fmt.Println("\t", indexedFiles[key].filename)
 		results.Results = append(results.Results, indexedFiles[key].filename)
@@ -27,7 +39,7 @@ func textSearch(query string) *SearchResult {
 	return &results
 }
 
-func ui() {
+func searchUI() {
 	fmt.Println("query string length = 0 -> quit")
 	for {
 		// get query
@@ -39,8 +51,6 @@ func ui() {
 		}
 
 		results := textSearch(word)
-		for _, res := range results.Results {
-			fmt.Println("\t", res)
-		}
+		fmt.Println(results.String())
 	}
 }

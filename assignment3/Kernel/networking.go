@@ -16,7 +16,7 @@ type insertionRequestMessage struct {
 }
 
 func (r *insertionRequestMessage) String() string {
-	return "Title: " + r.Title + "\n" + "Body: " + r.Body + "\n" + "URL: " + r.URL
+	return "Title: " + r.Title + "\nBody: " + r.Body + "\nURL: " + r.URL
 }
 
 type searchRequestMessage struct {
@@ -54,7 +54,7 @@ func handleInsertionRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 
 	// print log
-	log.Println("One insertion request is received", "\n"+msg.String())
+	log.Println("One insertion request is received", msg.String())
 }
 
 func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
@@ -73,13 +73,11 @@ func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	log.Println("One search request is received", "\n"+msg.String())
+	log.Println("One search request is received", msg.String())
 
 	// Perform searching
 	results := textSearch(msg.Query)
-	for _, res := range results.Results {
-		fmt.Println("\t", res)
-	}
+	fmt.Println(results.String())
 
 	// return result
 	output, err := json.Marshal(results)
