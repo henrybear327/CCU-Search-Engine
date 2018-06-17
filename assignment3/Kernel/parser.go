@@ -7,10 +7,6 @@ import (
 )
 
 func parseDocument(filename string, docID int) {
-	// segmenter
-	segmenter := segmentationGSE{}
-	segmenter.init()
-
 	// open file
 	f, err := os.Open(filename)
 	check("os.Open", err)
@@ -59,7 +55,7 @@ func parseDocument(filename string, docID int) {
 			// }
 
 			// Split by segmentation
-			for _, token := range segmenter.getSegmentedText(str) {
+			for _, token := range option.segmenter.getSegmentedText(str) {
 				// log.Println(token)
 				if len(token) > 0 {
 					docs := index[token]

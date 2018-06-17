@@ -8,7 +8,16 @@ func check(functionName string, err error) {
 	}
 }
 
+var (
+	option Option
+)
+
 func main() {
+	// config
+	// setup the segmentation program to use
+	option.segmenter = &segmentationGSE{}
+	option.segmenter.init()
+
 	// init
 	source, port := parse()
 	loadDataFromFile()

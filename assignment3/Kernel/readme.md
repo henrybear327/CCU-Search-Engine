@@ -17,6 +17,10 @@ curl -X POST \
 http://localhost:8001/insert
 ```
 
+## Package
+
+* gse: `go get -u github.com/go-ego/gse`
+
 ## Things to consider
 
 * [index](https://www.elastic.co/guide/en/elasticsearch/guide/current/inverted-index.html)  
