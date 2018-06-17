@@ -39,7 +39,7 @@ func textSearch(query string) *SearchResult {
 	return &results
 }
 
-func searchUI() {
+func searchCLI() {
 	fmt.Println("query string length = 0 -> quit")
 	for {
 		// get query

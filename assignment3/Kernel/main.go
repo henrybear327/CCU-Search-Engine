@@ -29,7 +29,7 @@ func main() {
 	go indexFromDirectory(source)
 
 	// run user interface for searching
-	go searchUI()
+	go searchCLI()
 
 	// let's start!
 	listen(port)
