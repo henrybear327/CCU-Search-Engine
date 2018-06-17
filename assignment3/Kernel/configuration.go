@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"log"
 	"os"
 	"strings"
@@ -9,12 +10,12 @@ import (
 )
 
 // Option is the global conf struct
-type Option struct {
+type Configuration struct {
 	segmenter Segmentation
 	storage   Storage
 }
 
-func (option *Option) init() {
+func (option *Configuration) init() {
 	option.segmenter.init()
 
 	option.storage.init() // init map
@@ -71,7 +72,22 @@ func (storage *storageFromFolder) load() {
 
 				filename := dir + "/" + file.Name()
 				log.Println("indexing", filename)
-				parseDocument(filename, docID)
+
+				// load document
+				// open file
+				f, err := os.Open(filename)
+				check("os.Open", err)
+				defer f.Close()
+
+				// register new file
+				newDocument := document{filename}
+				indexedFiles[docID] = newDocument
+
+				// scan lines, one by one
+				r := bufio.NewReader(f)
+
+				// parse document
+				parseDocument(r, docID)
 			} else {
 				log.Println("Recursive is not supported")
 			}

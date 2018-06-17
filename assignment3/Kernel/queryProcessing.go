@@ -2,13 +2,12 @@ package main
 
 import "fmt"
 
-// SearchResult is the query result
-type SearchResult struct {
+type searchResult struct {
 	Count   int      `json:"count"`
 	Results []string `json:"results"`
 }
 
-func (results *SearchResult) String() string {
+func (results *searchResult) String() string {
 	str := ""
 
 	switch results.Count {
@@ -26,10 +25,10 @@ func (results *SearchResult) String() string {
 	return str
 }
 
-func textSearch(query string) *SearchResult {
+func textSearch(query string) *searchResult {
 	dl := invertedIndex[query]
 
-	var results SearchResult
+	var results searchResult
 	results.Count = len(dl)
 	for key := range dl {
 		// fmt.Println("\t", indexedFiles[key].filename)

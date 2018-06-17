@@ -9,7 +9,10 @@ func check(functionName string, err error) {
 }
 
 var (
-	option Option
+	configuration Configuration
+
+	nextDocID int
+
 	// coarse grain
 	invertedIndex map[string]map[int]bool
 	indexedFiles  map[int]document
@@ -20,11 +23,12 @@ func main() {
 	source, port := parse()
 
 	/* config */
-	option.segmenter = &segmentationGSE{}
-	option.storage = &storageFromFolder{folderName: source}
+	configuration.segmenter = &segmentationGSE{}
+	configuration.storage = &storageFromFolder{folderName: source}
 
 	/* init */
-	option.init()
+	nextDocID = 0
+	configuration.init()
 
 	// run command line interface for searching
 	go searchCLI()

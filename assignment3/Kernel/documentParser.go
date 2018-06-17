@@ -3,21 +3,10 @@ package main
 import (
 	"bufio"
 	"io"
-	"os"
 )
 
-func parseDocument(filename string, docID int) {
-	// open file
-	f, err := os.Open(filename)
-	check("os.Open", err)
-	defer f.Close()
-
-	// register new file
-	newDocument := document{filename}
-	indexedFiles[docID] = newDocument
-
-	// scan lines, one by one
-	r := bufio.NewReader(f)
+func parseDocument(r *bufio.Reader, docID int) {
+	// read input
 	var str []byte
 	for {
 		b, isPrefix, err := r.ReadLine()
@@ -55,7 +44,7 @@ func parseDocument(filename string, docID int) {
 			// }
 
 			// Split by segmentation
-			for _, token := range option.segmenter.getSegmentedText(str) {
+			for _, token := range configuration.segmenter.getSegmentedText(str) {
 				// log.Println(token)
 				if len(token) > 0 {
 					docs := invertedIndex[token]
