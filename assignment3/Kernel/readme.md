@@ -127,3 +127,7 @@ Logging by service, don't only use general log!
 
 * [Learn and code](https://www.rosettacode.org/wiki/Inverted_index)
 * [http networking for decoding JSON payload](https://gist.github.com/aodin/9493190)
+* Lectures 
+    * [Cornell](http://www.cs.cornell.edu/courses/cs4300/2013fa/lectures.htm)
+    * [Stanford](https://nlp.stanford.edu/IR-book/html/htmledition/contents-1.html)
+        * [Textbook (free)](https://nlp.stanford.edu/IR-book/)
