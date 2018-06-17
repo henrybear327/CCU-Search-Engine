@@ -4,4 +4,10 @@ package main
 type Storage interface {
 	/* Restores the inverted index hash map in the memory */
 	init()
+	load()
+}
+
+func storageInit() {
+	invertedIndex = make(map[string]map[int]bool)
+	indexedFiles = make(map[int]document)
 }

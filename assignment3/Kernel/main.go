@@ -21,7 +21,7 @@ func main() {
 
 	/* config */
 	option.segmenter = &segmentationGSE{}
-	option.storage = &storageInitFromFolder{folderName: source}
+	option.storage = &storageFromFolder{folderName: source}
 
 	/* init */
 	option.init()
