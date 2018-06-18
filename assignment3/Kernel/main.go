@@ -14,8 +14,8 @@ var (
 	nextDocID int
 
 	// coarse grain
-	invertedIndex map[string]map[int]bool
-	indexedFiles  map[int]document
+	invertedIndex invertedIndexData
+	indexedFiles  indexedFilesData
 )
 
 func main() {

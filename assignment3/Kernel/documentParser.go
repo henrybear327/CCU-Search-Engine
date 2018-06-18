@@ -6,13 +6,34 @@ import (
 	"strings"
 )
 
-func parseDocument(r *bufio.Reader, docID int) {
+func tokenSanitizer(token string) (string, bool) {
+	if strings.Contains(token, " ") == true {
+		return "", false
+	}
+
+	if len(token) == 0 {
+		return "", false
+	}
+
+	// TODO: regex strip special characters
+
+	return token, true
+}
+
+func parseDocument(r *bufio.Reader, docID int) map[string][]int {
+	// term: [pos]
+	pageIndex := make(map[string][]int)
+	position := 0
+
 	var str []byte
 	for {
 		b, isPrefix, err := r.ReadLine()
 		switch {
 		case err == io.EOF: // end of file
-			return
+			// for key, value := range pageIndex {
+			// 	fmt.Println("[parseDocument]", key, value)
+			// }
+			return pageIndex
 		case err != nil: // non-EOF error, GG
 			check("r.ReadLine()", err)
 		case isPrefix == true:
@@ -26,23 +47,11 @@ func parseDocument(r *bufio.Reader, docID int) {
 
 			// Perform segmentation
 			for _, token := range configuration.segmenter.getSegmentedText(str) {
-				if strings.Contains(token, " ") == true {
-					continue
-				}
-
-				if len(token) > 0 {
+				if token, ok := tokenSanitizer(token); ok {
 					// fmt.Println(token)
-					docs := invertedIndex[token]
 
-					if len(docs) == 0 {
-						invertedIndex[token] = make(map[int]bool)
-						docs = invertedIndex[token]
-					}
-
-					_, ok := docs[docID]
-					if ok == false {
-						docs[docID] = true
-					}
+					pageIndex[token] = append(pageIndex[token], position)
+					position++
 				}
 			}
 

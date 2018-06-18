@@ -47,6 +47,38 @@ func (storage *storageFromFolder) init() {
 	storageInit()
 }
 
+func parseFromFile(filename string, docID int) map[string][]int {
+	log.Println("indexing", filename)
+
+	// load document
+	// open file
+	f, err := os.Open(filename)
+	check("os.Open", err)
+	defer f.Close()
+
+	// register new file
+	newDocument := document{filename}
+	indexedFiles.Lock()
+	indexedFiles.data[docID] = newDocument
+	indexedFiles.Unlock()
+
+	// scan lines, one by one
+	r := bufio.NewReader(f)
+
+	// parse document
+	return parseDocument(r, docID)
+}
+
+func mergePageIndex(pageIndex map[string][]int) {
+	// merge index
+	invertedIndex.Lock()
+	defer invertedIndex.Unlock()
+	for key, value := range pageIndex {
+		// fmt.Println(key, value)
+		// TODO: merge opration
+	}
+}
+
 func (storage *storageFromFolder) load() {
 	go func(dir string) {
 		log.Println("Indexing directory", dir)
@@ -70,24 +102,8 @@ func (storage *storageFromFolder) load() {
 					continue
 				}
 
-				filename := dir + "/" + file.Name()
-				log.Println("indexing", filename)
-
-				// load document
-				// open file
-				f, err := os.Open(filename)
-				check("os.Open", err)
-				defer f.Close()
-
-				// register new file
-				newDocument := document{filename}
-				indexedFiles[docID] = newDocument
-
-				// scan lines, one by one
-				r := bufio.NewReader(f)
-
-				// parse document
-				parseDocument(r, docID)
+				pageIndex := parseFromFile(dir+"/"+file.Name(), docID)
+				mergePageIndex(pageIndex)
 			} else {
 				log.Println("Recursive is not supported")
 			}

@@ -26,13 +26,17 @@ func (results *searchResult) String() string {
 }
 
 func textSearch(query string) *searchResult {
-	dl := invertedIndex[query]
+	invertedIndex.RLock()
+	defer invertedIndex.RUnlock()
+	dl := invertedIndex.data[query]
 
 	var results searchResult
 	results.Count = len(dl)
+	indexedFiles.RLock()
+	defer indexedFiles.RUnlock()
 	for key := range dl {
 		// fmt.Println("\t", indexedFiles[key].filename)
-		results.Results = append(results.Results, indexedFiles[key].filename)
+		results.Results = append(results.Results, indexedFiles.data[key].filename)
 	}
 
 	return &results

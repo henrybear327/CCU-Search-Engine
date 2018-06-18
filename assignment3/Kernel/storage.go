@@ -8,6 +8,6 @@ type Storage interface {
 }
 
 func storageInit() {
-	invertedIndex = make(map[string]map[int]bool)
-	indexedFiles = make(map[int]document)
+	invertedIndex.data = make(map[string]map[int]bool)
+	indexedFiles.data = make(map[int]document)
 }
