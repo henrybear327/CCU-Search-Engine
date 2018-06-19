@@ -7,13 +7,25 @@ import (
 	"sync"
 )
 
+type termNode struct {
+	Total    int
+	DocCount int
+	Data     map[int][]int
+}
+
+func (t *termNode) init() {
+	t.Total = 0
+	t.DocCount = 0
+	t.Data = make(map[int][]int)
+}
+
 type invertedIndexData struct {
 	sync.RWMutex
-	data map[string]map[int][]int
+	data map[string]*termNode
 }
 
 func storageInit() {
-	invertedIndex.data = make(map[string]map[int][]int) // term, (docID, [positions])
+	invertedIndex.data = make(map[string]*termNode) // term, (docID, [positions])
 }
 
 type storageV1 struct {
@@ -32,7 +44,7 @@ func (storage *storageV1) store(filename string) {
 	// store key-value pairs to disk
 }
 
-func serializing(filePath string, object map[string]map[int][]int) {
+func serializing(filePath string, object map[string]*termNode) {
 	log.Println("Serializing started")
 
 	file, err := os.Create(filePath)
@@ -46,7 +58,7 @@ func serializing(filePath string, object map[string]map[int][]int) {
 	log.Println("Serializing completed")
 }
 
-func deserializing(filePath string, object map[string]map[int][]int) {
+func deserializing(filePath string, object map[string]*termNode) {
 	log.Println("Deserializing started")
 
 	file, err := os.Open(filePath)

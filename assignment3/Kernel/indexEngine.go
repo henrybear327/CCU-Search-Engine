@@ -11,8 +11,11 @@ func mergePageIndex(pageIndex map[string][]int, docID int) {
 	for key, value := range pageIndex {
 		// fmt.Println(key, value)
 		if invertedIndex.data[key] == nil {
-			invertedIndex.data[key] = make(map[int][]int)
+			termNode := &termNode{Total: 0, DocCount: 0, Data: make(map[int][]int)}
+			invertedIndex.data[key] = termNode
 		}
-		invertedIndex.data[key][docID] = value
+		invertedIndex.data[key].Total += len(value)
+		invertedIndex.data[key].DocCount++
+		invertedIndex.data[key].Data[docID] = value
 	}
 }

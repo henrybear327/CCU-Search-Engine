@@ -31,7 +31,7 @@ func (results *searchResult) String() string {
 func textSearch(query string) *searchResult {
 	invertedIndex.RLock()
 	defer invertedIndex.RUnlock()
-	dl := invertedIndex.data[query]
+	dl := invertedIndex.data[query].Data
 
 	var results searchResult
 	results.Count = len(dl)

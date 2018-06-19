@@ -16,13 +16,14 @@ func check(functionName string, err error) {
 	}
 }
 
-func parseCommandLine() (string, int, string) {
+func parseCommandLine() (string, int, string, int) {
 	source := flag.String("source", "docs", "the source folder to index")
 	port := flag.Int("port", 8001, "port to listen for requests")
 	gobFile := flag.String("gobFile", "index.dat", "The index file to load")
+	debug := flag.Int("debug", 0, "debug mode")
 	flag.Parse()
 
-	return *source, *port, *gobFile
+	return *source, *port, *gobFile, *debug
 }
 
 func debugPrintRequest(incomingRequest net.Conn) {
@@ -59,8 +60,8 @@ func debugPrintRequest(incomingRequest net.Conn) {
 
 func debugPrintInvertedTable() {
 	for term, records := range invertedIndex.data {
-		fmt.Println("term", term)
-		for docID, positions := range records {
+		fmt.Println("[term]", term, "count", records.Total, "doc count", records.DocCount)
+		for docID, positions := range records.Data {
 			fmt.Printf("docID %v = [", docID)
 			for _, position := range positions {
 				fmt.Printf("%v ", position)

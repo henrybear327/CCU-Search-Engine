@@ -10,15 +10,17 @@ var (
 
 func main() {
 	/* parse command line */
-	// source, port, gobFile := parseCommandLine()
-	_, port, gobFile := parseCommandLine()
+	source, port, gobFile, debugMode := parseCommandLine()
 
 	/* config */
 	// setup interfaces
 	config.segmenter = &segmentationGSE{}
 
-	// config.storage = &storageStupid{folderName: source}
-	config.storage = &storageV1{}
+	if debugMode == 0 {
+		config.storage = &storageStupid{folderName: source}
+	} else if debugMode == 1 {
+		config.storage = &storageV1{}
+	}
 
 	/* init */
 	nextDocID = 0
