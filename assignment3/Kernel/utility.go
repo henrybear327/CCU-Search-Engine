@@ -19,7 +19,7 @@ func check(functionName string, err error) {
 func parseCommandLine() (string, int, string) {
 	source := flag.String("source", "docs", "the source folder to index")
 	port := flag.Int("port", 8001, "port to listen for requests")
-	gobFile := flag.String("gobFile", "", "The index file to load")
+	gobFile := flag.String("gobFile", "index.dat", "The index file to load")
 	flag.Parse()
 
 	return *source, *port, *gobFile
