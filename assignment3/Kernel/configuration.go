@@ -113,7 +113,7 @@ func (storage *storageFromFolder) load() {
 
 		log.Println("Indexing directory, done")
 
-		debugPrintInvertedTable()
+		// debugPrintInvertedTable()
 	}(storage.folderName)
 }
 
