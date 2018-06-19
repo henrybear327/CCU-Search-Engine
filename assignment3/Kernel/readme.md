@@ -54,6 +54,20 @@ Logging by service, don't only use general log!
 
 * Page analyzer 
     * `page` to `page index tuples`
+    * preprocessing
+        * stopword
+            * issue: you will have a LOT of returning results that is simply useless!
+            * phrase: `the who` (a band)
+            * blacklist, whitelist (phrase-level terms, higher priority than blacklist)
+            * auto detection: use frequency (set threshold)
+        * case sensitivity
+            * issue: `she` vs `SHE`
+            * simple solution: all to lower case
+            * hard solution: redundant index, build both original and lowercased
+                * query processing determines what to use
+                * space issue
+            * best solution:    
+                * 帶 prefix 的 search query e.g. _SHE|she (不是很懂)
     * 斷詞 (segmentation)
         * Segmentation (cppJieba)
         * n-gram (e.g. 杜斯妥也夫斯基, 7-gram is sufficient)
