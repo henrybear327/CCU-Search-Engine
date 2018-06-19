@@ -46,7 +46,7 @@ func parseDocument(r *bufio.Reader, docID int) map[string][]int {
 			}
 
 			// Perform segmentation
-			for _, token := range configuration.segmenter.getSegmentedText(str) {
+			for _, token := range config.segmenter.getSegmentedText(str) {
 				if token, ok := tokenSanitizer(token); ok {
 					// fmt.Println(token)
 

@@ -9,11 +9,10 @@ func check(functionName string, err error) {
 }
 
 var (
-	configuration Configuration
+	config configuration
 
 	nextDocID int
 
-	// coarse grain
 	invertedIndex invertedIndexData
 	indexedFiles  indexedFilesData
 )
@@ -23,15 +22,17 @@ func main() {
 	source, port := parse()
 
 	/* config */
-	configuration.segmenter = &segmentationGSE{}
-	configuration.storage = &storageFromFolder{folderName: source}
+	config.segmenter = &segmentationGSE{}
+	config.storage = &storageFromFolder{folderName: source}
 
 	/* init */
 	nextDocID = 0
-	configuration.init()
+	config.init()
 
 	// run command line interface for searching
 	go searchCLI()
+
+	// TODO: handle ctrl+c interrupt for data saving
 
 	// let's start!
 	listen(port) // blocking!

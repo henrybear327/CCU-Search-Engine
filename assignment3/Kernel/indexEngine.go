@@ -4,7 +4,7 @@ import "sync"
 
 type invertedIndexData struct {
 	sync.RWMutex
-	data map[string]map[int]bool
+	data map[string]map[int][]int
 }
 
 type indexedFilesData struct {

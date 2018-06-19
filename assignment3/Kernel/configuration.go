@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -9,17 +10,16 @@ import (
 	"github.com/go-ego/gse"
 )
 
-// Option is the global conf struct
-type Configuration struct {
+type configuration struct {
 	segmenter Segmentation
 	storage   Storage
 }
 
-func (option *Configuration) init() {
-	option.segmenter.init()
+func (config *configuration) init() {
+	config.segmenter.init()
 
-	option.storage.init() // init map
-	option.storage.load() // load data
+	config.storage.init() // init map
+	config.storage.load() // load data
 }
 
 /* Start Storage */
@@ -69,13 +69,16 @@ func parseFromFile(filename string, docID int) map[string][]int {
 	return parseDocument(r, docID)
 }
 
-func mergePageIndex(pageIndex map[string][]int) {
+func mergePageIndex(pageIndex map[string][]int, docID int) {
 	// merge index
 	invertedIndex.Lock()
 	defer invertedIndex.Unlock()
 	for key, value := range pageIndex {
 		// fmt.Println(key, value)
-		// TODO: merge opration
+		if invertedIndex.data[key] == nil {
+			invertedIndex.data[key] = make(map[int][]int)
+		}
+		invertedIndex.data[key][docID] = value
 	}
 }
 
@@ -103,13 +106,24 @@ func (storage *storageFromFolder) load() {
 				}
 
 				pageIndex := parseFromFile(dir+"/"+file.Name(), docID)
-				mergePageIndex(pageIndex)
+				mergePageIndex(pageIndex, docID)
 			} else {
 				log.Println("Recursive is not supported")
 			}
 		}
 
 		log.Println("Indexing directory, done")
+
+		for term, records := range invertedIndex.data {
+			fmt.Println("term", term)
+			for docID, positions := range records {
+				fmt.Printf("docID %v = [", docID)
+				for _, position := range positions {
+					fmt.Printf("%v ", position)
+				}
+				fmt.Println("]")
+			}
+		}
 	}(storage.folderName)
 }
 
