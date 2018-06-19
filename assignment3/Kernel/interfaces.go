@@ -1,10 +1,15 @@
 package main
 
+// Segmentation defines Chinese segmentation engine
+type Segmentation interface {
+	init()
+	getSegmentedText(text []byte) []string
+}
+
 // Storage of the kernel
 type Storage interface {
-	/* Restores the inverted index hash map in the memory */
 	init()
-	load()
+	load() /* Restores the inverted index hash map in the memory */
 }
 
 func storageInit() {

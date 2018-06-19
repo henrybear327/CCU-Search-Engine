@@ -2,12 +2,27 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"time"
 )
+
+func check(functionName string, err error) {
+	if err != nil {
+		log.Fatalln("error from", functionName, err)
+	}
+}
+
+func parseCommandLine() (string, int) {
+	source := flag.String("source", "docs", "the source folder to index")
+	port := flag.Int("port", 8001, "port to listen for requests")
+	flag.Parse()
+
+	return *source, *port
+}
 
 func debugPrintRequest(incomingRequest net.Conn) {
 	timeoutDuration := 1 * time.Second

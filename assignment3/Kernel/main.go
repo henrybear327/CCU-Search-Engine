@@ -1,13 +1,5 @@
 package main
 
-import "log"
-
-func check(functionName string, err error) {
-	if err != nil {
-		log.Fatalln("error from", functionName, err)
-	}
-}
-
 var (
 	config configuration
 
@@ -19,9 +11,10 @@ var (
 
 func main() {
 	/* parse command line */
-	source, port := parse()
+	source, port := parseCommandLine()
 
 	/* config */
+	// setup interfaces
 	config.segmenter = &segmentationGSE{}
 	config.storage = &storageFromFolder{folderName: source}
 
@@ -29,11 +22,11 @@ func main() {
 	nextDocID = 0
 	config.init()
 
-	// run command line interface for searching
+	/* run command line interface for searching in the background */
 	go searchCLI()
 
-	// TODO: handle ctrl+c interrupt for data saving
+	/* TODO: handle ctrl+c interrupt for data saving */
 
-	// let's start!
+	/* let's start! */
 	listen(port) // blocking!
 }
