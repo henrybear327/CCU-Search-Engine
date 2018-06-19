@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -114,16 +113,7 @@ func (storage *storageFromFolder) load() {
 
 		log.Println("Indexing directory, done")
 
-		for term, records := range invertedIndex.data {
-			fmt.Println("term", term)
-			for docID, positions := range records {
-				fmt.Printf("docID %v = [", docID)
-				for _, position := range positions {
-					fmt.Printf("%v ", position)
-				}
-				fmt.Println("]")
-			}
-		}
+		debugPrintInvertedTable()
 	}(storage.folderName)
 }
 

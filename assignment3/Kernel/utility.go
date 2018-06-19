@@ -40,3 +40,16 @@ func debugPrintRequest(incomingRequest net.Conn) {
 		}
 	}
 }
+
+func debugPrintInvertedTable() {
+	for term, records := range invertedIndex.data {
+		fmt.Println("term", term)
+		for docID, positions := range records {
+			fmt.Printf("docID %v = [", docID)
+			for _, position := range positions {
+				fmt.Printf("%v ", position)
+			}
+			fmt.Println("]")
+		}
+	}
+}
