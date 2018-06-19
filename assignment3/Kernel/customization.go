@@ -10,28 +10,10 @@ import (
 )
 
 /* Start Storage */
-// networking-based
-// load dumped data from file
 
-type storageJSON struct {
-}
-
-func (storage *storageJSON) init() {
-	storageInit()
-}
-
-func (storage *storageJSON) load() {
-	// load key-value pairs from dumped file
-}
-
-// debug purpose
-// load data straight from files in the folder
-type storageFromFolder struct {
+/* File version */
+type storageStupid struct {
 	folderName string
-}
-
-func (storage *storageFromFolder) init() {
-	storageInit()
 }
 
 func parseFromFile(filename string, docID int) map[string][]int {
@@ -43,12 +25,6 @@ func parseFromFile(filename string, docID int) map[string][]int {
 	check("os.Open", err)
 	defer f.Close()
 
-	// register new file
-	newDocument := document{filename}
-	indexedFiles.Lock()
-	indexedFiles.data[docID] = newDocument
-	indexedFiles.Unlock()
-
 	// scan lines, one by one
 	r := bufio.NewReader(f)
 
@@ -56,20 +32,11 @@ func parseFromFile(filename string, docID int) map[string][]int {
 	return parseDocument(r, docID)
 }
 
-func mergePageIndex(pageIndex map[string][]int, docID int) {
-	// merge index
-	invertedIndex.Lock()
-	defer invertedIndex.Unlock()
-	for key, value := range pageIndex {
-		// fmt.Println(key, value)
-		if invertedIndex.data[key] == nil {
-			invertedIndex.data[key] = make(map[int][]int)
-		}
-		invertedIndex.data[key][docID] = value
-	}
+func (storage *storageStupid) init() {
+	storageInit()
 }
 
-func (storage *storageFromFolder) load() {
+func (storage *storageStupid) load(filename string) {
 	go func(dir string) {
 		log.Println("Indexing directory", dir)
 
@@ -102,7 +69,12 @@ func (storage *storageFromFolder) load() {
 		log.Println("Indexing directory, done")
 
 		// debugPrintInvertedTable()
+		storage.store(filename)
 	}(storage.folderName)
+}
+
+func (storage *storageStupid) store(filename string) {
+	serializing(filename, invertedIndex.data)
 }
 
 /* End Storage */

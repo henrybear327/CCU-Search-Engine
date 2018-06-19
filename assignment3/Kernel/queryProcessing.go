@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type searchResult struct {
 	Count   int      `json:"count"`
@@ -32,11 +35,9 @@ func textSearch(query string) *searchResult {
 
 	var results searchResult
 	results.Count = len(dl)
-	indexedFiles.RLock()
-	defer indexedFiles.RUnlock()
 	for key := range dl {
 		// fmt.Println("\t", indexedFiles[key].filename)
-		results.Results = append(results.Results, indexedFiles.data[key].filename)
+		results.Results = append(results.Results, "DocID "+strconv.Itoa(key))
 	}
 
 	return &results

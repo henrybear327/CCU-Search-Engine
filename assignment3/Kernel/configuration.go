@@ -5,9 +5,10 @@ type configuration struct {
 	storage   Storage
 }
 
-func (config *configuration) init() {
-	config.segmenter.init()
+/* CRUCIAL: register all init functions here! */
+func (config *configuration) init(gobFilename string) {
+	config.segmenter.init() // load dict
 
-	config.storage.init() // init map
-	config.storage.load() // load data
+	config.storage.init()            // make map
+	config.storage.load(gobFilename) // load data
 }

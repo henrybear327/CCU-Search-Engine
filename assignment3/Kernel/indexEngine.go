@@ -1,21 +1,18 @@
 package main
 
-import "sync"
-
-type invertedIndexData struct {
-	sync.RWMutex
-	data map[string]map[int][]int
-}
-
-type indexedFilesData struct {
-	sync.RWMutex
-	data map[int]document
-}
-
-type document struct {
-	filename string
-}
-
 func indexFromJSON(payload string) {
 
+}
+
+func mergePageIndex(pageIndex map[string][]int, docID int) {
+	// merge index
+	invertedIndex.Lock()
+	defer invertedIndex.Unlock()
+	for key, value := range pageIndex {
+		// fmt.Println(key, value)
+		if invertedIndex.data[key] == nil {
+			invertedIndex.data[key] = make(map[int][]int)
+		}
+		invertedIndex.data[key][docID] = value
+	}
 }

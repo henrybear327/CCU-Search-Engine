@@ -6,21 +6,23 @@ var (
 	nextDocID int
 
 	invertedIndex invertedIndexData
-	indexedFiles  indexedFilesData
 )
 
 func main() {
 	/* parse command line */
-	source, port := parseCommandLine()
+	// source, port, gobFile := parseCommandLine()
+	_, port, gobFile := parseCommandLine()
 
 	/* config */
 	// setup interfaces
 	config.segmenter = &segmentationGSE{}
-	config.storage = &storageFromFolder{folderName: source}
+
+	// config.storage = &storageStupid{folderName: source}
+	config.storage = &storageV1{}
 
 	/* init */
 	nextDocID = 0
-	config.init()
+	config.init(gobFile)
 
 	/* run command line interface for searching in the background */
 	go searchCLI()

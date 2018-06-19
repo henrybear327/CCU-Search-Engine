@@ -8,11 +8,7 @@ type Segmentation interface {
 
 // Storage of the kernel
 type Storage interface {
-	init()
-	load() /* Restores the inverted index hash map in the memory */
-}
-
-func storageInit() {
-	invertedIndex.data = make(map[string]map[int][]int) // term, (docID, [positions])
-	indexedFiles.data = make(map[int]document)
+	init()                 /* Init data structures */
+	load(filename string)  /* Load the inverted index from disk */
+	store(filename string) /* Store the inverted index to disk */
 }
