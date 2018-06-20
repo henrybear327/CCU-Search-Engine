@@ -29,11 +29,14 @@ func (results *searchResult) String() string {
 }
 
 func textSearch(query string) *searchResult {
-	invertedIndex.RLock()
-	defer invertedIndex.RUnlock()
-	dl := invertedIndex.data[query].Data
-
 	var results searchResult
+
+	d := config.storage.getTermRecords(query)
+	if d == nil {
+		return &results
+	}
+	dl := d.Data
+
 	results.Count = len(dl)
 	for key := range dl {
 		// fmt.Println("\t", indexedFiles[key].filename)

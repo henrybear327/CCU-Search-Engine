@@ -2,10 +2,6 @@ package main
 
 var (
 	config configuration
-
-	nextDocID int
-
-	invertedIndex invertedIndexData
 )
 
 func main() {
@@ -23,7 +19,6 @@ func main() {
 	}
 
 	/* init */
-	nextDocID = 0
 	config.init(gobFile)
 
 	/* run command line interface for searching in the background */

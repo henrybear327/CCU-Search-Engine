@@ -59,8 +59,11 @@ func debugPrintRequest(incomingRequest net.Conn) {
 }
 
 func debugPrintInvertedTable() {
-	for term, records := range invertedIndex.data {
+	allTerms := config.storage.getAllTerms()
+	for _, term := range allTerms {
+		records := config.storage.getTermRecords(term)
 		fmt.Println("[term]", term, "count", records.Total, "doc count", records.DocCount)
+
 		for docID, positions := range records.Data {
 			fmt.Printf("docID %v = [", docID)
 			for _, position := range positions {

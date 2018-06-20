@@ -11,9 +11,11 @@ import (
 
 /* Start Storage */
 
-/* File version */
+/* storage engine, file-based version */
 type storageStupid struct {
-	folderName string
+	folderName    string
+	nextDocID     int
+	invertedIndex invertedIndexData
 }
 
 func parseFromFile(filename string, docID int) map[string][]int {
@@ -33,7 +35,33 @@ func parseFromFile(filename string, docID int) map[string][]int {
 }
 
 func (storage *storageStupid) init() {
-	storageInit()
+	storage.nextDocID = 0
+	storage.invertedIndex.data = make(map[string]*termNode) // term, (docID, [positions])
+}
+
+func (storage *storageStupid) getAllTerms() []string {
+	var ret []string
+	for key := range storage.invertedIndex.data {
+		ret = append(ret, key)
+	}
+	return ret
+}
+
+func (storage *storageStupid) getTermRecords(term string) *termNode {
+	return storage.invertedIndex.data[term]
+}
+
+func (storage *storageStupid) insertTermRecord(term string, docID int, positions []int) {
+	storage.invertedIndex.Lock()
+	defer storage.invertedIndex.Unlock()
+
+	if storage.invertedIndex.data[term] == nil {
+		termNode := &termNode{Total: 0, DocCount: 0, Data: make(map[int][]int)}
+		storage.invertedIndex.data[term] = termNode
+	}
+	storage.invertedIndex.data[term].Total += len(positions)
+	storage.invertedIndex.data[term].DocCount++
+	storage.invertedIndex.data[term].Data[docID] = positions
 }
 
 func (storage *storageStupid) load(filename string) {
@@ -53,6 +81,7 @@ func (storage *storageStupid) load(filename string) {
 		}
 
 		for docID, file := range filesInDirectory {
+			storage.nextDocID = docID + 1
 			if file.IsDir() == false { // non-recursive
 				if strings.HasPrefix(file.Name(), ".") {
 					log.Println("skipping", file.Name())
@@ -74,7 +103,7 @@ func (storage *storageStupid) load(filename string) {
 }
 
 func (storage *storageStupid) store(filename string) {
-	serializing(filename, invertedIndex.data)
+	serializing(filename, storage.invertedIndex.data)
 }
 
 /* End Storage */
