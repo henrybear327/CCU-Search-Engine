@@ -20,6 +20,8 @@ func (r rankScoreArray) Len() int           { return len(r) }
 func (r rankScoreArray) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 func (r rankScoreArray) Less(i, j int) bool { return r[i].score > r[j].score }
 
+// TODO
+// Implement TF-IDF
 func getTFIDF() float64 {
 	return 0.0
 }

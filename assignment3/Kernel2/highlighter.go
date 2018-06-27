@@ -1,5 +1,9 @@
 package main
 
+import (
+	"strings"
+)
+
 func highlight(rankedDocIDs []int, segmentedQuery []string) []searchRequestReturnMessage {
 	var results []searchRequestReturnMessage
 
@@ -7,9 +11,15 @@ func highlight(rankedDocIDs []int, segmentedQuery []string) []searchRequestRetur
 	defer idxer.databaseLock.RUnlock()
 	for _, docID := range rankedDocIDs {
 		record := idxer.database[docID]
+
+		highlightedText := record.body
+		for _, token := range segmentedQuery {
+			newToken := "<span style=\"color:red;font-weight:bold\">" + token + "</span>"
+			highlightedText = strings.Replace(highlightedText, token, newToken, -1)
+		}
 		results = append(results, searchRequestReturnMessage{
 			Title: record.title,
-			Body:  record.body,
+			Body:  highlightedText,
 			URL:   record.url,
 		})
 	}
