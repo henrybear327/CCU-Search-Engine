@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"sort"
 )
 
@@ -22,8 +23,30 @@ func (r rankScoreArray) Less(i, j int) bool { return r[i].score > r[j].score }
 
 // TODO
 // Implement TF-IDF
-func getTFIDF() float64 {
-	return 0.0
+func getTFIDF(docID int, queries []string, elements []*rankElement) float64 {
+	idxer.databaseLock.RLock()
+	defer idxer.databaseLock.RUnlock()
+	idxer.invertedTableLock.RLock()
+	defer idxer.invertedTableLock.RUnlock()
+
+	result := 0.0
+	for _, element := range elements {
+		// tf
+		// number of times term t appears in the document / total terms in the document
+		tf := float64(len(element.positions)) / float64(idxer.database[docID].wordCount)
+
+		// idf
+		// ln(total number of documents / number of documents with term t in it)
+		totalNumberOfDocuments := float64(idxer.totalDocs)
+		numberOfDocsWithTerm := float64(len(idxer.invertedTable[queries[element.termIdx]].documents))
+		idf := math.Log(totalNumberOfDocuments / numberOfDocsWithTerm)
+
+		tfidf := tf * idf
+
+		result += tfidf
+	}
+
+	return result
 }
 
 func rank(queries []string, matchedTermData []*termData) []int {
@@ -44,7 +67,7 @@ func rank(queries []string, matchedTermData []*termData) []int {
 	// rank them
 	var intermediate []rankScore
 	for id, _ := range mapping {
-		intermediate = append(intermediate, rankScore{docID: id, score: float64(id)})
+		intermediate = append(intermediate, rankScore{docID: id, score: getTFIDF(id, queries, mapping[id])})
 	}
 	sort.Sort(rankScoreArray(intermediate))
 	// fmt.Println(intermediate)
