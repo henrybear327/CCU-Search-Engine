@@ -10,6 +10,8 @@ type document struct {
 	title string
 	body  string
 	url   string
+
+	wordCount int
 }
 
 // inverted table
@@ -73,16 +75,17 @@ func (i *indexer) insert(title, body, url string) int {
 	segmentedBody := seg.getSegmentedText(body)
 	seg.Unlock()
 
-	// to database
 	docID := i.getNextDocID()
-	newDocument := &document{title, body, url}
+
+	// to inverted table
+	parsed, wordCount := parsePage(docID, segmentedBody)
+	i.merge(parsed)
+
+	// to database
+	newDocument := &document{title, body, url, wordCount}
 	i.databaseLock.Lock()
 	i.database[docID] = newDocument
 	i.databaseLock.Unlock()
-
-	// to inverted table
-	parsed := parsePage(docID, segmentedBody)
-	i.merge(parsed)
 
 	return docID
 }
@@ -128,6 +131,7 @@ func (i *indexer) printDatabase() {
 	fmt.Println("=========================================")
 	for key, value := range i.database {
 		fmt.Println("[DocID]", key)
+		fmt.Println("\t[Word count]", value.wordCount)
 		fmt.Println("\t[Title]", value.title)
 		fmt.Println("\t[Body]", value.body)
 		fmt.Println("\t[URL]", value.url)

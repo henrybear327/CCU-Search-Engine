@@ -19,7 +19,7 @@ func tokenSanitizer(token string) (string, bool) {
 	return token, true
 }
 
-func parsePage(docID int, segmentedBody []string) map[string]*docTermData {
+func parsePage(docID int, segmentedBody []string) (map[string]*docTermData, int) {
 	result := make(map[string]*docTermData)
 
 	pos := 0
@@ -38,5 +38,5 @@ func parsePage(docID int, segmentedBody []string) map[string]*docTermData {
 		}
 	}
 
-	return result
+	return result, pos
 }
