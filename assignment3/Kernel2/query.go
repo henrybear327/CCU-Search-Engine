@@ -11,12 +11,6 @@ func queryByString(query string, from int, to int) (int, []searchRequestReturnMe
 	results := make([]searchRequestReturnMessage, 0)
 
 	segmentedQuery, matchedTermData := idxer.query(query)
-	if len(matchedTermData) == 0 {
-		if debug {
-			fmt.Println("No matched term!")
-		}
-		return totalRecords, results
-	}
 
 	// rank
 	if debug {
@@ -36,6 +30,9 @@ func queryByString(query string, from int, to int) (int, []searchRequestReturnMe
 
 	// [from, to) bound check, 0-based
 	if from >= len(rankedDocIDs) {
+		if debug {
+			fmt.Println("from and to out of bound")
+		}
 		return totalRecords, results
 	} else if to >= len(rankedDocIDs) {
 		to = len(rankedDocIDs)
