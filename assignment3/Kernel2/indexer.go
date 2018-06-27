@@ -56,6 +56,13 @@ func (i *indexer) getNextDocID() int {
 	return ret
 }
 
+func (i *indexer) getCurrentDocID() int {
+	i.docIDLock.RLock()
+	defer i.docIDLock.RUnlock()
+
+	return i.docID
+}
+
 // insert
 func (i *indexer) merge(result map[string]*docTermData) {
 	i.invertedTableLock.Lock()

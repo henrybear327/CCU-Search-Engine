@@ -1,4 +1,5 @@
-import requests, json
+import json
+import requests
 from flask import Flask, render_template, url_for, request, session, redirect
 
 app = Flask(__name__)

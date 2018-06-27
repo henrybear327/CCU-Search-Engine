@@ -49,7 +49,7 @@ func queryByString(query string, from int, to int) (int, []searchRequestReturnMe
 
 // returns docID
 func insertDocument(title, body, url string) int {
-	docID := idxer.insert(title, body, url)
+	docID := idxer.insert(title, title+"\n\n"+body, url)
 
 	if debug {
 		log.Println("Debug print inverted table")

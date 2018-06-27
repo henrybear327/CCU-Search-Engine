@@ -1,19 +1,29 @@
-# https://github.com/amoshyc/ccu-search-engine/blob/master/hw1/build-data.py
-
-import pathlib
-from tqdm import tqdm
-from elasticsearch import Elasticsearch
-from elasticsearch import helpers
 import json
+import pathlib
+import time
 
-DOC_DIR = pathlib.Path('./data/jieba').resolve()
-DOC_PATHS = sorted(DOC_DIR.glob('ettoday_*.txt'))
-# DOC_PATHS = sorted(DOC_DIR.glob('example.rec'))
-BATCH_SIZE = 2000
+import requests
+from tqdm import tqdm
 
-es = Elasticsearch()
-# curl -XDELETE 'localhost:9200/ettoday?pretty'
-es.indices.delete(index='ettoday', ignore_unavailable=True)
+DOC_DIR = pathlib.Path('../Kernel2/testcase/ettoday').resolve()
+DOC_PATHS = sorted(DOC_DIR.glob('ettoday*.rec'))
+
+
+def extract_record(data):
+    for line in data:
+        line = line.strip()
+        if line.startswith('@GAISRec:'):
+            record = dict()
+        elif line.startswith('@U:'):
+            record['url'] = line[3:]
+        elif line.startswith('@T:'):
+            record['title'] = line[3:]
+        elif line.startswith('@B:'):
+            pass
+        else:
+            record['body'] = line
+            yield record
+
 
 cnt = 0
 for path in tqdm(DOC_PATHS):
@@ -21,21 +31,18 @@ for path in tqdm(DOC_PATHS):
     with path.open('r', encoding='UTF-8') as f:
         data = f.readlines()
 
-    actions = []  # batch operation
-    for record in data:
-        actions.append({
-            '_index': 'ettoday',
-            '_type': 'news',
-            '_id': cnt,
-            '_source': record,
-        })
+    for record in extract_record(data):
         cnt += 1
-        if len(actions) == BATCH_SIZE:
-            helpers.bulk(es, actions)
-            actions = []
 
-    if len(actions) > 0:
-        helpers.bulk(es, actions)
-        pass
+        url = 'http://localhost:8001/insert'
+        payload = {
+            "title": record["title"],
+            "body": record['body'],
+            "url": record['url']
+        }
+        r = requests.post(url, data=json.dumps(payload))
+        # print(r.json())
+
+        # time.sleep(1)
 
 print('total:', cnt)

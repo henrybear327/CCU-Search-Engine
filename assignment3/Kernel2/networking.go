@@ -84,7 +84,13 @@ func handleInsertionRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 
 	// print log
-	log.Println("One insertion request is received\n", msg.String())
+	if debug {
+		log.Println("One insertion request is received\n", msg.String())
+	}
+
+	if idxer.getCurrentDocID()%1000 == 0 {
+		log.Println("Current DocID", idxer.getCurrentDocID())
+	}
 }
 
 func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +109,9 @@ func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	log.Println("One search request is received\n", msg.String())
+	if debug {
+		log.Println("One search request is received\n", msg.String())
+	}
 
 	// Perform searching
 	totalRecords, results := queryByString(msg.Query, msg.From, msg.To)
