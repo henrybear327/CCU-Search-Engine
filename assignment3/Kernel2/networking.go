@@ -115,7 +115,9 @@ func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
 
 	// Perform searching
 	totalRecords, results := queryByString(msg.Query, msg.From, msg.To)
-	fmt.Println(totalRecords, results)
+	if debug {
+		fmt.Println(totalRecords, results)
+	}
 
 	// return result
 	output, err := json.Marshal(results)
