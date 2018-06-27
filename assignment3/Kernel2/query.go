@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 // returns total result count, query result as array of strings
 func queryByString(query string, from int, to int) (int, []string) {
 	totalRecords := 0
@@ -16,7 +18,12 @@ func queryByString(query string, from int, to int) (int, []string) {
 
 // returns docID
 func insertDocument(title, body, url string) int {
-	idxer.insert(title, body, url)
+	docID := idxer.insert(title, body, url)
 
-	return 0
+	if debug {
+		log.Println("Debug Print inverted table")
+		idxer.printInvertedTable()
+	}
+
+	return docID
 }

@@ -31,6 +31,7 @@ type insertionRequestMessage struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
 	URL   string `json:"url"`
+	DocID int    `json:"docID"`
 }
 
 func (r *insertionRequestMessage) String() string {
@@ -39,10 +40,12 @@ func (r *insertionRequestMessage) String() string {
 
 type searchRequestMessage struct {
 	Query string `json:"query"`
+	From  int    `json:"from"`
+	To    int    `json:"to"`
 }
 
 func (r *searchRequestMessage) String() string {
-	return "Query: " + r.Query
+	return "Query: " + r.Query + "\nfrom: " + strconv.Itoa(r.From) + "\nTo:" + strconv.Itoa(r.To)
 }
 
 func handleInsertionRequest(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +65,9 @@ func handleInsertionRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// insert
+	msg.DocID = insertDocument(msg.Title, msg.Body, msg.URL)
+
 	// Echo input JSON payload
 	output, err := json.Marshal(msg)
 	if err != nil {
@@ -72,7 +78,7 @@ func handleInsertionRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(output)
 
 	// print log
-	log.Println("One insertion request is received", msg.String())
+	log.Println("One insertion request is received\n", msg.String())
 }
 
 func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
@@ -91,10 +97,10 @@ func handleSearchRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	log.Println("One search request is received", msg.String())
+	log.Println("One search request is received\n", msg.String())
 
 	// Perform searching
-	totalRecords, results := queryByString(msg.Query, 0, 10)
+	totalRecords, results := queryByString(msg.Query, msg.From, msg.To)
 	fmt.Println(totalRecords, results)
 
 	// return result

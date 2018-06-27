@@ -1,6 +1,9 @@
 package main
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 // collection database
 type document struct {
@@ -16,7 +19,7 @@ type docTermData struct {
 }
 
 type termData struct {
-	documents            []docTermData
+	documents            []*docTermData
 	totalOccurrenceCount int
 }
 
@@ -48,13 +51,23 @@ func (i *indexer) getNextDocID() int {
 }
 
 // merge
-func (i *indexer) merge(result map[string]*termData) {
+func (i *indexer) merge(result map[string]*docTermData) {
 	i.invertedTableLock.Lock()
 	defer i.invertedTableLock.Unlock()
+
+	for key, value := range result {
+		data, exist := i.invertedTable[key]
+		if exist == false {
+			data = &termData{}
+			i.invertedTable[key] = data
+		}
+		data.documents = append(data.documents, value)
+		data.totalOccurrenceCount += len(value.positions)
+	}
 }
 
 // insert
-func (i *indexer) insert(title, body, url string) {
+func (i *indexer) insert(title, body, url string) int {
 	seg.Lock()
 	segmentedBody := seg.getSegmentedText(body)
 	seg.Unlock()
@@ -69,6 +82,8 @@ func (i *indexer) insert(title, body, url string) {
 	// to inverted table
 	parsed := parsePage(docID, segmentedBody)
 	i.merge(parsed)
+
+	return docID
 }
 
 // query
@@ -79,4 +94,20 @@ func (i *indexer) query(query string) []*termData {
 
 	var results []*termData
 	return results
+}
+
+// debug
+func (i *indexer) printInvertedTable() {
+	fmt.Println("=========================================")
+	for key, value := range i.invertedTable {
+		fmt.Println("[Key]", key, "\n[Total occurrence count]", value.totalOccurrenceCount)
+		for _, doc := range value.documents {
+			fmt.Println("docID = ", doc.docID)
+			for _, pos := range doc.positions {
+				fmt.Printf("%v ", pos)
+			}
+			fmt.Println()
+		}
+	}
+	fmt.Println("=========================================")
 }

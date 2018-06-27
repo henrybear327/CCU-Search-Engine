@@ -12,15 +12,17 @@ var (
 
 func parseCommandLine() int {
 	port := flag.Int("port", 8001, "port to listen for requests")
-	debug = *(flag.Bool("debug", false, "debug mode"))
+	debugPtr := flag.Bool("debug", false, "debug mode")
 	flag.Parse()
 
+	debug = *debugPtr
 	return *port
 }
 
 func main() {
 	// setup
 	port := parseCommandLine()
+	// log.Println("port", port, "debug", debug)
 
 	seg.init()
 	idxer.init()
