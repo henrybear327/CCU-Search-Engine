@@ -44,6 +44,12 @@ type searchRequestMessage struct {
 	To    int    `json:"to"`
 }
 
+type searchRequestReturnMessage struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
+	URL   string `json:"Url"`
+}
+
 func (r *searchRequestMessage) String() string {
 	return "Query: " + r.Query + "\nfrom: " + strconv.Itoa(r.From) + "\nTo:" + strconv.Itoa(r.To)
 }

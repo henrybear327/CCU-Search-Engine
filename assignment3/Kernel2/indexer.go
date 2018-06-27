@@ -21,12 +21,13 @@ type docTermData struct {
 }
 
 type termData struct {
-	documents            []*docTermData
 	totalOccurrenceCount int
+	documents            []*docTermData
 }
 
 type indexer struct {
 	docID     int
+	totalDocs int
 	docIDLock sync.RWMutex
 
 	invertedTable     map[string]*termData
@@ -50,10 +51,12 @@ func (i *indexer) getNextDocID() int {
 
 	ret := i.docID
 	i.docID++
+
+	i.totalDocs++
 	return ret
 }
 
-// merge
+// insert
 func (i *indexer) merge(result map[string]*docTermData) {
 	i.invertedTableLock.Lock()
 	defer i.invertedTableLock.Unlock()
@@ -69,7 +72,6 @@ func (i *indexer) merge(result map[string]*docTermData) {
 	}
 }
 
-// insert
 func (i *indexer) insert(title, body, url string) int {
 	seg.Lock()
 	segmentedBody := seg.getSegmentedText(body)
@@ -91,16 +93,42 @@ func (i *indexer) insert(title, body, url string) int {
 }
 
 // query
-func (i *indexer) query(query string) []*termData {
+func (i *indexer) query(query string) ([]string, []*termData) {
 	seg.Lock()
-	// segmentedQuery := seg.getSegmentedText(query)
+	segmentedQuery := seg.getSegmentedText(query)
 	seg.Unlock()
 
-	var results []*termData
-	return results
+	i.invertedTableLock.Lock()
+	defer i.invertedTableLock.Unlock()
+
+	results := make([]*termData, 0)
+	for _, term := range segmentedQuery {
+		if _, ok := i.invertedTable[term]; ok {
+			results = append(results, i.invertedTable[term])
+		} else {
+			results = append(results, nil)
+		}
+	}
+
+	return segmentedQuery, results
 }
 
 // debug
+func printTermData(data *termData) {
+	for _, doc := range data.documents {
+		fmt.Printf("\tdocID = %v (", doc.docID)
+		for i, pos := range doc.positions {
+			if i == 0 {
+				fmt.Printf("")
+			} else {
+				fmt.Printf(", ")
+			}
+			fmt.Printf("%v", pos)
+		}
+		fmt.Println(")")
+	}
+}
+
 func (i *indexer) printInvertedTable() {
 	i.invertedTableLock.RLock()
 	defer i.invertedTableLock.RUnlock()
@@ -108,18 +136,7 @@ func (i *indexer) printInvertedTable() {
 	fmt.Println("=========================================")
 	for key, value := range i.invertedTable {
 		fmt.Println("[Key]", key, "\n[Total occurrence count]", value.totalOccurrenceCount)
-		for _, doc := range value.documents {
-			fmt.Printf("\tdocID = %v (", doc.docID)
-			for i, pos := range doc.positions {
-				if i == 0 {
-					fmt.Printf("")
-				} else {
-					fmt.Printf(", ")
-				}
-				fmt.Printf("%v", pos)
-			}
-			fmt.Println(")")
-		}
+		printTermData(value)
 	}
 	fmt.Println("=========================================")
 }
