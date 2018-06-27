@@ -47,7 +47,7 @@ type searchRequestMessage struct {
 type searchRequestReturnMessage struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
-	URL   string `json:"Url"`
+	URL   string `json:"url"`
 }
 
 func (r *searchRequestMessage) String() string {

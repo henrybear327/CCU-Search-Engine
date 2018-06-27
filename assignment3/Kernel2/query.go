@@ -38,7 +38,7 @@ func queryByString(query string, from int, to int) (int, []searchRequestReturnMe
 		to = len(rankedDocIDs)
 	}
 	if debug {
-		fmt.Println("Ranked docs", len(rankedDocIDs), "from", from, "to", to)
+		fmt.Println("Total ranked docs", len(rankedDocIDs), "from", from, "to", to)
 	}
 
 	// highlight

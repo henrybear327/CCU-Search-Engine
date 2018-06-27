@@ -41,7 +41,7 @@ func (s *segmenter) getSegmentedText(text string) []string {
 	for _, token := range gse.ToSlice(segments, false) {
 		if token, ok := s.tokenSanitizer(token); ok {
 			// log.Println(token)
-			results = append(results, token)
+			results = append(results, strings.ToLower(token))
 		}
 	}
 
