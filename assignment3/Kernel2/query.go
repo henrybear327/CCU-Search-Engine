@@ -21,8 +21,11 @@ func insertDocument(title, body, url string) int {
 	docID := idxer.insert(title, body, url)
 
 	if debug {
-		log.Println("Debug Print inverted table")
+		log.Println("Debug print inverted table")
 		idxer.printInvertedTable()
+
+		log.Println("Debug print database")
+		idxer.printDatabase()
 	}
 
 	return docID

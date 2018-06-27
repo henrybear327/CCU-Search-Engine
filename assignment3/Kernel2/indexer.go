@@ -29,8 +29,9 @@ type indexer struct {
 
 	invertedTable     map[string]*termData
 	invertedTableLock sync.RWMutex
-	database          map[int]*document
-	databaseLock      sync.RWMutex
+
+	database     map[int]*document
+	databaseLock sync.RWMutex
 }
 
 // init
@@ -98,16 +99,38 @@ func (i *indexer) query(query string) []*termData {
 
 // debug
 func (i *indexer) printInvertedTable() {
+	i.invertedTableLock.RLock()
+	defer i.invertedTableLock.RUnlock()
+
 	fmt.Println("=========================================")
 	for key, value := range i.invertedTable {
 		fmt.Println("[Key]", key, "\n[Total occurrence count]", value.totalOccurrenceCount)
 		for _, doc := range value.documents {
-			fmt.Println("docID = ", doc.docID)
-			for _, pos := range doc.positions {
-				fmt.Printf("%v ", pos)
+			fmt.Printf("\tdocID = %v (", doc.docID)
+			for i, pos := range doc.positions {
+				if i == 0 {
+					fmt.Printf("")
+				} else {
+					fmt.Printf(", ")
+				}
+				fmt.Printf("%v", pos)
 			}
-			fmt.Println()
+			fmt.Println(")")
 		}
+	}
+	fmt.Println("=========================================")
+}
+
+func (i *indexer) printDatabase() {
+	i.databaseLock.RLock()
+	defer i.databaseLock.RUnlock()
+
+	fmt.Println("=========================================")
+	for key, value := range i.database {
+		fmt.Println("[DocID]", key)
+		fmt.Println("\t[Title]", value.title)
+		fmt.Println("\t[Body]", value.body)
+		fmt.Println("\t[URL]", value.url)
 	}
 	fmt.Println("=========================================")
 }
