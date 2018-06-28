@@ -28,6 +28,7 @@ func (r rankScoreArray) Less(i, j int) bool {
 	return r[i].proximityScore < r[j].proximityScore
 
 	/*
+		// bug on >
 		if r[i].proximityScore < r[j].proximityScore { // proximity score
 			return true
 		}
