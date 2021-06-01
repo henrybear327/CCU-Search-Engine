@@ -30,6 +30,6 @@ sendgrid==1.6.22
 six==1.11.0
 smtpapi==0.3.1
 tqdm==4.19.6
-urllib3==1.24.2
+urllib3==1.26.5
 virtualenv==15.1.0
 Werkzeug==0.14.1
